@@ -1,0 +1,221 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Design Spec Colors - Light Mode */
+    --background: 215 20% 91%; /* #e8ebed - gray-blue */
+    --foreground: 0 0% 20%; /* #333333 - dark gray */
+    --card: 0 0% 100%; /* #ffffff - white */
+    --card-foreground: 0 0% 20%; /* #333333 */
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 20%;
+
+    /* Primary Brand Color - Deep Red #c10007 */
+    --primary: 358 99% 38%; /* #c10007 */
+    --primary-foreground: 0 0% 100%; /* white text on red */
+
+    --secondary: 215 20% 91%;
+    --secondary-foreground: 0 0% 20%;
+    --muted: 215 20% 91%;
+    --muted-foreground: 0 0% 46%;
+    --accent: 358 99% 38%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive uses same Deep Red */
+    --destructive: 358 99% 38%; /* #c10007 */
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders - #dcdfe2 */
+    --border: 210 13% 88%; /* #dcdfe2 */
+    --input: 210 13% 88%;
+
+    /* Focus Ring - Deep Red */
+    --ring: 358 99% 38%;
+
+    /* Border Radius - 10px for inputs/cards */
+    --radius: 0.625rem; /* 10px */
+  }
+
+  .dark {
+    /* Design Spec Colors - Dark Mode */
+    --background: 221 34% 16%; /* #1c2433 - dark navy */
+    --foreground: 0 0% 90%; /* #e5e5e5 - light gray */
+    --card: 220 24% 21%; /* #2a3040 - dark card */
+    --card-foreground: 0 0% 90%;
+    --popover: 220 24% 21%;
+    --popover-foreground: 0 0% 90%;
+
+    /* Primary remains Deep Red in dark mode */
+    --primary: 358 99% 38%; /* #c10007 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 24% 21%;
+    --secondary-foreground: 0 0% 90%;
+    --muted: 220 24% 21%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 358 99% 38%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 358 99% 38%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 24% 21%;
+    --input: 220 24% 21%;
+    --ring: 358 99% 38%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 16px; /* text-base */
+    line-height: 1.5;
+  }
+
+  /* Typography Scale */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-size: 30px; /* text-3xl */
+  }
+
+  h2 {
+    font-size: 24px; /* text-2xl */
+  }
+
+  h3 {
+    font-size: 18px; /* text-lg */
+  }
+
+  code, pre {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  /* Accessibility - Focus Rings (2px width, 2px offset, Deep Red) */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Minimum Touch Targets - 44x44px (WCAG AAA) */
+  button, a, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Smooth Transitions */
+  * {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: ease-in-out;
+    transition-duration: 150ms;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground));
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary));
+  }
+}
+
+/* Animations from Design Spec */
+@keyframes accordion-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  /* Animation Classes */
+  .animate-accordion-down {
+    animation: accordion-down 0.2s ease-out;
+  }
+
+  .animate-accordion-up {
+    animation: accordion-up 0.2s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+
+  /* Container Utilities */
+  .container-custom {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  /* Card Padding */
+  .card-padding {
+    padding: 24px;
+  }
+}

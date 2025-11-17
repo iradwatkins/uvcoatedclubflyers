@@ -41,3 +41,22 @@ logs/
 # Misc
 .cache/
 .turbo/
+
+# Docker Secrets (CRITICAL - NEVER COMMIT!)
+secrets/
+!secrets/.gitkeep
+!secrets.example/
+
+# Docker Volumes
+postgres-data/
+redis-data/
+minio-data/
+vaultwarden-data/
+
+# BMAD-METHOD
+.bmad/node_modules/
+.bmad/.git/
+
+# Qwen Code
+.qwen/commands/
+.qwen/bmad-source

@@ -1,0 +1,198 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: uvcoated-postgres
+    restart: unless-stopped
+    ports:
+      - "5448:5432"
+    environment:
+      POSTGRES_DB: uvcoated
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - uvcoated-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d uvcoated"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: uvcoated-redis
+    restart: unless-stopped
+    ports:
+      - "6302:6379"
+    command: redis-server --requirepass $(cat /run/secrets/redis_password)
+    secrets:
+      - redis_password
+    volumes:
+      - redis-data:/data
+    networks:
+      - uvcoated-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: uvcoated-minio
+    restart: unless-stopped
+    ports:
+      - "9002:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER_FILE: /run/secrets/minio_access_key
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_secret_key
+    secrets:
+      - minio_access_key
+      - minio_secret_key
+    volumes:
+      - minio-data:/data
+    networks:
+      - uvcoated-network
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Vaultwarden Password Manager (Web UI for credential management)
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: uvcoated-vaultwarden
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      WEBSOCKET_ENABLED: "true"
+      SIGNUPS_ALLOWED: "false"
+      ADMIN_TOKEN_FILE: /run/secrets/vaultwarden_admin_token
+      DOMAIN: "http://localhost:8080"
+    secrets:
+      - vaultwarden_admin_token
+    volumes:
+      - vaultwarden-data:/data
+    networks:
+      - uvcoated-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/alive"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: uvcoated-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    secrets:
+      - db_password
+      - redis_password
+      - minio_access_key
+      - minio_secret_key
+      - square_access_token
+      - square_sandbox_access_token
+      - paypal_client_id
+      - paypal_client_secret
+      - nextauth_secret
+      - google_client_id
+      - google_client_secret
+    environment:
+      # Public environment variables (non-sensitive)
+      NODE_ENV: production
+      NEXT_PUBLIC_SQUARE_APPLICATION_ID: "sandbox-sq0idb-k_i3kMBVVK_7m0jtLPZWdw"
+      NEXT_PUBLIC_SQUARE_LOCATION_ID: "LLAA4E8NME90R"
+      NEXT_PUBLIC_SQUARE_ENVIRONMENT: "sandbox"
+      NEXT_PUBLIC_PAYPAL_ENVIRONMENT: "sandbox"
+      NEXTAUTH_URL: "http://localhost:3000"
+      # Database connection (non-sensitive parts)
+      DATABASE_HOST: postgres
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: uvcoated
+      DATABASE_USER: appuser
+      # Redis connection
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      # MinIO connection
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: "9000"
+      MINIO_USE_SSL: "false"
+      MINIO_BUCKET: uploads
+    networks:
+      - uvcoated-network
+    volumes:
+      - ./public:/app/public
+      - app-cache:/app/.next/cache
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Docker Secrets Configuration
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  redis_password:
+    file: ./secrets/redis_password.txt
+  minio_access_key:
+    file: ./secrets/minio_access_key.txt
+  minio_secret_key:
+    file: ./secrets/minio_secret_key.txt
+  square_access_token:
+    file: ./secrets/square_access_token.txt
+  square_sandbox_access_token:
+    file: ./secrets/square_sandbox_access_token.txt
+  paypal_client_id:
+    file: ./secrets/paypal_client_id.txt
+  paypal_client_secret:
+    file: ./secrets/paypal_client_secret.txt
+  nextauth_secret:
+    file: ./secrets/nextauth_secret.txt
+  google_client_id:
+    file: ./secrets/google_client_id.txt
+  google_client_secret:
+    file: ./secrets/google_client_secret.txt
+  vaultwarden_admin_token:
+    file: ./secrets/vaultwarden_admin_token.txt
+
+# Persistent Volumes
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  minio-data:
+    driver: local
+  vaultwarden-data:
+    driver: local
+  app-cache:
+    driver: local
+
+# Networks
+networks:
+  uvcoated-network:
+    driver: bridge

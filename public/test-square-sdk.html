@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Square SDK Direct Load Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .status {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background: white;
+            border-left: 4px solid #ccc;
+        }
+        .status.success {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+        .status.error {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+        .log {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        .log div {
+            margin: 2px 0;
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Square SDK Direct Load Test</h1>
+    <p>This is a simple HTML page to test if the Square SDK can load without Next.js.</p>
+
+    <div id="status" class="status">
+        <h3>Status: Testing...</h3>
+        <p id="status-message">Loading Square SDK...</p>
+    </div>
+
+    <button onclick="testSquareSDK()">🔄 Retry Test</button>
+
+    <h3>Console Logs:</h3>
+    <div id="log" class="log"></div>
+
+    <script>
+        const appId = 'sandbox-sq0idb-rvraAQn8xf8o6_fEXDRPCA';
+        const locationId = 'LZN634J2MSXRY';
+
+        function addLog(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#f44336' : type === 'success' ? '#4caf50' : '#0f0';
+            logDiv.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${timestamp}]`, message);
+        }
+
+        function updateStatus(title, message, success) {
+            const statusDiv = document.getElementById('status');
+            const statusMessage = document.getElementById('status-message');
+            statusDiv.className = 'status ' + (success ? 'success' : 'error');
+            statusDiv.querySelector('h3').textContent = title;
+            statusMessage.textContent = message;
+        }
+
+        async function testSquareSDK() {
+            addLog('🚀 Starting Square SDK test...', 'info');
+            addLog(`App ID: ${appId.substring(0, 20)}...`, 'info');
+            addLog(`Location ID: ${locationId}`, 'info');
+
+            try {
+                // Check if SDK already loaded
+                if (window.Square) {
+                    addLog('✅ window.Square already exists!', 'success');
+                } else {
+                    addLog('window.Square not found, loading SDK...', 'info');
+
+                    // Check if script tag already exists
+                    const existingScript = document.querySelector('script[src*="squarecdn.com"]');
+                    if (existingScript) {
+                        addLog('⚠️  Script tag already exists in DOM', 'info');
+                    } else {
+                        // Load the SDK
+                        const sdkUrl = 'https://sandbox.web.squarecdn.com/v1/square.js';
+                        addLog(`Loading SDK from: ${sdkUrl}`, 'info');
+
+                        await new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src = sdkUrl;
+                            script.async = true;
+                            script.crossOrigin = 'anonymous';
+
+                            script.onload = () => {
+                                addLog('✅ Script onload event fired!', 'success');
+                                resolve();
+                            };
+
+                            script.onerror = (error) => {
+                                addLog(`❌ Script onerror event: ${error}`, 'error');
+                                reject(new Error('Failed to load script'));
+                            };
+
+                            document.head.appendChild(script);
+                            addLog('Script tag appended to <head>', 'info');
+                        });
+                    }
+
+                    // Wait for window.Square to become available
+                    addLog('Waiting for window.Square to be available...', 'info');
+                    let attempts = 0;
+                    const maxAttempts = 150;
+
+                    while (!window.Square && attempts < maxAttempts) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        attempts++;
+
+                        if (attempts % 20 === 0) {
+                            addLog(`Still waiting... (${attempts/10}s / ${maxAttempts/10}s)`, 'info');
+                        }
+                    }
+
+                    if (!window.Square) {
+                        throw new Error(`window.Square not available after ${attempts/10} seconds`);
+                    }
+
+                    addLog(`✅ window.Square is available after ${attempts/10} seconds!`, 'success');
+                }
+
+                // Test Square.payments()
+                addLog('Attempting to initialize Square payments...', 'info');
+                const payments = window.Square.payments(appId, locationId);
+                addLog('✅ Square payments instance created!', 'success');
+
+                // Try to initialize a card
+                addLog('Attempting to create card instance...', 'info');
+                const card = await payments.card();
+                addLog('✅ Card instance created!', 'success');
+
+                updateStatus(
+                    '✅ Success!',
+                    'Square SDK loaded and initialized successfully. The SDK is working correctly!',
+                    true
+                );
+
+                addLog('🎉 ALL TESTS PASSED!', 'success');
+
+            } catch (error) {
+                const errorMsg = error.message || String(error);
+                addLog(`❌ ERROR: ${errorMsg}`, 'error');
+                updateStatus(
+                    '❌ Failed',
+                    `Square SDK failed to load: ${errorMsg}`,
+                    false
+                );
+            }
+        }
+
+        // Auto-start test when page loads
+        window.addEventListener('load', () => {
+            addLog('Page loaded, starting test in 1 second...', 'info');
+            setTimeout(testSquareSDK, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Square SDK Diagnostic</title>
+    <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ccc;
+        }
+        .success { border-color: #4caf50; background: #e8f5e9; }
+        .error { border-color: #f44336; background: #ffebee; }
+        .log { background: #000; color: #0f0; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Square SDK Diagnostic</h1>
+    <div id="status" class="status">Checking...</div>
+    <div id="log" class="log"></div>
+
+    <script type="module">
+        function log(msg) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}<br>`;
+            console.log(msg);
+        }
+
+        function setStatus(msg, success) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = 'status ' + (success ? 'success' : 'error');
+            statusDiv.textContent = msg;
+        }
+
+        log('Starting Square SDK diagnostic...');
+        log(`Script tag in head: ${document.querySelector('script[src*="squarecdn"]') ? 'YES' : 'NO'}`);
+        log(`window.Square exists: ${typeof window.Square !== 'undefined'}`);
+
+        if (typeof window.Square !== 'undefined') {
+            log('✅ window.Square is available immediately!');
+
+            try {
+                const appId = 'sandbox-sq0idb-rvraAQn8xf8o6_fEXDRPCA';
+                const locationId = 'LZN634J2MSXRY';
+
+                log(`Initializing payments with appId: ${appId.substring(0, 20)}...`);
+                const payments = window.Square.payments(appId, locationId);
+                log('✅ payments instance created!');
+
+                log('Creating card instance...');
+                const card = await payments.card();
+                log('✅ card instance created!');
+
+                setStatus('✅ SUCCESS! Square SDK is working perfectly!', true);
+                log('🎉 ALL CHECKS PASSED!');
+            } catch (err) {
+                log(`❌ ERROR: ${err.message}`);
+                setStatus(`❌ FAILED: ${err.message}`, false);
+            }
+        } else {
+            log('❌ window.Square is NOT available');
+            log('Waiting 5 seconds to see if it loads...');
+
+            setTimeout(() => {
+                if (typeof window.Square !== 'undefined') {
+                    log('✅ window.Square loaded after delay!');
+                    setStatus('✅ Square SDK loaded (with delay)', true);
+                } else {
+                    log('❌ window.Square still not available after 5 seconds');
+                    setStatus('❌ Square SDK failed to load', false);
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

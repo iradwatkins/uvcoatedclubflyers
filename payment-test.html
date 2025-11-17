@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Integration Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-section {
+      background: white;
+      padding: 30px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      border-bottom: 3px solid #4CAF50;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #555;
+      margin-top: 0;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .status.loading {
+      background: #FFF3CD;
+      border-left: 4px solid #FFC107;
+    }
+    .status.success {
+      background: #D4EDDA;
+      border-left: 4px solid #28A745;
+    }
+    .status.error {
+      background: #F8D7DA;
+      border-left: 4px solid #DC3545;
+    }
+    #square-card-container,
+    #cashapp-container,
+    #paypal-container {
+      min-height: 100px;
+      padding: 20px;
+      border: 2px dashed #ddd;
+      border-radius: 4px;
+      margin: 15px 0;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .test-info {
+      background: #E3F2FD;
+      padding: 15px;
+      border-radius: 4px;
+      border-left: 4px solid #2196F3;
+      margin: 15px 0;
+    }
+    .test-counter {
+      font-weight: bold;
+      color: #2196F3;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Payment Methods Integration Test</h1>
+
+  <div class="test-info">
+    <strong>Test Configuration:</strong><br>
+    Environment: Sandbox<br>
+    Test Amount: $175.00 (with 8.75% tax = $190.31)<br>
+    Server: http://localhost:3001<br>
+  </div>
+
+  <!-- Square Card Payment Test -->
+  <div class="test-section">
+    <h2>1. Square Card Payment</h2>
+    <div id="square-status" class="status loading">
+      ⏳ Loading Square SDK...
+    </div>
+    <div class="test-info">
+      <strong>Test Card:</strong> 4111 1111 1111 1111<br>
+      <strong>CVV:</strong> 123 | <strong>Expiry:</strong> 12/25 | <strong>ZIP:</strong> 12345
+    </div>
+    <div id="square-card-container"></div>
+    <div>
+      <span class="test-counter">Tests completed: <span id="square-count">0</span>/3</span>
+    </div>
+  </div>
+
+  <!-- Cash App Pay Test -->
+  <div class="test-section">
+    <h2>2. Cash App Pay</h2>
+    <div id="cashapp-status" class="status loading">
+      ⏳ Loading Square SDK for Cash App...
+    </div>
+    <div class="test-info">
+      <strong>Action:</strong> QR code should appear below for Cash App scanning
+    </div>
+    <div id="cashapp-container"></div>
+    <div>
+      <span class="test-counter">Tests completed: <span id="cashapp-count">0</span>/3</span>
+    </div>
+  </div>
+
+  <!-- PayPal Payment Test -->
+  <div class="test-section">
+    <h2>3. PayPal Payment</h2>
+    <div id="paypal-status" class="status loading">
+      ⏳ Loading PayPal SDK...
+    </div>
+    <div class="test-info">
+      <strong>Action:</strong> PayPal buttons should appear below
+    </div>
+    <div id="paypal-container"></div>
+    <div>
+      <span class="test-counter">Tests completed: <span id="paypal-count">0</span>/3</span>
+    </div>
+  </div>
+
+  <script>
+    // Configuration - Update these with your actual values
+    const SQUARE_APP_ID = 'sandbox-sq0idb-rvraAQn8xf8o6_fEXDRPCA';
+    const SQUARE_LOCATION_ID = 'LZN634J2MSXRY';
+    const PAYPAL_CLIENT_ID = 'AabXwMSB3J9rKKhf0wfdTCq8z_tQp3SnSwVM8IjDw5kOX6K2RZLhmFqXNLkBeENN7XgarjeVC1QGaLaw';
+
+    let squareTests = 0;
+    let cashappTests = 0;
+    let paypalTests = 0;
+
+    // Test Square Card Payment
+    async function testSquareCard() {
+      try {
+        // Load Square SDK
+        const script = document.createElement('script');
+        script.src = 'https://sandbox.web.squarecdn.com/v1/square.js';
+        script.async = true;
+
+        script.onload = async () => {
+          console.log('✅ Square SDK loaded');
+          updateStatus('square-status', 'success', '✅ Square SDK loaded successfully');
+
+          if (!window.Square) {
+            throw new Error('Square object not available');
+          }
+
+          const payments = window.Square.payments(SQUARE_APP_ID, SQUARE_LOCATION_ID);
+          const card = await payments.card();
+          await card.attach('#square-card-container');
+
+          console.log('✅ Square card form rendered');
+          updateStatus('square-status', 'success', '✅ Square card form rendered - Ready for manual testing');
+        };
+
+        script.onerror = () => {
+          throw new Error('Failed to load Square SDK');
+        };
+
+        document.head.appendChild(script);
+      } catch (error) {
+        console.error('❌ Square test failed:', error);
+        updateStatus('square-status', 'error', `❌ Error: ${error.message}`);
+      }
+    }
+
+    // Test Cash App Pay
+    async function testCashApp() {
+      try {
+        // Wait for Square SDK (shares same SDK as card)
+        let attempts = 0;
+        while (!window.Square && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+
+        if (!window.Square) {
+          throw new Error('Square SDK not loaded for Cash App');
+        }
+
+        console.log('✅ Square SDK ready for Cash App');
+
+        const payments = window.Square.payments(SQUARE_APP_ID, SQUARE_LOCATION_ID);
+
+        // Create payment request
+        const paymentRequest = payments.paymentRequest({
+          countryCode: 'US',
+          currencyCode: 'USD',
+          total: {
+            amount: '190.31',
+            label: 'Total',
+            pending: false,
+          },
+        });
+
+        const cashAppPay = await payments.cashAppPay(paymentRequest, {
+          redirectURL: window.location.href,
+          referenceId: `test-${Date.now()}`,
+        });
+
+        await cashAppPay.attach('#cashapp-container', {
+          shape: 'semiround',
+          width: 'full',
+        });
+
+        console.log('✅ Cash App Pay button rendered');
+        updateStatus('cashapp-status', 'success', '✅ Cash App Pay button rendered - Ready for manual testing');
+      } catch (error) {
+        console.error('❌ Cash App test failed:', error);
+        updateStatus('cashapp-status', 'error', `❌ Error: ${error.message}`);
+      }
+    }
+
+    // Test PayPal
+    async function testPayPal() {
+      try {
+        const script = document.createElement('script');
+        script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD`;
+        script.async = true;
+
+        script.onload = () => {
+          console.log('✅ PayPal SDK loaded');
+
+          if (!window.paypal) {
+            throw new Error('PayPal object not available');
+          }
+
+          window.paypal.Buttons({
+            createOrder: function(data, actions) {
+              return actions.order.create({
+                purchase_units: [{
+                  amount: {
+                    value: '190.31'
+                  }
+                }]
+              });
+            },
+            onApprove: function(data, actions) {
+              console.log('✅ PayPal payment approved:', data);
+              paypalTests++;
+              document.getElementById('paypal-count').textContent = paypalTests;
+              return actions.order.capture().then(function(details) {
+                alert('Payment successful! Transaction ID: ' + details.id);
+              });
+            },
+            onError: function(err) {
+              console.error('❌ PayPal error:', err);
+              updateStatus('paypal-status', 'error', `❌ PayPal Error: ${err}`);
+            }
+          }).render('#paypal-container');
+
+          console.log('✅ PayPal buttons rendered');
+          updateStatus('paypal-status', 'success', '✅ PayPal buttons rendered - Ready for manual testing');
+        };
+
+        script.onerror = () => {
+          throw new Error('Failed to load PayPal SDK');
+        };
+
+        document.head.appendChild(script);
+      } catch (error) {
+        console.error('❌ PayPal test failed:', error);
+        updateStatus('paypal-status', 'error', `❌ Error: ${error.message}`);
+      }
+    }
+
+    function updateStatus(elementId, type, message) {
+      const element = document.getElementById(elementId);
+      element.className = `status ${type}`;
+      element.textContent = message;
+    }
+
+    // Run all tests
+    console.log('🚀 Starting payment integration tests...');
+    testSquareCard();
+    testCashApp();
+    testPayPal();
+  </script>
+</body>
+</html>

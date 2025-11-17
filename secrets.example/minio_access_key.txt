@@ -1,0 +1,1 @@
+your_minio_access_key_here
