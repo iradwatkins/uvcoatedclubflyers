@@ -68,7 +68,7 @@ export function PaymentMethodSettings({ userId }: PaymentMethodSettingsProps) {
         throw new Error('Failed to delete payment method');
       }
 
-      setPaymentMethods(prev => prev.filter(pm => pm.id !== id));
+      setPaymentMethods((prev) => prev.filter((pm) => pm.id !== id));
     } catch (err) {
       console.error('Delete payment method error:', err);
       setError('Failed to delete payment method');
@@ -117,9 +117,7 @@ export function PaymentMethodSettings({ userId }: PaymentMethodSettingsProps) {
       <Card>
         <CardHeader>
           <CardTitle>Payment Methods</CardTitle>
-          <CardDescription>
-            Manage your saved payment methods
-          </CardDescription>
+          <CardDescription>Manage your saved payment methods</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
@@ -131,16 +129,16 @@ export function PaymentMethodSettings({ userId }: PaymentMethodSettingsProps) {
     );
   }
 
-  const activePaymentMethods = paymentMethods.filter(pm => !pm.isExpired);
-  const expiredPaymentMethods = paymentMethods.filter(pm => pm.isExpired);
+  const activePaymentMethods = paymentMethods.filter((pm) => !pm.isExpired);
+  const expiredPaymentMethods = paymentMethods.filter((pm) => pm.isExpired);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Payment Methods</CardTitle>
         <CardDescription>
-          Manage your saved payment methods. Payment methods are automatically saved when
-          you check out and can be reused for faster payments.
+          Manage your saved payment methods. Payment methods are automatically saved when you check
+          out and can be reused for faster payments.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -156,21 +154,16 @@ export function PaymentMethodSettings({ userId }: PaymentMethodSettingsProps) {
             <CreditCard className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No saved payment methods</h3>
             <p className="text-muted-foreground mb-4">
-              Payment methods will be saved automatically during checkout when you opt to
-              save your card.
+              Payment methods will be saved automatically during checkout when you opt to save your
+              card.
             </p>
-            <Button onClick={() => window.location.href = '/products'}>
-              Browse Products
-            </Button>
+            <Button onClick={() => (window.location.href = '/products')}>Browse Products</Button>
           </div>
         ) : (
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-muted-foreground">Active Cards</h3>
-            {activePaymentMethods.map(pm => (
-              <div
-                key={pm.id}
-                className="flex items-center justify-between rounded-lg border p-4"
-              >
+            {activePaymentMethods.map((pm) => (
+              <div key={pm.id} className="flex items-center justify-between rounded-lg border p-4">
                 <div className="flex items-center gap-4">
                   {getCardIcon(pm.cardBrand)}
                   <div>
@@ -219,7 +212,7 @@ export function PaymentMethodSettings({ userId }: PaymentMethodSettingsProps) {
         {expiredPaymentMethods.length > 0 && (
           <div className="space-y-4 pt-6 border-t">
             <h3 className="text-sm font-medium text-muted-foreground">Expired Cards</h3>
-            {expiredPaymentMethods.map(pm => (
+            {expiredPaymentMethods.map((pm) => (
               <div
                 key={pm.id}
                 className="flex items-center justify-between rounded-lg border border-destructive/50 bg-destructive/5 p-4"
@@ -257,8 +250,8 @@ export function PaymentMethodSettings({ userId }: PaymentMethodSettingsProps) {
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            For your security, full card details are never stored. Only the last 4 digits
-            and expiration date are saved for identification purposes.
+            For your security, full card details are never stored. Only the last 4 digits and
+            expiration date are saved for identification purposes.
           </AlertDescription>
         </Alert>
       </CardContent>

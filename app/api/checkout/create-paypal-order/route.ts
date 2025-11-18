@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PAYPAL_API_BASE = process.env.PAYPAL_ENVIRONMENT === 'production'
-  ? 'https://api-m.paypal.com'
-  : 'https://api-m.sandbox.paypal.com';
+const PAYPAL_API_BASE =
+  process.env.PAYPAL_ENVIRONMENT === 'production'
+    ? 'https://api-m.paypal.com'
+    : 'https://api-m.sandbox.paypal.com';
 
 async function getPayPalAccessToken() {
   const clientId = process.env.PAYPAL_CLIENT_ID;
@@ -17,7 +18,7 @@ async function getPayPalAccessToken() {
   const response = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
     method: 'POST',
     headers: {
-      'Authorization': `Basic ${auth}`,
+      Authorization: `Basic ${auth}`,
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: 'grant_type=client_credentials',
@@ -36,10 +37,7 @@ export async function POST(request: NextRequest) {
     const { amount, orderNumber } = await request.json();
 
     if (!amount || !orderNumber) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const accessToken = await getPayPalAccessToken();
@@ -47,7 +45,7 @@ export async function POST(request: NextRequest) {
     const response = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -72,10 +70,7 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       const error = await response.json();
       console.error('PayPal order creation failed:', error);
-      return NextResponse.json(
-        { error: 'Failed to create PayPal order' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to create PayPal order' }, { status: 500 });
     }
 
     const order = await response.json();
@@ -83,9 +78,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ id: order.id });
   } catch (error) {
     console.error('Create PayPal order error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

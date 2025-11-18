@@ -13,10 +13,7 @@ export async function createUser(data: CreateUserData) {
   const { email, password, name, phone, role = 'customer' } = data;
 
   // Check if user already exists
-  const existing = await query(
-    'SELECT id FROM users WHERE email = $1',
-    [email]
-  );
+  const existing = await query('SELECT id FROM users WHERE email = $1', [email]);
 
   if (existing.rows.length > 0) {
     throw new Error('User with this email already exists');
@@ -37,10 +34,7 @@ export async function createUser(data: CreateUserData) {
 }
 
 export async function getUserByEmail(email: string) {
-  const result = await query(
-    'SELECT * FROM users WHERE email = $1',
-    [email]
-  );
+  const result = await query('SELECT * FROM users WHERE email = $1', [email]);
 
   return result.rows[0] || null;
 }

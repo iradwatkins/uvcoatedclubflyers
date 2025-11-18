@@ -25,8 +25,9 @@ export async function addToCart(userId: string, item: CartItem): Promise<void> {
 
   // Check if item already exists
   const existingIndex = cart.findIndex(
-    (i) => i.productId === item.productId &&
-    JSON.stringify(i.configuration) === JSON.stringify(item.configuration)
+    (i) =>
+      i.productId === item.productId &&
+      JSON.stringify(i.configuration) === JSON.stringify(item.configuration)
   );
 
   if (existingIndex >= 0) {
@@ -50,8 +51,10 @@ export async function removeFromCart(
 
   const filtered = cart.filter(
     (item) =>
-      !(item.productId === productId &&
-        JSON.stringify(item.configuration) === JSON.stringify(configuration))
+      !(
+        item.productId === productId &&
+        JSON.stringify(item.configuration) === JSON.stringify(configuration)
+      )
   );
 
   await redis.set(`cart:${userId}`, JSON.stringify(filtered), {
@@ -75,8 +78,7 @@ export async function updateCartItemQuantity(
 
   const item = cart.find(
     (i) =>
-      i.productId === productId &&
-      JSON.stringify(i.configuration) === JSON.stringify(configuration)
+      i.productId === productId && JSON.stringify(i.configuration) === JSON.stringify(configuration)
   );
 
   if (item) {

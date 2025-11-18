@@ -46,8 +46,8 @@ export function ProductImage({
           variant === 'hero'
             ? '(max-width: 768px) 100vw, 600px'
             : variant === 'card'
-            ? '(max-width: 768px) 100vw, 300px'
-            : `${width}px`
+              ? '(max-width: 768px) 100vw, 300px'
+              : `${width}px`
         }
         priority={priority}
       />

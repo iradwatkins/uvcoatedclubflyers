@@ -7,10 +7,7 @@ export async function GET(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const preferences = await prisma.$queryRaw<any[]>`
@@ -41,10 +38,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ preferences: preferences[0] });
   } catch (error) {
     console.error('Fetch preferences error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch preferences' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch preferences' }, { status: 500 });
   }
 }
 
@@ -53,14 +47,10 @@ export async function PUT(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { email_order_updates, email_promotions, email_newsletters } =
-      await request.json();
+    const { email_order_updates, email_promotions, email_newsletters } = await request.json();
 
     // Check if preferences exist
     const existing = await prisma.$queryRaw<any[]>`
@@ -101,9 +91,6 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error('Update preferences error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update preferences' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update preferences' }, { status: 500 });
   }
 }

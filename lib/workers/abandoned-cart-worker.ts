@@ -162,7 +162,9 @@ async function detectAbandonedCarts() {
         `;
 
         created++;
-        console.log(`[Worker] Created abandoned cart: ${cart.session_id} (value: $${cart.total_value / 100})`);
+        console.log(
+          `[Worker] Created abandoned cart: ${cart.session_id} (value: $${cart.total_value / 100})`
+        );
       } catch (error) {
         console.error(`[Worker] Error processing cart ${cart.session_id}:`, error);
       }

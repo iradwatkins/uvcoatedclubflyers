@@ -2,10 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ShoppingCart, Check, Info } from 'lucide-react';
@@ -61,7 +74,9 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
       // Apply option modifiers
       let modifierTotal = 0;
       Object.values(selectedOptions).forEach((optionId) => {
-        const option = (product.productOptions || []).find((opt: any) => opt.id.toString() === optionId);
+        const option = (product.productOptions || []).find(
+          (opt: any) => opt.id.toString() === optionId
+        );
         if (option && option.priceModifier) {
           modifierTotal += parseFloat(option.priceModifier);
         }
@@ -143,12 +158,14 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {Object.entries(product.specifications as Record<string, any>).map(([key, value]) => (
-                  <div key={key} className="flex justify-between border-b pb-2 last:border-0">
-                    <span className="font-medium capitalize">{key.replace(/_/g, ' ')}:</span>
-                    <span className="text-muted-foreground">{String(value)}</span>
-                  </div>
-                ))}
+                {Object.entries(product.specifications as Record<string, any>).map(
+                  ([key, value]) => (
+                    <div key={key} className="flex justify-between border-b pb-2 last:border-0">
+                      <span className="font-medium capitalize">{key.replace(/_/g, ' ')}:</span>
+                      <span className="text-muted-foreground">{String(value)}</span>
+                    </div>
+                  )
+                )}
               </div>
             </CardContent>
           </Card>
@@ -189,9 +206,7 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
         <Card>
           <CardHeader>
             <CardTitle>Configure Your Order</CardTitle>
-            <CardDescription>
-              Select your options and quantity below
-            </CardDescription>
+            <CardDescription>Select your options and quantity below</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -332,16 +347,21 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
                           isSelected && 'ring-2 ring-primary'
                         )}
                         onClick={() => {
-                          setSelectedOptions((prev) => ({ ...prev, turnaround: option.id.toString() }));
+                          setSelectedOptions((prev) => ({
+                            ...prev,
+                            turnaround: option.id.toString(),
+                          }));
                         }}
                       >
                         <div className="flex flex-1 items-center justify-between">
                           <span className="font-medium">{option.optionValue}</span>
                           {priceModifier !== 0 && (
-                            <span className={cn(
-                              'text-sm',
-                              isSelected ? 'text-primary-foreground' : 'text-muted-foreground'
-                            )}>
+                            <span
+                              className={cn(
+                                'text-sm',
+                                isSelected ? 'text-primary-foreground' : 'text-muted-foreground'
+                              )}
+                            >
                               {priceModifier > 0 ? '+' : ''}
                               {formatPrice(Math.round(priceModifier * 100))}
                             </span>

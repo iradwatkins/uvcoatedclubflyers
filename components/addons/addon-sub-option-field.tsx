@@ -2,7 +2,13 @@
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Info } from 'lucide-react';
@@ -51,7 +57,7 @@ const parseOptions = (optionsString: string | null | undefined): string[] => {
   } catch (e) {
     // If it's a comma-separated string, split it
     if (typeof optionsString === 'string' && optionsString.includes(',')) {
-      return optionsString.split(',').map(opt => opt.trim());
+      return optionsString.split(',').map((opt) => opt.trim());
     }
     return [];
   }
@@ -150,9 +156,7 @@ export function AddOnSubOptionField({
               ))}
             </SelectContent>
           </Select>
-          {config.tooltip && (
-            <p className="text-xs text-muted-foreground">{config.tooltip}</p>
-          )}
+          {config.tooltip && <p className="text-xs text-muted-foreground">{config.tooltip}</p>}
         </div>
       );
     }
@@ -177,9 +181,7 @@ export function AddOnSubOptionField({
             placeholder={config.fieldLabel}
             min={0}
           />
-          {config.tooltip && (
-            <p className="text-xs text-muted-foreground">{config.tooltip}</p>
-          )}
+          {config.tooltip && <p className="text-xs text-muted-foreground">{config.tooltip}</p>}
         </div>
       );
     }
@@ -203,9 +205,7 @@ export function AddOnSubOptionField({
             onChange={(e) => onChange(e.target.value)}
             placeholder={config.fieldLabel}
           />
-          {config.tooltip && (
-            <p className="text-xs text-muted-foreground">{config.tooltip}</p>
-          )}
+          {config.tooltip && <p className="text-xs text-muted-foreground">{config.tooltip}</p>}
         </div>
       );
     }
@@ -229,9 +229,7 @@ export function AddOnSubOptionField({
             placeholder={config.fieldLabel}
             rows={3}
           />
-          {config.tooltip && (
-            <p className="text-xs text-muted-foreground">{config.tooltip}</p>
-          )}
+          {config.tooltip && <p className="text-xs text-muted-foreground">{config.tooltip}</p>}
         </div>
       );
     }
@@ -239,11 +237,7 @@ export function AddOnSubOptionField({
     case 'checkbox': {
       return (
         <div className="flex items-start space-x-2">
-          <Checkbox
-            id={fieldId}
-            checked={value || false}
-            onCheckedChange={onChange}
-          />
+          <Checkbox id={fieldId} checked={value || false} onCheckedChange={onChange} />
           <div className="flex-1">
             <Label
               htmlFor={fieldId}

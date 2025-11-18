@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info, Upload } from 'lucide-react';
 import { FileUploadDropzone } from '@/components/file-upload-dropzone';
@@ -84,7 +90,7 @@ export function DesignOptionSelector({
   const sortedOptions = [...designOptions].sort((a, b) => a.display_order - b.display_order);
 
   // Get selected option details
-  const selectedOption = sortedOptions.find(opt => opt.id === selectedOptionId);
+  const selectedOption = sortedOptions.find((opt) => opt.id === selectedOptionId);
 
   // Validate when selection changes
   useEffect(() => {
@@ -135,10 +141,7 @@ export function DesignOptionSelector({
             Design & Files
             <span className="text-red-500 ml-1">*</span>
           </Label>
-          <RadioGroup
-            value={selectedOptionId?.toString() || ''}
-            onValueChange={handleOptionChange}
-          >
+          <RadioGroup value={selectedOptionId?.toString() || ''} onValueChange={handleOptionChange}>
             <div className="space-y-2">
               {sortedOptions.map((option) => (
                 <div
@@ -232,8 +235,8 @@ export function DesignOptionSelector({
           <Alert className="ml-8">
             <Info className="h-4 w-4" />
             <AlertDescription>
-              You can upload your files later from your dashboard after placing the order.
-              Your order will not be processed until files are received.
+              You can upload your files later from your dashboard after placing the order. Your
+              order will not be processed until files are received.
             </AlertDescription>
           </Alert>
         )}

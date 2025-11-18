@@ -2,18 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { status } = await request.json();
@@ -21,10 +15,7 @@ export async function PATCH(
     const orderId = parseInt(id);
 
     if (!status) {
-      return NextResponse.json(
-        { error: 'Status is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Status is required' }, { status: 400 });
     }
 
     // Valid production statuses
@@ -40,10 +31,7 @@ export async function PATCH(
     ];
 
     if (!validStatuses.includes(status)) {
-      return NextResponse.json(
-        { error: 'Invalid status' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
     }
 
     // Update order status
@@ -81,9 +69,6 @@ export async function PATCH(
     });
   } catch (error) {
     console.error('Update order status error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update order status' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update order status' }, { status: 500 });
   }
 }

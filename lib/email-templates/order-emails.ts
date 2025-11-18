@@ -72,7 +72,12 @@ export interface OrderData {
 /**
  * Format address for display
  */
-function formatAddress(address: { street: string; city: string; state: string; zip: string }): string {
+function formatAddress(address: {
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+}): string {
   return `${address.street}<br>${address.city}, ${address.state} ${address.zip}`;
 }
 
@@ -100,7 +105,11 @@ function formatDate(dateString: string): string {
  * Email 1: Order Confirmation
  * Sent immediately when order is placed
  */
-export function generateOrderConfirmation(data: OrderData): { subject: string; html: string; text: string } {
+export function generateOrderConfirmation(data: OrderData): {
+  subject: string;
+  html: string;
+  text: string;
+} {
   const subject = `Order Confirmation - #${data.orderNumber}`;
 
   const html = `
@@ -153,12 +162,16 @@ export function generateOrderConfirmation(data: OrderData): { subject: string; h
                     ${data.orderNumber}${data.reorderOf ? ` (Reorder of #${data.reorderOf})` : ''}
                   </td>
                 </tr>
-                ${data.jobName ? `
+                ${
+                  data.jobName
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Job Name:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.jobName}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Type:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.type}</td>
@@ -175,12 +188,16 @@ export function generateOrderConfirmation(data: OrderData): { subject: string; h
 
               <!-- CUSTOMER INFORMATION -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 30px;">
-                ${data.companyName ? `
+                ${
+                  data.companyName
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; width: 200px; vertical-align: top;">Company Name:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.companyName}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Name:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.customerName}</td>
@@ -189,18 +206,26 @@ export function generateOrderConfirmation(data: OrderData): { subject: string; h
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Email:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.email}</td>
                 </tr>
-                ${data.primaryPhone ? `
+                ${
+                  data.primaryPhone
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Primary Phone:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.primaryPhone}</td>
                 </tr>
-                ` : ''}
-                ${data.alternatePhone ? `
+                `
+                    : ''
+                }
+                ${
+                  data.alternatePhone
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Alternate Phone:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.alternatePhone}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Billing Address:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${formatAddress(data.billingAddress)}</td>
@@ -218,34 +243,50 @@ export function generateOrderConfirmation(data: OrderData): { subject: string; h
                     ${formatAddress(data.shippingAddress)}
                   </td>
                 </tr>
-                ${data.addressType ? `
+                ${
+                  data.addressType
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Address Type:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.addressType}</td>
                 </tr>
-                ` : ''}
-                ${data.alternateEmail ? `
+                `
+                    : ''
+                }
+                ${
+                  data.alternateEmail
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Alternate Email:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.alternateEmail}</td>
                 </tr>
-                ` : ''}
-                ${data.blindShipping ? `
+                `
+                    : ''
+                }
+                ${
+                  data.blindShipping
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Blind Shipping:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">Yes</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Delivery Method:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.deliveryMethod}</td>
                 </tr>
-                ${data.estimatedDeliveryDate ? `
+                ${
+                  data.estimatedDeliveryDate
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Estimated Delivery Date:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333; font-weight: bold;">${data.estimatedDeliveryDate}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
               </table>
 
               <!-- ORDER SUMMARY -->
@@ -280,24 +321,36 @@ export function generateOrderConfirmation(data: OrderData): { subject: string; h
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Design Option:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.designOption}</td>
                 </tr>
-                ${data.designInstructions ? `
+                ${
+                  data.designInstructions
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Design Instructions:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.designInstructions}</td>
                 </tr>
-                ` : ''}
-                ${data.designFrontText ? `
+                `
+                    : ''
+                }
+                ${
+                  data.designFrontText
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Design Front Text:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.designFrontText}</td>
                 </tr>
-                ` : ''}
-                ${data.designBackText ? `
+                `
+                    : ''
+                }
+                ${
+                  data.designBackText
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Design Back Text:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.designBackText}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Added Files:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.addedFiles || 'No files uploaded'}</td>
@@ -389,7 +442,11 @@ Questions? Contact us at support@uvcoatedflyers.com
  * Email 2: Production Notification
  * Sent when order moves into production
  */
-export function generateProductionNotification(data: OrderData): { subject: string; html: string; text: string } {
+export function generateProductionNotification(data: OrderData): {
+  subject: string;
+  html: string;
+  text: string;
+} {
   const subject = `In Production - Order #${data.orderNumber}`;
 
   const html = `
@@ -455,12 +512,16 @@ export function generateProductionNotification(data: OrderData): { subject: stri
                     ${data.orderNumber}${data.reorderOf ? ` (Reorder of #${data.reorderOf})` : ''}
                   </td>
                 </tr>
-                ${data.jobName ? `
+                ${
+                  data.jobName
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Job Name:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.jobName}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Type:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.type}</td>
@@ -477,12 +538,16 @@ export function generateProductionNotification(data: OrderData): { subject: stri
 
               <!-- CUSTOMER INFORMATION -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 30px;">
-                ${data.companyName ? `
+                ${
+                  data.companyName
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; width: 200px; vertical-align: top;">Company Name:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.companyName}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Name:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.customerName}</td>
@@ -491,18 +556,26 @@ export function generateProductionNotification(data: OrderData): { subject: stri
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Email:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.email}</td>
                 </tr>
-                ${data.primaryPhone ? `
+                ${
+                  data.primaryPhone
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Primary Phone:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.primaryPhone}</td>
                 </tr>
-                ` : ''}
-                ${data.alternatePhone ? `
+                `
+                    : ''
+                }
+                ${
+                  data.alternatePhone
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Alternate Phone:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.alternatePhone}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Billing Address:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${formatAddress(data.billingAddress)}</td>
@@ -520,34 +593,50 @@ export function generateProductionNotification(data: OrderData): { subject: stri
                     ${formatAddress(data.shippingAddress)}
                   </td>
                 </tr>
-                ${data.addressType ? `
+                ${
+                  data.addressType
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Address Type:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.addressType}</td>
                 </tr>
-                ` : ''}
-                ${data.alternateEmail ? `
+                `
+                    : ''
+                }
+                ${
+                  data.alternateEmail
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Alternate Email:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.alternateEmail}</td>
                 </tr>
-                ` : ''}
-                ${data.blindShipping ? `
+                `
+                    : ''
+                }
+                ${
+                  data.blindShipping
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Blind Shipping:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">Yes</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Delivery Method:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.deliveryMethod}</td>
                 </tr>
-                ${data.estimatedDeliveryDate ? `
+                ${
+                  data.estimatedDeliveryDate
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Estimated Delivery Date:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333; font-weight: bold;">${data.estimatedDeliveryDate}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
               </table>
 
               <!-- ORDER SUMMARY -->
@@ -582,24 +671,36 @@ export function generateProductionNotification(data: OrderData): { subject: stri
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Design Option:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.designOption}</td>
                 </tr>
-                ${data.designInstructions ? `
+                ${
+                  data.designInstructions
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Design Instructions:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.designInstructions}</td>
                 </tr>
-                ` : ''}
-                ${data.designFrontText ? `
+                `
+                    : ''
+                }
+                ${
+                  data.designFrontText
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Design Front Text:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.designFrontText}</td>
                 </tr>
-                ` : ''}
-                ${data.designBackText ? `
+                `
+                    : ''
+                }
+                ${
+                  data.designBackText
+                    ? `
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Design Back Text:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.designBackText}</td>
                 </tr>
-                ` : ''}
+                `
+                    : ''
+                }
                 <tr>
                   <td style="padding: 8px 0; font-size: 14px; color: #666666; vertical-align: top;">Added Files:</td>
                   <td style="padding: 8px 0; font-size: 14px; color: #333333;">${data.addedFiles || 'No files uploaded'}</td>
@@ -618,7 +719,9 @@ export function generateProductionNotification(data: OrderData): { subject: stri
                 </tr>
               </table>
 
-              ${data.pricing ? `
+              ${
+                data.pricing
+                  ? `
               <!-- PRICING -->
               <h2 style="margin: 30px 0 20px; font-size: 18px; color: #000000; font-weight: bold; border-bottom: 2px solid #000000; padding-bottom: 10px;">PRICING</h2>
 
@@ -662,7 +765,9 @@ export function generateProductionNotification(data: OrderData): { subject: stri
                   </tr>
                 </tbody>
               </table>
-              ` : ''}
+              `
+                  : ''
+              }
 
             </td>
           </tr>
@@ -709,7 +814,9 @@ Placed: ${data.placedAt}
 
 [... rest of order details ...]
 
-${data.pricing ? `
+${
+  data.pricing
+    ? `
 PRICING
 ${data.jobName || data.type} - #${data.orderNumber} ${data.printJobSize}: ${formatPrice(data.pricing.productPrice)}
 Design: ${formatPrice(data.pricing.designPrice)}
@@ -719,7 +826,9 @@ Order Subtotal: ${formatPrice(data.pricing.subtotal)}
 Sales Tax: ${formatPrice(data.pricing.salesTax)}
 
 ORDER TOTAL: ${formatPrice(data.pricing.total)}
-` : ''}
+`
+    : ''
+}
 
 Questions? Contact us at support@uvcoatedflyers.com
 
@@ -733,7 +842,11 @@ Questions? Contact us at support@uvcoatedflyers.com
  * Generate Shipping Notification Email
  * Sent when order has been shipped
  */
-export function generateShippingNotification(data: OrderData): { subject: string; html: string; text: string } {
+export function generateShippingNotification(data: OrderData): {
+  subject: string;
+  html: string;
+  text: string;
+} {
   const greeting = data.customerName?.split(' ')[0] || 'Customer';
   const jobDescription = data.jobName ? `${data.jobName} ` : '';
   const carrierName = data.carrierName || 'FedEx Ground';
@@ -772,7 +885,9 @@ export function generateShippingNotification(data: OrderData): { subject: string
                 Your ${data.type} order <strong>#${data.orderNumber}</strong> ${jobDescription}(${data.printJobSize}) has been shipped via <strong>${carrierName}</strong>.
               </p>
 
-              ${data.trackingNumber ? `
+              ${
+                data.trackingNumber
+                  ? `
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 30px; background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 4px;">
                 <tr>
                   <td style="padding: 20px; text-align: center;">
@@ -783,7 +898,9 @@ export function generateShippingNotification(data: OrderData): { subject: string
                   </td>
                 </tr>
               </table>
-              ` : ''}
+              `
+                  : ''
+              }
 
               <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #333333;">
                 Thank you,<br>

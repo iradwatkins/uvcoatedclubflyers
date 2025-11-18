@@ -6,13 +6,11 @@ import { randomUUID } from 'crypto';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { productId, productName, quantity, options, price, unitPrice, uploadedFiles, addOns } = body;
+    const { productId, productName, quantity, options, price, unitPrice, uploadedFiles, addOns } =
+      body;
 
     if (!productId || !quantity || !price) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     // Get or create session ID
@@ -47,9 +45,6 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error('Add to cart error:', error);
-    return NextResponse.json(
-      { error: 'Failed to add item to cart' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to add item to cart' }, { status: 500 });
   }
 }

@@ -82,9 +82,7 @@ export default function PricingTestPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">
-          Pricing Calculator Test
-        </h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-8">Pricing Calculator Test</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Configuration Panel */}
@@ -93,9 +91,7 @@ export default function PricingTestPage() {
 
             {/* Paper Stock */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Paper Stock
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Paper Stock</label>
               <select
                 value={paperStockId}
                 onChange={(e) => setPaperStockId(Number(e.target.value))}
@@ -113,9 +109,7 @@ export default function PricingTestPage() {
 
             {/* Coating */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Coating
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Coating</label>
               <select
                 value={coatingId}
                 onChange={(e) => setCoatingId(Number(e.target.value))}
@@ -152,9 +146,7 @@ export default function PricingTestPage() {
 
             {/* Quantity */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Quantity
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
               <select
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
@@ -207,9 +199,7 @@ export default function PricingTestPage() {
 
             {/* Sides */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Printing Sides
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Printing Sides</label>
               <div className="flex gap-4">
                 <label className="flex items-center">
                   <input
@@ -253,11 +243,7 @@ export default function PricingTestPage() {
               </div>
             )}
 
-            {loading && (
-              <div className="text-center py-8 text-gray-500">
-                Calculating price...
-              </div>
-            )}
+            {loading && <div className="text-center py-8 text-gray-500">Calculating price...</div>}
 
             {priceBreakdown && !loading && (
               <div className="space-y-4">
@@ -286,11 +272,15 @@ export default function PricingTestPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Size:</span>
-                      <span className="font-medium">{priceBreakdown.size} ({priceBreakdown.squareInches} sq in)</span>
+                      <span className="font-medium">
+                        {priceBreakdown.size} ({priceBreakdown.squareInches} sq in)
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Quantity:</span>
-                      <span className="font-medium">{priceBreakdown.quantity.toLocaleString()}</span>
+                      <span className="font-medium">
+                        {priceBreakdown.quantity.toLocaleString()}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Turnaround:</span>
@@ -328,7 +318,9 @@ export default function PricingTestPage() {
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Markup multiplier:</span>
-                      <span className="font-medium">{priceBreakdown.markupMultiplier.toFixed(3)}x</span>
+                      <span className="font-medium">
+                        {priceBreakdown.markupMultiplier.toFixed(3)}x
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Markup amount:</span>
@@ -346,13 +338,14 @@ export default function PricingTestPage() {
                   <h3 className="font-semibold text-gray-900 mb-2">Formula</h3>
                   <div className="bg-gray-50 p-3 rounded text-xs font-mono">
                     <div className="mb-2">
-                      baseCost = ${priceBreakdown.pricePerSqIn.toFixed(4)} × {priceBreakdown.sidesMultiplier} × {priceBreakdown.turnaroundMultiplier} × {priceBreakdown.squareInches} × {priceBreakdown.quantity.toLocaleString()}
+                      baseCost = ${priceBreakdown.pricePerSqIn.toFixed(4)} ×{' '}
+                      {priceBreakdown.sidesMultiplier} × {priceBreakdown.turnaroundMultiplier} ×{' '}
+                      {priceBreakdown.squareInches} × {priceBreakdown.quantity.toLocaleString()}
                     </div>
+                    <div className="mb-2">baseCost = ${priceBreakdown.baseCost.toFixed(2)}</div>
                     <div className="mb-2">
-                      baseCost = ${priceBreakdown.baseCost.toFixed(2)}
-                    </div>
-                    <div className="mb-2">
-                      retailPrice = ${priceBreakdown.baseCost.toFixed(2)} × {priceBreakdown.markupMultiplier} = ${priceBreakdown.totalPrice.toFixed(2)}
+                      retailPrice = ${priceBreakdown.baseCost.toFixed(2)} ×{' '}
+                      {priceBreakdown.markupMultiplier} = ${priceBreakdown.totalPrice.toFixed(2)}
                     </div>
                   </div>
                 </div>

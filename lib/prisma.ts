@@ -6,7 +6,8 @@ export const prisma = {
   // Product queries
   product: {
     findMany: async (options?: any) => {
-      let sql = 'SELECT p.*, c.id as "category.id", c.name as "category.name", c.slug as "category.slug" FROM products p LEFT JOIN categories c ON p.category_id = c.id';
+      let sql =
+        'SELECT p.*, c.id as "category.id", c.name as "category.name", c.slug as "category.slug" FROM products p LEFT JOIN categories c ON p.category_id = c.id';
       const conditions = [];
       const params: any[] = [];
 
@@ -47,12 +48,14 @@ export const prisma = {
         availableAddons: row.available_addons,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
-        category: row['category.id'] ? {
-          id: row['category.id'],
-          name: row['category.name'],
-          slug: row['category.slug']
-        } : null,
-        _count: { orderItems: 0 }
+        category: row['category.id']
+          ? {
+              id: row['category.id'],
+              name: row['category.name'],
+              slug: row['category.slug'],
+            }
+          : null,
+        _count: { orderItems: 0 },
       }));
     },
 
@@ -86,11 +89,13 @@ export const prisma = {
         availableAddons: row.available_addons,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
-        category: row['category.id'] ? {
-          id: row['category.id'],
-          name: row['category.name'],
-          slug: row['category.slug']
-        } : null,
+        category: row['category.id']
+          ? {
+              id: row['category.id'],
+              name: row['category.name'],
+              slug: row['category.slug'],
+            }
+          : null,
         productOptions: optionsResult.rows.map((opt: any) => ({
           ...opt,
           productId: opt.product_id,
@@ -100,8 +105,8 @@ export const prisma = {
           priceModifier: parseFloat(opt.price_modifier) || 0,
           isDefault: opt.is_default,
           sortOrder: opt.sort_order,
-          createdAt: opt.created_at
-        }))
+          createdAt: opt.created_at,
+        })),
       };
     },
 
@@ -124,7 +129,7 @@ export const prisma = {
           data.availablePaperStocks ? JSON.stringify(data.availablePaperStocks) : '[]',
           data.availableTurnarounds ? JSON.stringify(data.availableTurnarounds) : '[]',
           data.mandatoryAddons ? JSON.stringify(data.mandatoryAddons) : '[]',
-          data.availableAddons ? JSON.stringify(data.availableAddons) : '[]'
+          data.availableAddons ? JSON.stringify(data.availableAddons) : '[]',
         ]
       );
 
@@ -142,7 +147,7 @@ export const prisma = {
         mandatoryAddons: product.mandatory_addons,
         availableAddons: product.available_addons,
         createdAt: product.created_at,
-        updatedAt: product.updated_at
+        updatedAt: product.updated_at,
       };
     },
 
@@ -234,12 +239,14 @@ export const prisma = {
         mandatoryAddons: product.mandatory_addons,
         availableAddons: product.available_addons,
         createdAt: product.created_at,
-        updatedAt: product.updated_at
+        updatedAt: product.updated_at,
       };
     },
 
     delete: async (options: any) => {
-      const result = await query('DELETE FROM products WHERE id = $1 RETURNING *', [options.where.id]);
+      const result = await query('DELETE FROM products WHERE id = $1 RETURNING *', [
+        options.where.id,
+      ]);
       if (result.rows.length === 0) return null;
 
       const product = result.rows[0];
@@ -256,9 +263,9 @@ export const prisma = {
         mandatoryAddons: product.mandatory_addons,
         availableAddons: product.available_addons,
         createdAt: product.created_at,
-        updatedAt: product.updated_at
+        updatedAt: product.updated_at,
       };
-    }
+    },
   },
 
   // Category queries
@@ -290,7 +297,7 @@ export const prisma = {
         parentId: row.parent_id,
         sortOrder: row.sort_order,
         createdAt: row.created_at,
-        updatedAt: row.updated_at
+        updatedAt: row.updated_at,
       }));
     },
 
@@ -305,7 +312,7 @@ export const prisma = {
           data.description || null,
           data.parentId || null,
           data.sortOrder || 0,
-          data.isActive !== undefined ? data.isActive : true
+          data.isActive !== undefined ? data.isActive : true,
         ]
       );
 
@@ -316,9 +323,9 @@ export const prisma = {
         parentId: category.parent_id,
         sortOrder: category.sort_order,
         createdAt: category.created_at,
-        updatedAt: category.updated_at
+        updatedAt: category.updated_at,
       };
-    }
+    },
   },
 
   // Product Options queries
@@ -339,16 +346,15 @@ export const prisma = {
             option.optionValue,
             option.priceModifier || 0,
             option.isDefault || false,
-            option.sortOrder || 0
+            option.sortOrder || 0,
           ]
         );
         results.push(result.rows[0]);
       }
 
       return { count: results.length };
-    }
+    },
   },
-
 
   // Raw query methods
   $queryRaw: async (strings: TemplateStringsArray, ...values: any[]) => {
@@ -407,7 +413,7 @@ export const prisma = {
         ...row,
         emailVerified: row.email_verified,
         createdAt: row.created_at,
-        updatedAt: row.updated_at
+        updatedAt: row.updated_at,
       }));
 
       // Handle includes
@@ -427,7 +433,7 @@ export const prisma = {
             paymentId: row.payment_id,
             paymentStatus: row.payment_status,
             createdAt: row.created_at,
-            updatedAt: row.updated_at
+            updatedAt: row.updated_at,
           }));
         }
       }
@@ -444,9 +450,9 @@ export const prisma = {
         ...row,
         emailVerified: row.email_verified,
         createdAt: row.created_at,
-        updatedAt: row.updated_at
+        updatedAt: row.updated_at,
       };
-    }
+    },
   },
 
   // Order queries
@@ -482,7 +488,9 @@ export const prisma = {
             data.data.paymentStatus || 'unpaid',
             // Billing info
             data.data.billingInfo?.firstName || data.data.billingInfo?.name?.split(' ')[0] || '',
-            data.data.billingInfo?.lastName || data.data.billingInfo?.name?.split(' ').slice(1).join(' ') || '',
+            data.data.billingInfo?.lastName ||
+              data.data.billingInfo?.name?.split(' ').slice(1).join(' ') ||
+              '',
             data.data.billingInfo?.email || '',
             data.data.billingInfo?.phone || '',
             data.data.billingInfo?.address || data.data.billingInfo?.street || '',
@@ -492,8 +500,12 @@ export const prisma = {
             data.data.billingInfo?.zipCode || data.data.billingInfo?.zip || '',
             data.data.billingInfo?.country || 'US',
             // Shipping info
-            data.data.shippingAddress?.firstName || data.data.shippingAddress?.fullName?.split(' ')[0] || '',
-            data.data.shippingAddress?.lastName || data.data.shippingAddress?.fullName?.split(' ').slice(1).join(' ') || '',
+            data.data.shippingAddress?.firstName ||
+              data.data.shippingAddress?.fullName?.split(' ')[0] ||
+              '',
+            data.data.shippingAddress?.lastName ||
+              data.data.shippingAddress?.fullName?.split(' ').slice(1).join(' ') ||
+              '',
             data.data.shippingAddress?.address || data.data.shippingAddress?.street || '',
             data.data.shippingAddress?.address2 || '',
             data.data.shippingAddress?.city || '',
@@ -507,7 +519,7 @@ export const prisma = {
             data.data.pickupAirportId || null,
             // Notes
             data.data.customerNotes || null,
-            data.data.internalNotes || null
+            data.data.internalNotes || null,
           ]
         );
 
@@ -525,7 +537,7 @@ export const prisma = {
               item.quantity,
               item.unitPrice,
               item.totalPrice,
-              JSON.stringify(item.options || item.configuration || {})
+              JSON.stringify(item.options || item.configuration || {}),
             ]
           );
         }
@@ -542,7 +554,7 @@ export const prisma = {
           transactionId: order.transaction_id,
           paymentStatus: order.payment_status,
           createdAt: order.created_at,
-          updatedAt: order.updated_at
+          updatedAt: order.updated_at,
         };
       } catch (e) {
         await client.query('ROLLBACK');
@@ -567,7 +579,7 @@ export const prisma = {
         paymentId: row.payment_id,
         paymentStatus: row.payment_status,
         createdAt: row.created_at,
-        updatedAt: row.updated_at
+        updatedAt: row.updated_at,
       };
     },
 
@@ -585,10 +597,10 @@ export const prisma = {
         createdAt: row.created_at,
         updatedAt: row.updated_at,
         user: null,
-        orderItems: []
+        orderItems: [],
       }));
-    }
-  }
+    },
+  },
 };
 
 export default prisma;

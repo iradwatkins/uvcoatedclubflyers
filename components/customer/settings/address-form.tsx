@@ -37,9 +37,7 @@ export function AddressForm({ userId, address, onSuccess, onCancel }: AddressFor
     setError('');
 
     try {
-      const url = address
-        ? `/api/user/addresses/${address.id}`
-        : '/api/user/addresses';
+      const url = address ? `/api/user/addresses/${address.id}` : '/api/user/addresses';
       const method = address ? 'PUT' : 'POST';
 
       const response = await fetch(url, {

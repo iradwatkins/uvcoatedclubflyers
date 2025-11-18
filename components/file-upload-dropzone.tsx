@@ -15,25 +15,31 @@ export function FileUploadDropzone({
   onFilesSelected,
   maxFiles = 10,
   acceptedFileTypes = ['.pdf', '.jpg', '.jpeg', '.png', '.eps', '.ai'],
-  className
+  className,
 }: FileUploadDropzoneProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
-  const handleFiles = useCallback((newFiles: FileList | null) => {
-    if (!newFiles) return;
+  const handleFiles = useCallback(
+    (newFiles: FileList | null) => {
+      if (!newFiles) return;
 
-    const fileArray = Array.from(newFiles).slice(0, maxFiles - files.length);
-    const updatedFiles = [...files, ...fileArray];
-    setFiles(updatedFiles);
-    onFilesSelected?.(updatedFiles);
-  }, [files, maxFiles, onFilesSelected]);
+      const fileArray = Array.from(newFiles).slice(0, maxFiles - files.length);
+      const updatedFiles = [...files, ...fileArray];
+      setFiles(updatedFiles);
+      onFilesSelected?.(updatedFiles);
+    },
+    [files, maxFiles, onFilesSelected]
+  );
 
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    handleFiles(e.dataTransfer.files);
-  }, [handleFiles]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setIsDragging(false);
+      handleFiles(e.dataTransfer.files);
+    },
+    [handleFiles]
+  );
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -55,7 +61,7 @@ export function FileUploadDropzone({
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   return (
@@ -82,9 +88,7 @@ export function FileUploadDropzone({
         />
 
         <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-        <p className="text-sm font-medium mb-1">
-          Drop files here or click to browse
-        </p>
+        <p className="text-sm font-medium mb-1">Drop files here or click to browse</p>
         <p className="text-xs text-muted-foreground">
           Supports: {acceptedFileTypes.join(', ')} (Max {maxFiles} files)
         </p>
@@ -93,7 +97,9 @@ export function FileUploadDropzone({
       {/* File List */}
       {files.length > 0 && (
         <div className="space-y-2">
-          <p className="text-sm font-medium">{files.length} file{files.length > 1 ? 's' : ''} selected:</p>
+          <p className="text-sm font-medium">
+            {files.length} file{files.length > 1 ? 's' : ''} selected:
+          </p>
           {files.map((file, index) => (
             <div
               key={index}

@@ -71,18 +71,26 @@ export function generateEmail1(data: EmailData): { subject: string; html: string
 
               <!-- Products -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0; border: 1px solid #e0e0e0; border-radius: 4px;">
-                ${products.map((product, index) => `
+                ${products
+                  .map(
+                    (product, index) => `
                   <tr style="${index > 0 ? 'border-top: 1px solid #e0e0e0;' : ''}">
                     <td style="padding: 20px;">
-                      ${product.imageUrl ? `
+                      ${
+                        product.imageUrl
+                          ? `
                         <img src="${product.imageUrl}" alt="${product.name}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; display: block; margin-bottom: 10px;">
-                      ` : ''}
+                      `
+                          : ''
+                      }
                       <div style="font-size: 16px; font-weight: bold; color: #333333; margin-bottom: 5px;">${product.name}</div>
                       <div style="font-size: 14px; color: #666666;">Quantity: ${product.quantity.toLocaleString()}</div>
                       <div style="font-size: 16px; font-weight: bold; color: #000000; margin-top: 10px;">${formatPrice(product.price)}</div>
                     </td>
                   </tr>
-                `).join('')}
+                `
+                  )
+                  .join('')}
               </table>
 
               <!-- Cart Total -->
@@ -131,7 +139,7 @@ Hi ${greeting},
 We noticed you left some items in your cart. Don't worry, we saved them for you!
 
 Your Cart:
-${products.map(p => `- ${p.name} (${p.quantity.toLocaleString()}) - ${formatPrice(p.price)}`).join('\n')}
+${products.map((p) => `- ${p.name} (${p.quantity.toLocaleString()}) - ${formatPrice(p.price)}`).join('\n')}
 
 Cart Total: ${formatPrice(cartTotal)}
 
@@ -150,7 +158,16 @@ Need help? Reply to this email or contact us at support@uvcoatedflyers.com
  * Add incentive with small discount
  */
 export function generateEmail2(data: EmailData): { subject: string; html: string; text: string } {
-  const { customerName, email, products, cartTotal, recoveryUrl, discountCode, discountPercent = 5, expiresInHours = 48 } = data;
+  const {
+    customerName,
+    email,
+    products,
+    cartTotal,
+    recoveryUrl,
+    discountCode,
+    discountPercent = 5,
+    expiresInHours = 48,
+  } = data;
   const greeting = customerName || 'there';
   const discountedTotal = cartTotal * (1 - discountPercent / 100);
 
@@ -201,12 +218,19 @@ export function generateEmail2(data: EmailData): { subject: string; html: string
 
               <!-- Products -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0; border: 1px solid #e0e0e0; border-radius: 4px;">
-                ${products.slice(0, 3).map((product, index) => `
+                ${products
+                  .slice(0, 3)
+                  .map(
+                    (product, index) => `
                   <tr style="${index > 0 ? 'border-top: 1px solid #e0e0e0;' : ''}">
                     <td style="padding: 20px;">
-                      ${product.imageUrl ? `
+                      ${
+                        product.imageUrl
+                          ? `
                         <img src="${product.imageUrl}" alt="${product.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; display: inline-block; vertical-align: middle; margin-right: 15px;">
-                      ` : ''}
+                      `
+                          : ''
+                      }
                       <div style="display: inline-block; vertical-align: middle;">
                         <div style="font-size: 16px; font-weight: bold; color: #333333;">${product.name}</div>
                         <div style="font-size: 14px; color: #666666;">Qty: ${product.quantity.toLocaleString()}</div>
@@ -214,14 +238,20 @@ export function generateEmail2(data: EmailData): { subject: string; html: string
                       <div style="float: right; font-size: 16px; font-weight: bold; color: #000000;">${formatPrice(product.price)}</div>
                     </td>
                   </tr>
-                `).join('')}
-                ${products.length > 3 ? `
+                `
+                  )
+                  .join('')}
+                ${
+                  products.length > 3
+                    ? `
                   <tr style="border-top: 1px solid #e0e0e0;">
                     <td style="padding: 15px 20px; text-align: center; color: #666666; font-size: 14px;">
                       + ${products.length - 3} more item${products.length - 3 > 1 ? 's' : ''}
                     </td>
                   </tr>
-                ` : ''}
+                `
+                    : ''
+                }
               </table>
 
               <!-- Price Comparison -->
@@ -280,7 +310,7 @@ Use code: ${discountCode}
 ⏰ Expires in ${expiresInHours} hours
 
 Your Cart (${products.length} item${products.length > 1 ? 's' : ''}):
-${products.map(p => `- ${p.name} (${p.quantity.toLocaleString()}) - ${formatPrice(p.price)}`).join('\n')}
+${products.map((p) => `- ${p.name} (${p.quantity.toLocaleString()}) - ${formatPrice(p.price)}`).join('\n')}
 
 Original Total: ${formatPrice(cartTotal)}
 Your Price with ${discountPercent}% OFF: ${formatPrice(discountedTotal)}
@@ -301,7 +331,16 @@ Questions? We're here to help at support@uvcoatedflyers.com
  * Final attempt with bigger discount and urgency
  */
 export function generateEmail3(data: EmailData): { subject: string; html: string; text: string } {
-  const { customerName, email, products, cartTotal, recoveryUrl, discountCode, discountPercent = 10, expiresInHours = 24 } = data;
+  const {
+    customerName,
+    email,
+    products,
+    cartTotal,
+    recoveryUrl,
+    discountCode,
+    discountPercent = 10,
+    expiresInHours = 24,
+  } = data;
   const greeting = customerName || 'there';
   const discountedTotal = cartTotal * (1 - discountPercent / 100);
 
@@ -362,13 +401,17 @@ export function generateEmail3(data: EmailData): { subject: string; html: string
               <!-- Products Summary -->
               <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 20px; margin: 30px 0; border-radius: 4px;">
                 <div style="font-size: 14px; color: #666666; margin-bottom: 10px;">Your saved cart contains:</div>
-                ${products.map(p => `
+                ${products
+                  .map(
+                    (p) => `
                   <div style="margin: 8px 0;">
                     <span style="font-weight: bold; color: #333333;">${p.name}</span>
                     <span style="color: #666666;"> (${p.quantity.toLocaleString()})</span>
                     <span style="float: right; font-weight: bold; color: #000000;">${formatPrice(p.price)}</span>
                   </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
               </div>
 
               <!-- Price Comparison with Urgency -->
@@ -438,7 +481,7 @@ This is your FINAL opportunity to complete your order with our biggest discount 
 Use code: ${discountCode}
 
 Your Cart:
-${products.map(p => `- ${p.name} (${p.quantity.toLocaleString()}) - ${formatPrice(p.price)}`).join('\n')}
+${products.map((p) => `- ${p.name} (${p.quantity.toLocaleString()}) - ${formatPrice(p.price)}`).join('\n')}
 
 Original Price: ${formatPrice(cartTotal)}
 Final Price (${discountPercent}% OFF): ${formatPrice(discountedTotal)}

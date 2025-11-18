@@ -101,9 +101,7 @@ export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormPro
               placeholder="1234 Main St"
               className={errors.street ? 'border-destructive' : ''}
             />
-            {errors.street && (
-              <p className="text-sm text-destructive">{errors.street}</p>
-            )}
+            {errors.street && <p className="text-sm text-destructive">{errors.street}</p>}
           </div>
 
           {/* Street Address 2 */}
@@ -127,9 +125,7 @@ export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormPro
               placeholder="Los Angeles"
               className={errors.city ? 'border-destructive' : ''}
             />
-            {errors.city && (
-              <p className="text-sm text-destructive">{errors.city}</p>
-            )}
+            {errors.city && <p className="text-sm text-destructive">{errors.city}</p>}
           </div>
 
           {/* State & ZIP */}
@@ -144,9 +140,7 @@ export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormPro
                 maxLength={2}
                 className={errors.state ? 'border-destructive' : ''}
               />
-              {errors.state && (
-                <p className="text-sm text-destructive">{errors.state}</p>
-              )}
+              {errors.state && <p className="text-sm text-destructive">{errors.state}</p>}
             </div>
 
             <div className="space-y-2">
@@ -158,9 +152,7 @@ export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormPro
                 placeholder="90001"
                 className={errors.zipCode ? 'border-destructive' : ''}
               />
-              {errors.zipCode && (
-                <p className="text-sm text-destructive">{errors.zipCode}</p>
-              )}
+              {errors.zipCode && <p className="text-sm text-destructive">{errors.zipCode}</p>}
             </div>
           </div>
 
@@ -171,10 +163,7 @@ export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormPro
               checked={isResidential}
               onCheckedChange={(checked) => setIsResidential(checked as boolean)}
             />
-            <Label
-              htmlFor="residential"
-              className="cursor-pointer text-sm font-normal"
-            >
+            <Label htmlFor="residential" className="cursor-pointer text-sm font-normal">
               This is a residential address
             </Label>
           </div>
@@ -182,7 +171,8 @@ export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormPro
           {isResidential && (
             <Alert>
               <AlertDescription>
-                Residential deliveries may have additional options available (like FedEx Home Delivery)
+                Residential deliveries may have additional options available (like FedEx Home
+                Delivery)
               </AlertDescription>
             </Alert>
           )}

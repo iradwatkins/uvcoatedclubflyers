@@ -34,12 +34,15 @@ export default async function AdminDashboardPage() {
   `;
 
   // Format recent orders to match expected structure
-  const formattedRecentOrders = recentOrders.map(order => ({
+  const formattedRecentOrders = recentOrders.map((order) => ({
     ...order,
-    user: order.user_name || order.user_email ? {
-      name: order.user_name,
-      email: order.user_email,
-    } : null,
+    user:
+      order.user_name || order.user_email
+        ? {
+            name: order.user_name,
+            email: order.user_email,
+          }
+        : null,
   }));
 
   // Calculate total revenue
@@ -71,7 +74,10 @@ export default async function AdminDashboardPage() {
     },
     {
       title: 'Avg Order Value',
-      value: totalOrders > 0 ? `$${((totalRevenue / totalOrders) / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '$0.00',
+      value:
+        totalOrders > 0
+          ? `$${(totalRevenue / totalOrders / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+          : '$0.00',
       icon: TrendingUp,
       description: 'Per order',
     },
@@ -93,9 +99,7 @@ export default async function AdminDashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome back, {session?.user?.name || 'Admin'}
-        </p>
+        <p className="text-muted-foreground">Welcome back, {session?.user?.name || 'Admin'}</p>
       </div>
 
       {/* Stats Grid */}
@@ -105,16 +109,12 @@ export default async function AdminDashboardPage() {
           return (
             <Card key={stat.title}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {stat.title}
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
                 <Icon className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-muted-foreground">
-                  {stat.description}
-                </p>
+                <p className="text-xs text-muted-foreground">{stat.description}</p>
               </CardContent>
             </Card>
           );
@@ -128,9 +128,7 @@ export default async function AdminDashboardPage() {
         </CardHeader>
         <CardContent>
           {formattedRecentOrders.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">
-              No orders yet
-            </p>
+            <p className="text-center text-muted-foreground py-8">No orders yet</p>
           ) : (
             <div className="space-y-4">
               {formattedRecentOrders.map((order) => (
@@ -145,9 +143,7 @@ export default async function AdminDashboardPage() {
                     </p>
                   </div>
                   <div className="text-right space-y-1">
-                    <p className="font-medium">
-                      ${(order.totalAmount / 100).toFixed(2)}
-                    </p>
+                    <p className="font-medium">${(order.totalAmount / 100).toFixed(2)}</p>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium capitalize ${
                         statusColors[order.status] || 'bg-gray-100 text-gray-800'

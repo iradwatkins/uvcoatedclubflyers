@@ -3,7 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
 
@@ -40,7 +47,8 @@ export default function CheckoutSuccessPage() {
             </div>
             <CardTitle className="text-3xl">Order Confirmed!</CardTitle>
             <CardDescription className="text-lg">
-              Thank you for your order. We've received your payment and will begin processing your order shortly.
+              Thank you for your order. We've received your payment and will begin processing your
+              order shortly.
             </CardDescription>
           </CardHeader>
 
@@ -77,7 +85,10 @@ export default function CheckoutSuccessPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="mt-0.5">2.</span>
-                  <span>Our team will review your design files and contact you if any adjustments are needed</span>
+                  <span>
+                    Our team will review your design files and contact you if any adjustments are
+                    needed
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="mt-0.5">3.</span>
@@ -98,9 +109,7 @@ export default function CheckoutSuccessPage() {
               </Button>
             </Link>
             <Link href="/products" className="flex-1">
-              <Button className="w-full">
-                Continue Shopping
-              </Button>
+              <Button className="w-full">Continue Shopping</Button>
             </Link>
           </CardFooter>
         </Card>

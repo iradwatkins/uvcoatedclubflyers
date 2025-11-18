@@ -1,0 +1,102 @@
+.wcuf_delete_single_file_in_multiple_list.wcuf_delete_file_icon,
+.wcuf_delete_single_file_stored_on_server.wcuf_delete_file_icon
+{
+	background:url('../img/delete-icon-resized.png');
+	height:16px;
+	width: 16px;
+	display: inline-block;
+	margin-left: 5px;
+	cursor: pointer;
+	display:inline-block; 
+	vertical-align:middle;
+	margin-top: -5px;
+}
+.wcuf-label
+{
+	color: #0073AA;
+	font-weight: bold;
+	display: block;
+}
+.wcuf-approval-area
+{
+	margin-top: 15px;
+	margin-bottom: 20px;
+}
+.wcuf-approval-selector-container
+{
+	margin-bottom: 10px;
+	display: block;
+}
+.wcuf_link
+{
+	word-wrap: break-word;
+}
+.wcuf_image_preview_container 
+{
+	display: inline-block;
+	margin: 10px 10px 0px 0px;
+	max-width: 120px;
+	vertical-align: top;
+}
+.wcuf_file_preview_list_item_image 
+{
+	max-width: 120px;
+	max-height: 120px;
+}
+.wcuf_file_name_text, .wcuf_file_quantity_text
+{
+	word-wrap: break-word;
+	display: block;
+	clear:both;
+}
+.wcuf_file_name_text
+{
+	font-weight: bold;
+}
+.wcuf_upload_field_title 
+{
+	color: #0073AA;
+	margin-bottom:0px;
+}
+
+.wp-core-ui .wcuf_primary_button, .wp-core-ui .wcuf_primary_button.focus, .wp-core-ui .wcuf_primary_button:focus
+{
+	background: #0073AA none repeat scroll 0 0;
+    border-color: #0073AA;
+    box-shadow: none;
+	font-weight: bold;
+	text-shadow:none;
+	color:white;
+}
+.wp-core-ui .wcuf_primary_button:hover
+{
+	background: #8e9dc4 none repeat scroll 0 0;
+    border-color: #8e9dc4 ;
+    box-shadow: none;
+    font-weight: bold;
+	color:white;
+}
+
+.wp-core-ui .wcuf_delete_button, .wp-core-ui .wcuf_delete_button.focus, .wp-core-ui .wcuf_delete_button:focus
+{
+	background: #D91E18 none repeat scroll 0 0;
+    border-color: #D91E18;
+    box-shadow: none;
+	font-weight: bold;
+	text-shadow:none;
+	color:white;
+}
+.wp-core-ui .wcuf_delete_button:hover
+{
+	background: #EC644B none repeat scroll 0 0;
+    border-color: #EC644B ;
+    box-shadow: none;
+    font-weight: bold;
+	color:white;
+}
+#wcuf_download_files_as_single_zip {
+	
+	background: #3F51B5 none repeat scroll 0 0;
+	border-color: #3F51B5 ;
+	margin-bottom: 5px;
+}

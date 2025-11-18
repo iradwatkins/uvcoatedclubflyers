@@ -26,7 +26,8 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
   const orderId = parseInt(id);
 
   // Fetch order with all details
-  const orderResult = await query(`
+  const orderResult = await query(
+    `
     SELECT
       o.*,
       u.id as user_id,
@@ -36,7 +37,9 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
     FROM orders o
     LEFT JOIN users u ON o.user_id = u.id
     WHERE o.id = $1
-  `, [orderId]);
+  `,
+    [orderId]
+  );
 
   if (orderResult.rows.length === 0) {
     notFound();
@@ -45,7 +48,8 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
   const orderRow = orderResult.rows[0];
 
   // Fetch order items with product details
-  const itemsResult = await query(`
+  const itemsResult = await query(
+    `
     SELECT
       oi.*,
       p.id as product_id,
@@ -55,16 +59,21 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
     FROM order_items oi
     LEFT JOIN products p ON oi.product_id = p.id
     WHERE oi.order_id = $1
-  `, [orderId]);
+  `,
+    [orderId]
+  );
 
   // Calculate customer stats
-  const statsResult = await query(`
+  const statsResult = await query(
+    `
     SELECT
       COUNT(*) as total_orders,
       COALESCE(SUM(CASE WHEN payment_status = 'paid' THEN total_amount ELSE 0 END), 0) as total_spent
     FROM orders
     WHERE user_id = $1
-  `, [orderRow.user_id]);
+  `,
+    [orderRow.user_id]
+  );
 
   const customerStats = statsResult.rows[0] || { total_orders: 0, total_spent: 0 };
 
@@ -81,7 +90,9 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
     subtotal: parseFloat(orderRow.subtotal),
     taxAmount: parseFloat(orderRow.tax_amount || 0),
     totalAmount: parseFloat(orderRow.total_amount),
-    shippingRateAmount: orderRow.shipping_rate_amount ? parseFloat(orderRow.shipping_rate_amount) : null,
+    shippingRateAmount: orderRow.shipping_rate_amount
+      ? parseFloat(orderRow.shipping_rate_amount)
+      : null,
     paymentMethod: orderRow.payment_method,
     paymentStatus: orderRow.payment_status,
     transactionId: orderRow.transaction_id,
@@ -112,24 +123,28 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
       zipCode: orderRow.shipping_postcode,
       country: orderRow.shipping_country,
     },
-    user: orderRow.user_id ? {
-      id: orderRow.user_id,
-      name: orderRow.user_name,
-      email: orderRow.user_email,
-      createdAt: orderRow.user_created_at,
-    } : null,
+    user: orderRow.user_id
+      ? {
+          id: orderRow.user_id,
+          name: orderRow.user_name,
+          email: orderRow.user_email,
+          createdAt: orderRow.user_created_at,
+        }
+      : null,
     orderItems: itemsResult.rows.map((item: any) => ({
       id: item.id,
       quantity: item.quantity,
       unitPrice: parseFloat(item.unit_price),
       totalPrice: parseFloat(item.total_price),
       options: item.configuration,
-      product: item.product_id ? {
-        id: item.product_id,
-        name: item.product_name,
-        sku: item.product_sku,
-        imageUrl: item.product_image_url,
-      } : null,
+      product: item.product_id
+        ? {
+            id: item.product_id,
+            name: item.product_name,
+            sku: item.product_sku,
+            imageUrl: item.product_image_url,
+          }
+        : null,
     })),
     userId: orderRow.user_id,
   };
@@ -160,7 +175,6 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
     }
   };
 
-
   return (
     <div className="container mx-auto py-10">
       {/* Header */}
@@ -176,7 +190,7 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
           <div>
             <h1 className="text-4xl font-bold">Order #{order.orderNumber}</h1>
             <p className="text-muted-foreground mt-2">
-              Placed on {formatDate(order.createdAt, 'MMMM d, yyyy \'at\' h:mm a')}
+              Placed on {formatDate(order.createdAt, "MMMM d, yyyy 'at' h:mm a")}
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -210,18 +224,26 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                     </div>
                     <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4 text-muted-foreground" />
-                      <a href={`mailto:${order.user?.email}`} className="text-primary hover:underline">
+                      <a
+                        href={`mailto:${order.user?.email}`}
+                        className="text-primary hover:underline"
+                      >
                         {order.user?.email || 'N/A'}
                       </a>
                     </div>
                     {order.user && (
                       <div className="mt-4 pt-4 border-t">
                         <p className="text-muted-foreground">Customer since:</p>
-                        <p className="font-medium">{formatDate(order.user.createdAt, 'MMM d, yyyy')}</p>
+                        <p className="font-medium">
+                          {formatDate(order.user.createdAt, 'MMM d, yyyy')}
+                        </p>
                         <p className="text-sm text-muted-foreground mt-2">
                           {totalOrders} total orders • ${totalSpent.toFixed(2)} spent
                         </p>
-                        <Link href={`/admin/customers/${order.user.id}`} className="text-sm text-primary hover:underline mt-2 inline-block">
+                        <Link
+                          href={`/admin/customers/${order.user.id}`}
+                          className="text-sm text-primary hover:underline mt-2 inline-block"
+                        >
                           View Customer Profile →
                         </Link>
                       </div>
@@ -234,7 +256,9 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                     <h3 className="font-semibold mb-3">Billing Address</h3>
                     <div className="text-sm space-y-1">
                       <p>{(order.billingInfo as any).name}</p>
-                      <p>{(order.billingInfo as any).address || (order.billingInfo as any).street}</p>
+                      <p>
+                        {(order.billingInfo as any).address || (order.billingInfo as any).street}
+                      </p>
                       <p>
                         {(order.billingInfo as any).city}, {(order.billingInfo as any).state}{' '}
                         {(order.billingInfo as any).zipCode || (order.billingInfo as any).zip}
@@ -274,9 +298,7 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                       </div>
                     )}
                     <div className="flex-1">
-                      <h3 className="font-semibold">
-                        {item.product?.name || 'Product'}
-                      </h3>
+                      <h3 className="font-semibold">{item.product?.name || 'Product'}</h3>
                       {item.product?.sku && (
                         <p className="text-xs text-muted-foreground">SKU: {item.product.sku}</p>
                       )}
@@ -287,11 +309,13 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                         <div className="mt-2 text-sm">
                           <p className="font-medium">Configuration:</p>
                           <div className="grid grid-cols-2 gap-x-4 text-muted-foreground">
-                            {Object.entries(item.options as Record<string, any>).map(([key, value]) => (
-                              <p key={key}>
-                                <span className="font-medium">{key}:</span> {String(value)}
-                              </p>
-                            ))}
+                            {Object.entries(item.options as Record<string, any>).map(
+                              ([key, value]) => (
+                                <p key={key}>
+                                  <span className="font-medium">{key}:</span> {String(value)}
+                                </p>
+                              )
+                            )}
                           </div>
                         </div>
                       )}
@@ -300,9 +324,7 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                       <p className="text-sm text-muted-foreground">
                         ${item.unitPrice.toFixed(2)} each
                       </p>
-                      <p className="font-semibold mt-1">
-                        ${item.totalPrice.toFixed(2)}
-                      </p>
+                      <p className="font-semibold mt-1">${item.totalPrice.toFixed(2)}</p>
                     </div>
                   </div>
                 ))}
@@ -324,11 +346,19 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                   <div>
                     <h3 className="font-semibold mb-3">Shipping Address</h3>
                     <div className="text-sm space-y-1">
-                      <p>{(order.shippingAddress as any).fullName || (order.shippingAddress as any).name}</p>
-                      <p>{(order.shippingAddress as any).address || (order.shippingAddress as any).street}</p>
                       <p>
-                        {(order.shippingAddress as any).city}, {(order.shippingAddress as any).state}{' '}
-                        {(order.shippingAddress as any).zipCode || (order.shippingAddress as any).zip}
+                        {(order.shippingAddress as any).fullName ||
+                          (order.shippingAddress as any).name}
+                      </p>
+                      <p>
+                        {(order.shippingAddress as any).address ||
+                          (order.shippingAddress as any).street}
+                      </p>
+                      <p>
+                        {(order.shippingAddress as any).city},{' '}
+                        {(order.shippingAddress as any).state}{' '}
+                        {(order.shippingAddress as any).zipCode ||
+                          (order.shippingAddress as any).zip}
                       </p>
                       {(order.shippingAddress as any).country && (
                         <p>{(order.shippingAddress as any).country}</p>
@@ -349,7 +379,9 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                     {order.shippingService && (
                       <p>
                         <span className="text-muted-foreground">Service:</span>{' '}
-                        <span className="font-medium">{order.shippingService.replace(/_/g, ' ')}</span>
+                        <span className="font-medium">
+                          {order.shippingService.replace(/_/g, ' ')}
+                        </span>
                       </p>
                     )}
                     {order.shippingRateAmount && (
@@ -384,9 +416,7 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Method:</span>
-                <span className="font-medium capitalize">
-                  {order.paymentMethod}
-                </span>
+                <span className="font-medium capitalize">{order.paymentMethod}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Status:</span>
@@ -403,9 +433,7 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
               {order.paidAt && (
                 <div className="flex justify-between text-sm pt-3 border-t">
                   <span className="text-muted-foreground">Paid On:</span>
-                  <span className="font-medium">
-                    {formatDate(order.paidAt, 'MMM d, yyyy')}
-                  </span>
+                  <span className="font-medium">{formatDate(order.paidAt, 'MMM d, yyyy')}</span>
                 </div>
               )}
             </CardContent>
@@ -436,9 +464,7 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
               <div className="pt-2 border-t">
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total:</span>
-                  <span className="text-primary">
-                    ${order.totalAmount.toFixed(2)}
-                  </span>
+                  <span className="text-primary">${order.totalAmount.toFixed(2)}</span>
                 </div>
               </div>
             </CardContent>
@@ -457,7 +483,9 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                 </a>
               </Button>
               <Button variant="outline" className="w-full" asChild>
-                <a href={`mailto:${order.user?.email}?subject=Regarding Order ${order.orderNumber}`}>
+                <a
+                  href={`mailto:${order.user?.email}?subject=Regarding Order ${order.orderNumber}`}
+                >
                   <Mail className="mr-2 h-4 w-4" />
                   Email Customer
                 </a>

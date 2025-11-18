@@ -10,7 +10,7 @@ interface CustomerInsightsProps {
 
 export function CustomerInsights({ customers }: CustomerInsightsProps) {
   // Calculate customer lifetime values
-  const customersWithLTV = customers.map(customer => {
+  const customersWithLTV = customers.map((customer) => {
     const totalSpent = customer.orders
       .filter((o: any) => o.paymentStatus === 'COMPLETED')
       .reduce((sum: number, order: any) => sum + order.totalAmount, 0);
@@ -22,19 +22,17 @@ export function CustomerInsights({ customers }: CustomerInsightsProps) {
     };
   });
 
-  const topCustomers = customersWithLTV
-    .sort((a, b) => b.totalSpent - a.totalSpent)
-    .slice(0, 10);
+  const topCustomers = customersWithLTV.sort((a, b) => b.totalSpent - a.totalSpent).slice(0, 10);
 
   const totalRevenue = customersWithLTV.reduce((sum, c) => sum + c.totalSpent, 0);
   const avgLTV = customers.length > 0 ? totalRevenue / customers.length : 0;
-  const activeCustomers = customersWithLTV.filter(c => c.orderCount > 0).length;
+  const activeCustomers = customersWithLTV.filter((c) => c.orderCount > 0).length;
 
   // New customers this month
   const thisMonth = new Date();
   thisMonth.setDate(1);
   thisMonth.setHours(0, 0, 0, 0);
-  const newThisMonth = customers.filter(c => new Date(c.createdAt) >= thisMonth).length;
+  const newThisMonth = customers.filter((c) => new Date(c.createdAt) >= thisMonth).length;
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -61,9 +59,7 @@ export function CustomerInsights({ customers }: CustomerInsightsProps) {
           <div className="pt-4 border-t">
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Avg Lifetime Value</span>
-              <span className="text-lg font-semibold">
-                ${(avgLTV / 100).toFixed(2)}
-              </span>
+              <span className="text-lg font-semibold">${(avgLTV / 100).toFixed(2)}</span>
             </div>
           </div>
         </CardContent>
@@ -87,13 +83,14 @@ export function CustomerInsights({ customers }: CustomerInsightsProps) {
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Revenue per Active Customer</span>
               <span className="font-semibold">
-                ${activeCustomers > 0 ? ((totalRevenue / activeCustomers) / 100).toFixed(2) : '0.00'}
+                ${activeCustomers > 0 ? (totalRevenue / activeCustomers / 100).toFixed(2) : '0.00'}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Customer Retention Rate</span>
               <span className="font-semibold text-green-600">
-                {customers.length > 0 ? ((activeCustomers / customers.length) * 100).toFixed(1) : 0}%
+                {customers.length > 0 ? ((activeCustomers / customers.length) * 100).toFixed(1) : 0}
+                %
               </span>
             </div>
           </div>
@@ -106,14 +103,15 @@ export function CustomerInsights({ customers }: CustomerInsightsProps) {
             <TrendingUp className="h-5 w-5" />
             Top Customers
           </CardTitle>
-          <CardDescription>
-            Highest value customers by total spent
-          </CardDescription>
+          <CardDescription>Highest value customers by total spent</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {topCustomers.map((customer, index) => (
-              <div key={customer.id} className="flex items-center justify-between pb-3 border-b last:border-0">
+              <div
+                key={customer.id}
+                className="flex items-center justify-between pb-3 border-b last:border-0"
+              >
                 <div className="flex items-center gap-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-medium">
                     #{index + 1}

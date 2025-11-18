@@ -71,9 +71,7 @@ export function SecuritySettings({ userId }: SecuritySettingsProps) {
             <Shield className="h-5 w-5" />
             Change Password
           </CardTitle>
-          <CardDescription>
-            Update your password to keep your account secure
-          </CardDescription>
+          <CardDescription>Update your password to keep your account secure</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -83,9 +81,7 @@ export function SecuritySettings({ userId }: SecuritySettingsProps) {
                 id="currentPassword"
                 type="password"
                 value={passwords.currentPassword}
-                onChange={(e) =>
-                  setPasswords({ ...passwords, currentPassword: e.target.value })
-                }
+                onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
                 required
               />
             </div>
@@ -96,15 +92,11 @@ export function SecuritySettings({ userId }: SecuritySettingsProps) {
                 id="newPassword"
                 type="password"
                 value={passwords.newPassword}
-                onChange={(e) =>
-                  setPasswords({ ...passwords, newPassword: e.target.value })
-                }
+                onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
                 required
                 minLength={8}
               />
-              <p className="text-sm text-muted-foreground">
-                Must be at least 8 characters long
-              </p>
+              <p className="text-sm text-muted-foreground">Must be at least 8 characters long</p>
             </div>
 
             <div className="space-y-2">
@@ -113,9 +105,7 @@ export function SecuritySettings({ userId }: SecuritySettingsProps) {
                 id="confirmPassword"
                 type="password"
                 value={passwords.confirmPassword}
-                onChange={(e) =>
-                  setPasswords({ ...passwords, confirmPassword: e.target.value })
-                }
+                onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
                 required
               />
             </div>

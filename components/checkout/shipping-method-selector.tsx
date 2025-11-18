@@ -187,7 +187,8 @@ export function ShippingMethodSelector({
         <CardContent>
           <Alert>
             <AlertDescription>
-              We couldn't find any shipping options for this address. Please check your address and try again.
+              We couldn't find any shipping options for this address. Please check your address and
+              try again.
             </AlertDescription>
           </Alert>
 
@@ -211,7 +212,8 @@ export function ShippingMethodSelector({
           <CardTitle>Select Shipping Method</CardTitle>
         </div>
         <CardDescription>
-          {rates.length} shipping option{rates.length !== 1 ? 's' : ''} available · Total weight: {totalWeight} lbs
+          {rates.length} shipping option{rates.length !== 1 ? 's' : ''} available · Total weight:{' '}
+          {totalWeight} lbs
           {boxSummary && ` · ${boxSummary}`}
         </CardDescription>
       </CardHeader>
@@ -235,7 +237,8 @@ export function ShippingMethodSelector({
                         <p className="font-semibold">{getServiceDisplayName(rate.serviceName)}</p>
                         <p className="text-sm text-muted-foreground">
                           {rate.carrier === 'FEDEX' && 'FedEx delivery to your address'}
-                          {rate.carrier === 'SOUTHWEST_CARGO' && 'Pickup at Southwest Cargo airport'}
+                          {rate.carrier === 'SOUTHWEST_CARGO' &&
+                            'Pickup at Southwest Cargo airport'}
                         </p>
                       </div>
                     </Label>
@@ -253,7 +256,7 @@ export function ShippingMethodSelector({
               <AlertDescription>
                 {rates.find((r) => r.service === selectedService)?.carrier === 'FEDEX'
                   ? 'Your order will be delivered directly to your address.'
-                  : 'You will pick up your order at the selected Southwest Cargo airport. You\'ll receive a notification when it\'s ready.'}
+                  : "You will pick up your order at the selected Southwest Cargo airport. You'll receive a notification when it's ready."}
               </AlertDescription>
             </Alert>
           )}

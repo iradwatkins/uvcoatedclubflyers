@@ -40,10 +40,7 @@ export async function getCart(sessionId: string): Promise<Cart> {
   }
 }
 
-export async function addToCart(
-  sessionId: string,
-  item: Omit<CartItem, 'id'>
-): Promise<Cart> {
+export async function addToCart(sessionId: string, item: Omit<CartItem, 'id'>): Promise<Cart> {
   try {
     const cart = await getCart(sessionId);
 
@@ -96,10 +93,7 @@ export async function updateCartItem(
   }
 }
 
-export async function removeFromCart(
-  sessionId: string,
-  itemId: string
-): Promise<Cart> {
+export async function removeFromCart(sessionId: string, itemId: string): Promise<Cart> {
   try {
     const cart = await getCart(sessionId);
 

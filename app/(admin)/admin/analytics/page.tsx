@@ -47,7 +47,7 @@ export default async function AnalyticsPage() {
 
   // Calculate metrics
   const totalRevenue = orders
-    .filter(o => o.paymentStatus === 'COMPLETED')
+    .filter((o) => o.paymentStatus === 'COMPLETED')
     .reduce((sum, order) => sum + order.totalAmount, 0);
 
   const thisMonth = new Date();
@@ -55,16 +55,16 @@ export default async function AnalyticsPage() {
   thisMonth.setHours(0, 0, 0, 0);
 
   const monthlyRevenue = orders
-    .filter(o => o.paymentStatus === 'COMPLETED' && new Date(o.createdAt) >= thisMonth)
+    .filter((o) => o.paymentStatus === 'COMPLETED' && new Date(o.createdAt) >= thisMonth)
     .reduce((sum, order) => sum + order.totalAmount, 0);
 
-  const completedOrders = orders.filter(o => o.status === 'COMPLETED').length;
+  const completedOrders = orders.filter((o) => o.status === 'COMPLETED').length;
   const averageOrderValue = completedOrders > 0 ? totalRevenue / completedOrders : 0;
 
   // Top products
   const productSales: Record<string, { name: string; quantity: number; revenue: number }> = {};
-  orders.forEach(order => {
-    order.orderItems.forEach(item => {
+  orders.forEach((order) => {
+    order.orderItems.forEach((item) => {
       const productName = item.product?.name || 'Unknown';
       if (!productSales[productName]) {
         productSales[productName] = { name: productName, quantity: 0, revenue: 0 };
@@ -79,10 +79,8 @@ export default async function AnalyticsPage() {
     .slice(0, 5);
 
   // Customer metrics
-  const activeCustomers = customers.filter(c => c.orders.length > 0).length;
-  const newCustomersThisMonth = customers.filter(
-    c => new Date(c.createdAt) >= thisMonth
-  ).length;
+  const activeCustomers = customers.filter((c) => c.orders.length > 0).length;
+  const newCustomersThisMonth = customers.filter((c) => new Date(c.createdAt) >= thisMonth).length;
 
   const stats = [
     {
@@ -138,16 +136,12 @@ export default async function AnalyticsPage() {
           return (
             <Card key={stat.title}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {stat.title}
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
                 <Icon className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-muted-foreground">
-                  {stat.description}
-                </p>
+                <p className="text-xs text-muted-foreground">{stat.description}</p>
                 <p className="text-xs text-green-600 mt-1">{stat.change}</p>
               </CardContent>
             </Card>

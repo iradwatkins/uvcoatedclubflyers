@@ -108,9 +108,7 @@ export function ProductionJobCard({ job }: ProductionJobCardProps) {
 
           {/* Items Summary */}
           <div>
-            <p className="text-xs text-muted-foreground line-clamp-2">
-              {job.items_summary}
-            </p>
+            <p className="text-xs text-muted-foreground line-clamp-2">{job.items_summary}</p>
             <p className="text-xs text-muted-foreground mt-1">
               {job.items_count} item{job.items_count !== 1 ? 's' : ''} • $
               {parseFloat(job.total_amount).toFixed(2)}

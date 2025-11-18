@@ -10,20 +10,14 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'No file provided' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
     // Validate file type
@@ -37,19 +31,13 @@ export async function POST(request: NextRequest) {
     ];
 
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { error: 'File type not supported' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'File type not supported' }, { status: 400 });
     }
 
     // Validate file size (50MB max)
     const maxSize = 50 * 1024 * 1024;
     if (file.size > maxSize) {
-      return NextResponse.json(
-        { error: 'File size exceeds 50MB limit' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'File size exceeds 50MB limit' }, { status: 400 });
     }
 
     // Create uploads directory if it doesn't exist
@@ -99,9 +87,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('File upload error:', error);
-    return NextResponse.json(
-      { error: 'Failed to upload file' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
   }
 }

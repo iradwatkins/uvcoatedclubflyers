@@ -126,13 +126,18 @@ export async function PATCH(request: NextRequest) {
     const { id, status, notes } = body;
 
     if (!id || !status) {
-      return NextResponse.json(
-        { error: 'Missing required fields: id, status' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing required fields: id, status' }, { status: 400 });
     }
 
-    const validStatuses = ['abandoned', 'email_sent_1', 'email_sent_2', 'email_sent_3', 'recovered', 'converted', 'lost'];
+    const validStatuses = [
+      'abandoned',
+      'email_sent_1',
+      'email_sent_2',
+      'email_sent_3',
+      'recovered',
+      'converted',
+      'lost',
+    ];
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
         { error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` },

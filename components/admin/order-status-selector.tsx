@@ -77,11 +77,7 @@ export function OrderStatusSelector({ orderId, currentStatus }: OrderStatusSelec
       </Select>
 
       {selectedStatus !== currentStatus && (
-        <Button
-          onClick={handleStatusUpdate}
-          disabled={isUpdating}
-          size="sm"
-        >
+        <Button onClick={handleStatusUpdate} disabled={isUpdating} size="sm">
           {isUpdating ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -2,11 +2,7 @@ import { auth } from '@/lib/auth';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 
-export default async function CustomerLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function CustomerLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
   return (

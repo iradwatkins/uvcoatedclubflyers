@@ -2,18 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -25,10 +19,7 @@ export async function POST(
     `;
 
     if (sourceProducts.length === 0) {
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
     const sourceProduct = sourceProducts[0];
@@ -123,9 +114,6 @@ export async function POST(
     });
   } catch (error) {
     console.error('Duplicate product error:', error);
-    return NextResponse.json(
-      { error: 'Failed to duplicate product' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to duplicate product' }, { status: 500 });
   }
 }

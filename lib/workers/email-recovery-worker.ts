@@ -2,7 +2,11 @@ import { Worker } from 'bullmq';
 import { Redis } from 'ioredis';
 import { sql } from '@/lib/db';
 import nodemailer from 'nodemailer';
-import { generateEmail1, generateEmail2, generateEmail3 } from '@/lib/email-templates/abandoned-cart';
+import {
+  generateEmail1,
+  generateEmail2,
+  generateEmail3,
+} from '@/lib/email-templates/abandoned-cart';
 import { addTrackingPixelToEmail } from '@/lib/email-templates/tracking';
 
 const redisConnection = new Redis(process.env.REDIS_URL || 'redis://localhost:6302', {
@@ -76,12 +80,13 @@ async function sendEmail1() {
         const productImages = cart.product_images as string[];
 
         // Build products array
-        const products = cartData.items?.map((item: any, index: number) => ({
-          name: item.productName || productNames[index] || 'Product',
-          imageUrl: productImages[index],
-          quantity: item.quantity,
-          price: item.price,
-        })) || [];
+        const products =
+          cartData.items?.map((item: any, index: number) => ({
+            name: item.productName || productNames[index] || 'Product',
+            imageUrl: productImages[index],
+            quantity: item.quantity,
+            price: item.price,
+          })) || [];
 
         // Build recovery URL
         const recoveryUrl = `${BASE_URL}/cart/recover?token=${cart.recovery_token}`;
@@ -174,12 +179,13 @@ async function sendEmail2() {
         const productNames = cart.product_names as string[];
         const productImages = cart.product_images as string[];
 
-        const products = cartData.items?.map((item: any, index: number) => ({
-          name: item.productName || productNames[index] || 'Product',
-          imageUrl: productImages[index],
-          quantity: item.quantity,
-          price: item.price,
-        })) || [];
+        const products =
+          cartData.items?.map((item: any, index: number) => ({
+            name: item.productName || productNames[index] || 'Product',
+            imageUrl: productImages[index],
+            quantity: item.quantity,
+            price: item.price,
+          })) || [];
 
         // Generate discount code
         const discountCode = generateDiscountCode('SAVE5');
@@ -278,12 +284,13 @@ async function sendEmail3() {
         const productNames = cart.product_names as string[];
         const productImages = cart.product_images as string[];
 
-        const products = cartData.items?.map((item: any, index: number) => ({
-          name: item.productName || productNames[index] || 'Product',
-          imageUrl: productImages[index],
-          quantity: item.quantity,
-          price: item.price,
-        })) || [];
+        const products =
+          cartData.items?.map((item: any, index: number) => ({
+            name: item.productName || productNames[index] || 'Product',
+            imageUrl: productImages[index],
+            quantity: item.quantity,
+            price: item.price,
+          })) || [];
 
         // Generate final discount code
         const discountCode = generateDiscountCode('SAVE10');

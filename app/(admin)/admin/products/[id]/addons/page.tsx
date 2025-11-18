@@ -48,10 +48,7 @@ export default async function ProductAddOnsPage({ params }: ProductAddOnsPagePro
       </Link>
 
       {/* Product Add-Ons Manager */}
-      <ProductAddOnsManager
-        productId={productId}
-        productName={product.name}
-      />
+      <ProductAddOnsManager productId={productId} productName={product.name} />
     </div>
   );
 }

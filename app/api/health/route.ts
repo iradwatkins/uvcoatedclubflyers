@@ -10,6 +10,6 @@ export async function GET() {
       paypal: process.env.PAYPAL_CLIENT_ID ? 'configured' : 'missing',
       database: process.env.DATABASE_URL ? 'configured' : 'missing',
       redis: process.env.REDIS_URL ? 'configured' : 'missing',
-    }
+    },
   });
 }

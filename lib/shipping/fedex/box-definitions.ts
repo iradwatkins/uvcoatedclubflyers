@@ -23,29 +23,29 @@ export enum FedExBoxType {
 }
 
 export interface FedExBox {
-  id: string
-  name: string
-  displayName: string
-  type: FedExBoxType
+  id: string;
+  name: string;
+  displayName: string;
+  type: FedExBoxType;
 
   // Dimensions (inches)
-  length: number
-  width: number
-  height: number
+  length: number;
+  width: number;
+  height: number;
 
   // Weight limits (pounds)
-  maxWeight: number
-  boxWeight: number // Tare weight of empty box
+  maxWeight: number;
+  boxWeight: number; // Tare weight of empty box
 
   // Special FedEx features
-  oneRateMaxWeight?: number // For FedEx One Rate pricing
-  oneRateEligible: boolean
+  oneRateMaxWeight?: number; // For FedEx One Rate pricing
+  oneRateEligible: boolean;
 
   // API packaging type
-  packagingType: string
+  packagingType: string;
 
   // Ideal use cases
-  bestFor: string[]
+  bestFor: string[];
 }
 
 /**
@@ -340,22 +340,22 @@ export const FEDEX_BOXES: Record<string, FedExBox> = {
     packagingType: 'FEDEX_25KG_BOX',
     bestFor: ['large international orders', 'bulk shipments abroad'],
   },
-}
+};
 
 /**
  * Helper Functions for Box Selection
  */
 
 export function getAllBoxes(): FedExBox[] {
-  return Object.values(FEDEX_BOXES)
+  return Object.values(FEDEX_BOXES);
 }
 
 export function getBoxesByType(type: FedExBoxType): FedExBox[] {
-  return Object.values(FEDEX_BOXES).filter((box) => box.type === type)
+  return Object.values(FEDEX_BOXES).filter((box) => box.type === type);
 }
 
 export function getBoxById(id: string): FedExBox | undefined {
-  return FEDEX_BOXES[id]
+  return FEDEX_BOXES[id];
 }
 
 /**
@@ -369,14 +369,14 @@ export function findSuitableBoxes(
 ): FedExBox[] {
   return Object.values(FEDEX_BOXES).filter((box) => {
     // Check weight
-    if (weight + box.boxWeight > box.maxWeight) return false
+    if (weight + box.boxWeight > box.maxWeight) return false;
 
     // Check if item fits in box (any rotation)
-    const itemDims = [length, width, height].sort((a, b) => b - a)
-    const boxDims = [box.length, box.width, box.height].sort((a, b) => b - a)
+    const itemDims = [length, width, height].sort((a, b) => b - a);
+    const boxDims = [box.length, box.width, box.height].sort((a, b) => b - a);
 
-    return itemDims.every((dim, i) => dim <= boxDims[i])
-  })
+    return itemDims.every((dim, i) => dim <= boxDims[i]);
+  });
 }
 
 /**
@@ -388,45 +388,45 @@ export function findSmallestBox(
   height: number,
   weight: number
 ): FedExBox | null {
-  const suitableBoxes = findSuitableBoxes(length, width, height, weight)
+  const suitableBoxes = findSuitableBoxes(length, width, height, weight);
 
-  if (suitableBoxes.length === 0) return null
+  if (suitableBoxes.length === 0) return null;
 
   // Sort by volume (smallest first)
   return suitableBoxes.sort((a, b) => {
-    const volA = a.length * a.width * a.height
-    const volB = b.length * b.width * b.height
-    return volA - volB
-  })[0]
+    const volA = a.length * a.width * a.height;
+    const volB = b.length * b.width * b.height;
+    return volA - volB;
+  })[0];
 }
 
 /**
  * Calculate box volume (cubic inches)
  */
 export function getBoxVolume(box: FedExBox): number {
-  return box.length * box.width * box.height
+  return box.length * box.width * box.height;
 }
 
 /**
  * Calculate usable volume (subtracting padding/structure)
  */
 export function getUsableVolume(box: FedExBox, paddingInches: number = 0.5): number {
-  const usableLength = Math.max(0, box.length - paddingInches * 2)
-  const usableWidth = Math.max(0, box.width - paddingInches * 2)
-  const usableHeight = Math.max(0, box.height - paddingInches * 2)
-  return usableLength * usableWidth * usableHeight
+  const usableLength = Math.max(0, box.length - paddingInches * 2);
+  const usableWidth = Math.max(0, box.width - paddingInches * 2);
+  const usableHeight = Math.max(0, box.height - paddingInches * 2);
+  return usableLength * usableWidth * usableHeight;
 }
 
 /**
  * Check if item is poster-like (long and thin)
  */
 export function isPosterDimensions(length: number, width: number, height: number): boolean {
-  const dims = [length, width, height].sort((a, b) => b - a)
-  const longest = dims[0]
-  const middle = dims[1]
+  const dims = [length, width, height].sort((a, b) => b - a);
+  const longest = dims[0];
+  const middle = dims[1];
 
   // If longest dimension is >24" and much longer than next dimension, likely poster
-  return longest >= 24 && longest / middle >= 2
+  return longest >= 24 && longest / middle >= 2;
 }
 
 /**
@@ -444,8 +444,8 @@ export function recommendBoxForProduct(productType: string, weight: number): Fed
     'greeting-cards': ['FEDEX_SMALL_BOX_2', 'FEDEX_PAK'],
     labels: ['FEDEX_PAK', 'FEDEX_SMALL_BOX_1'],
     stickers: ['FEDEX_SMALL_PAK', 'FEDEX_ENVELOPE'],
-  }
+  };
 
-  const boxIds = productMapping[productType] || []
-  return boxIds.map((id) => FEDEX_BOXES[id]).filter((box) => box && box.maxWeight >= weight)
+  const boxIds = productMapping[productType] || [];
+  return boxIds.map((id) => FEDEX_BOXES[id]).filter((box) => box && box.maxWeight >= weight);
 }

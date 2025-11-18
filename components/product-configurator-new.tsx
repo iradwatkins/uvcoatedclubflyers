@@ -2,10 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -17,7 +30,11 @@ import { cn } from '@/lib/utils';
 import { SIDES_OPTIONS } from '@/lib/pricing/paper-stock-coatings';
 import { AddOnWithSubOptions } from '@/components/addons/addon-with-sub-options';
 import { AddOnSubOptionConfig } from '@/components/addons/addon-sub-option-field';
-import { AddOnCategorySection, categorizeAddOns, ADDON_CATEGORIES } from '@/components/addons/addon-category-section';
+import {
+  AddOnCategorySection,
+  categorizeAddOns,
+  ADDON_CATEGORIES,
+} from '@/components/addons/addon-category-section';
 import { DesignOptionSelector } from '@/components/design-option-selector';
 import {
   getRequiredAddOns,
@@ -193,7 +210,11 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
         const uvBothSidesCardstocks = [2, 5, 7]; // 16pt, 12pt, 14pt
         const uvBothSidesCoating = paperStock?.coatings.find((c) => c.id === 5);
 
-        if (defaultPaperStock && uvBothSidesCardstocks.includes(defaultPaperStock) && uvBothSidesCoating) {
+        if (
+          defaultPaperStock &&
+          uvBothSidesCardstocks.includes(defaultPaperStock) &&
+          uvBothSidesCoating
+        ) {
           setSelectedCoatingId(5); // High Gloss UV Both Sides
         } else {
           // For other paper stocks, use first available coating
@@ -248,7 +269,7 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
       }
 
       // Map selected sides option to pricing value
-      const selectedSidesOption = SIDES_OPTIONS.find(opt => opt.value === selectedSides);
+      const selectedSidesOption = SIDES_OPTIONS.find((opt) => opt.value === selectedSides);
       const pricingSides = selectedSidesOption?.pricingValue || 'double';
 
       // Build addOns array with sub-options (includes below_upload add-ons only)
@@ -318,8 +339,10 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
 
         if (selectedDesignOption) {
           // Check if sides selection is required
-          if (selectedDesignOption.slug === 'standard-custom-design' ||
-              selectedDesignOption.slug === 'rush-custom-design') {
+          if (
+            selectedDesignOption.slug === 'standard-custom-design' ||
+            selectedDesignOption.slug === 'rush-custom-design'
+          ) {
             if (!designOptionSides) {
               errors.push('Please select the number of sides for your custom design');
             }
@@ -535,9 +558,7 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
         <Card>
           <CardHeader>
             <CardTitle>Configure Your Order</CardTitle>
-            <CardDescription>
-              Select your options and quantity below
-            </CardDescription>
+            <CardDescription>Select your options and quantity below</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -713,7 +734,7 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
             {options.addOns?.below_upload && options.addOns.below_upload.length > 0 && (
               <div className="space-y-3">
                 {options.addOns.below_upload
-                  .filter(a => !a.is_mandatory)
+                  .filter((a) => !a.is_mandatory)
                   .sort((a, b) => a.display_order - b.display_order)
                   .map((addOn) => (
                     <AddOnWithSubOptions
@@ -729,7 +750,9 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
 
                           const conflict = checkAddOnConflicts(addOn.slug, selectedSlugs);
                           if (conflict.hasConflict) {
-                            setError(conflict.reason || 'This addon conflicts with another selection');
+                            setError(
+                              conflict.reason || 'This addon conflicts with another selection'
+                            );
                             return;
                           }
 
@@ -831,7 +854,10 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
                       key={turnaround.id}
                       className="flex items-center space-x-3 rounded-lg border p-3 hover:bg-accent"
                     >
-                      <RadioGroupItem value={turnaround.id.toString()} id={`turnaround-${turnaround.id}`} />
+                      <RadioGroupItem
+                        value={turnaround.id.toString()}
+                        id={`turnaround-${turnaround.id}`}
+                      />
                       <label
                         htmlFor={`turnaround-${turnaround.id}`}
                         className="flex flex-1 cursor-pointer items-center justify-between"
@@ -839,7 +865,8 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
                         <div className="flex flex-col">
                           <span className="font-medium text-sm">{turnaround.name}</span>
                           <span className="text-xs text-muted-foreground">
-                            {turnaround.description || `${turnaround.production_days} business days`}
+                            {turnaround.description ||
+                              `${turnaround.production_days} business days`}
                           </span>
                         </div>
                         {priceBreakdown && (
@@ -887,7 +914,9 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
                   <div className="font-semibold mb-1">Please fix the following issues:</div>
                   <ul className="list-disc list-inside space-y-1">
                     {validationErrors.map((err, idx) => (
-                      <li key={idx} className="text-sm">{err}</li>
+                      <li key={idx} className="text-sm">
+                        {err}
+                      </li>
                     ))}
                   </ul>
                 </AlertDescription>

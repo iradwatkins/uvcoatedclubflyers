@@ -28,8 +28,8 @@ export default async function Home() {
                 <span className="block text-primary">Club Flyers</span>
               </h1>
               <p className="mb-8 text-lg text-gray-600 sm:text-xl md:text-2xl">
-                Premium UV coated printing for clubs, events, and promotions.
-                Fast turnaround, exceptional quality.
+                Premium UV coated printing for clubs, events, and promotions. Fast turnaround,
+                exceptional quality.
               </p>
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link href="/products">
@@ -51,9 +51,7 @@ export default async function Home() {
         <section className="border-t bg-background py-16 md:py-24">
           <div className="container mx-auto px-4">
             <div className="mb-12 text-center">
-              <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
-                Why Choose Us
-              </h2>
+              <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Why Choose Us</h2>
               <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
                 We provide the highest quality printing services with unmatched customer support
               </p>
@@ -111,9 +109,7 @@ export default async function Home() {
         <section className="border-t bg-muted/50 py-16 md:py-24">
           <div className="container mx-auto px-4">
             <div className="mb-12 text-center">
-              <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
-                How It Works
-              </h2>
+              <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">How It Works</h2>
               <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
                 Get your custom flyers in just a few simple steps
               </p>
@@ -166,7 +162,11 @@ export default async function Home() {
                 </Button>
               </Link>
               <Link href="/products">
-                <Button size="lg" variant="outline" className="w-full border-white text-white hover:bg-white/10 sm:w-auto">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full border-white text-white hover:bg-white/10 sm:w-auto"
+                >
                   View Products
                 </Button>
               </Link>

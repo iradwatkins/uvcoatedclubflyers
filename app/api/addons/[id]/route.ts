@@ -13,18 +13,12 @@ function generateSlug(name: string): string {
 }
 
 // GET - Fetch single addon with sub-options
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -36,10 +30,7 @@ export async function GET(
     `;
 
     if (addon.length === 0) {
-      return NextResponse.json(
-        { error: 'Addon not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Addon not found' }, { status: 404 });
     }
 
     // Get sub-options
@@ -67,26 +58,17 @@ export async function GET(
     });
   } catch (error) {
     console.error('Get addon error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch addon' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch addon' }, { status: 500 });
   }
 }
 
 // PUT - Update addon
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -118,18 +100,12 @@ export async function PUT(
     `;
 
     if (existingAddon.length === 0) {
-      return NextResponse.json(
-        { error: 'Addon not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Addon not found' }, { status: 404 });
     }
 
     // Validation
     if (!name || !pricingModel || !uiComponent || !position) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     // Generate slug from name
@@ -151,7 +127,7 @@ export async function PUT(
     }
 
     // Validate pricing based on model
-    if (pricingModel === 'FLAT' && (!basePrice && basePrice !== 0)) {
+    if (pricingModel === 'FLAT' && !basePrice && basePrice !== 0) {
       return NextResponse.json(
         { error: 'Base price is required for FLAT pricing model' },
         { status: 400 }
@@ -169,7 +145,7 @@ export async function PUT(
         { status: 400 }
       );
     }
-    if (pricingModel === 'CUSTOM' && (!basePrice && basePrice !== 0) && !perUnitPrice) {
+    if (pricingModel === 'CUSTOM' && !basePrice && basePrice !== 0 && !perUnitPrice) {
       return NextResponse.json(
         { error: 'At least one price field is required for CUSTOM pricing model' },
         { status: 400 }
@@ -261,10 +237,7 @@ export async function PUT(
     });
   } catch (error) {
     console.error('Update addon error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update addon' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update addon' }, { status: 500 });
   }
 }
 
@@ -277,10 +250,7 @@ export async function DELETE(
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -292,10 +262,7 @@ export async function DELETE(
     `;
 
     if (addon.length === 0) {
-      return NextResponse.json(
-        { error: 'Addon not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Addon not found' }, { status: 404 });
     }
 
     // Check if addon is in use
@@ -331,26 +298,17 @@ export async function DELETE(
     });
   } catch (error) {
     console.error('Delete addon error:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete addon' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete addon' }, { status: 500 });
   }
 }
 
 // PATCH - Toggle addon active status
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -360,10 +318,7 @@ export async function PATCH(
     const { isActive } = body;
 
     if (isActive === undefined) {
-      return NextResponse.json(
-        { error: 'isActive field is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'isActive field is required' }, { status: 400 });
     }
 
     // Check if addon exists
@@ -372,10 +327,7 @@ export async function PATCH(
     `;
 
     if (addon.length === 0) {
-      return NextResponse.json(
-        { error: 'Addon not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Addon not found' }, { status: 404 });
     }
 
     // Update status
@@ -391,9 +343,6 @@ export async function PATCH(
     });
   } catch (error) {
     console.error('Toggle addon status error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update addon status' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update addon status' }, { status: 500 });
   }
 }

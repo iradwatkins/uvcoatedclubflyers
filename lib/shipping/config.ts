@@ -1,5 +1,5 @@
-import { type Carrier } from './types'
-import type { ShippingConfiguration } from './interfaces'
+import { type Carrier } from './types';
+import type { ShippingConfiguration } from './interfaces';
 
 // FedEx configuration
 export const fedexConfig: ShippingConfiguration = {
@@ -9,7 +9,7 @@ export const fedexConfig: ShippingConfiguration = {
     weight: 0.5, // 0.5 lbs for box/packaging
   },
   markupPercentage: 0, // NO markup - show raw FedEx rates
-}
+};
 
 // UPS configuration
 export const upsConfig: ShippingConfiguration = {
@@ -19,7 +19,7 @@ export const upsConfig: ShippingConfiguration = {
     weight: 0.5,
   },
   markupPercentage: 10,
-}
+};
 
 // Southwest Cargo configuration moved to modular implementation
 // See: src/lib/shipping/modules/southwest-cargo/config.ts
@@ -61,7 +61,7 @@ export const FEDEX_SERVICE_CODES = {
   // International Freight
   INTERNATIONAL_ECONOMY_FREIGHT: 'INTERNATIONAL_ECONOMY_FREIGHT',
   INTERNATIONAL_PRIORITY_FREIGHT: 'INTERNATIONAL_PRIORITY_FREIGHT',
-} as const
+} as const;
 
 export const UPS_SERVICE_CODES = {
   GROUND: '03',
@@ -69,7 +69,7 @@ export const UPS_SERVICE_CODES = {
   SECOND_DAY_AIR: '02',
   NEXT_DAY_AIR: '01',
   NEXT_DAY_AIR_SAVER: '13',
-} as const
+} as const;
 
 // Service names for display (ALL 30+ FedEx services)
 export const SERVICE_NAMES = {
@@ -119,7 +119,7 @@ export const SERVICE_NAMES = {
   // Southwest Cargo
   SOUTHWEST_CARGO_PICKUP: 'Southwest Cargo Pickup',
   SOUTHWEST_CARGO_DASH: 'Southwest Cargo Dash',
-} as const
+} as const;
 
 // Default sender address (your warehouse)
 export const DEFAULT_SENDER_ADDRESS = {
@@ -129,7 +129,7 @@ export const DEFAULT_SENDER_ADDRESS = {
   zipCode: '60173',
   country: 'US',
   isResidential: false,
-}
+};
 
 // Carrier availability by state
 // NOTE: Southwest Cargo availability is now dynamically determined from 82 airports in database
@@ -138,7 +138,7 @@ export const CARRIER_AVAILABILITY: Record<Carrier, string[]> = {
   FEDEX: [], // Available in all states
   UPS: [], // Available in all states
   SOUTHWEST_CARGO: [], // Dynamically loaded from 82 airports in database
-}
+};
 
 // Southwest Cargo pricing moved to modular implementation
 // See: src/lib/shipping/modules/southwest-cargo/config.ts

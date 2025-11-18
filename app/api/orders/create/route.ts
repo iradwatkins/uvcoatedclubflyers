@@ -33,10 +33,7 @@ export async function POST(request: NextRequest) {
     };
 
     if (!orderNumber || !cart) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     // For cash payments, paymentId is not required
@@ -102,7 +99,10 @@ export async function POST(request: NextRequest) {
                 WHERE id = ${fileId}
               `;
             } catch (fileError) {
-              console.error(`Failed to link file ${fileId} to order item ${orderItem.id}:`, fileError);
+              console.error(
+                `Failed to link file ${fileId} to order item ${orderItem.id}:`,
+                fileError
+              );
               // Don't fail the entire order if file linking fails
             }
           }
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
           to: session.user.email,
           orderNumber: order.orderNumber,
           customerName: session.user.name || 'Customer',
-          items: cart.items.map(item => ({
+          items: cart.items.map((item) => ({
             productName: item.productName || 'Product',
             quantity: item.quantity,
             unitPrice: item.unitPrice,
@@ -162,9 +162,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Order creation error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create order' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
   }
 }

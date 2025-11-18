@@ -8,10 +8,7 @@ export async function PUT(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { currentPassword, newPassword } = await request.json();
@@ -40,20 +37,14 @@ export async function PUT(request: NextRequest) {
     const user = users[0];
 
     if (!user || !user.password_hash) {
-      return NextResponse.json(
-        { error: 'User not found or password not set' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found or password not set' }, { status: 404 });
     }
 
     // Verify current password
     const isValidPassword = await compare(currentPassword, user.password_hash);
 
     if (!isValidPassword) {
-      return NextResponse.json(
-        { error: 'Current password is incorrect' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Current password is incorrect' }, { status: 400 });
     }
 
     // Hash new password
@@ -73,9 +64,6 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error('Password update error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update password' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update password' }, { status: 500 });
   }
 }

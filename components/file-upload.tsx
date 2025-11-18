@@ -154,7 +154,7 @@ export function FileUpload({
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   return (
@@ -186,9 +186,7 @@ export function FileUpload({
           />
 
           <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
-          <p className="mt-4 font-medium">
-            Drag and drop files here, or click to browse
-          </p>
+          <p className="mt-4 font-medium">Drag and drop files here, or click to browse</p>
           <p className="mt-2 text-sm text-muted-foreground">
             Max {maxFiles} files, up to {maxSizeMB}MB each
           </p>
@@ -215,12 +213,8 @@ export function FileUpload({
                   {file.status === 'uploading' && (
                     <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                   )}
-                  {file.status === 'success' && (
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                  )}
-                  {file.status === 'error' && (
-                    <AlertCircle className="h-5 w-5 text-destructive" />
-                  )}
+                  {file.status === 'success' && <CheckCircle className="h-5 w-5 text-green-600" />}
+                  {file.status === 'error' && <AlertCircle className="h-5 w-5 text-destructive" />}
 
                   <div>
                     <p className="font-medium">{file.name}</p>

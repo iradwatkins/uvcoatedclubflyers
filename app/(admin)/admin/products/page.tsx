@@ -35,9 +35,7 @@ export default async function AdminProductsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="mb-2">Product Management</h1>
-          <p className="text-muted-foreground">
-            Manage your products, pricing, and options
-          </p>
+          <p className="text-muted-foreground">Manage your products, pricing, and options</p>
         </div>
         <Link href="/admin/products/new">
           <Button>
@@ -63,9 +61,7 @@ export default async function AdminProductsPage() {
             <CardTitle className="text-sm font-medium">Active Products</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {products.filter((p) => p.isActive).length}
-            </div>
+            <div className="text-2xl font-bold">{products.filter((p) => p.isActive).length}</div>
           </CardContent>
         </Card>
 
@@ -74,9 +70,7 @@ export default async function AdminProductsPage() {
             <CardTitle className="text-sm font-medium">Featured</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {products.filter((p) => p.isFeatured).length}
-            </div>
+            <div className="text-2xl font-bold">{products.filter((p) => p.isFeatured).length}</div>
           </CardContent>
         </Card>
 
@@ -96,9 +90,7 @@ export default async function AdminProductsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Products</CardTitle>
-          <CardDescription>
-            A list of all products in your catalog
-          </CardDescription>
+          <CardDescription>A list of all products in your catalog</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -135,9 +127,7 @@ export default async function AdminProductsPage() {
                       </div>
                     </td>
                     <td className="py-4">{product.category?.name || 'Uncategorized'}</td>
-                    <td className="py-4">
-                      ${(product.basePrice / 100).toFixed(2)}
-                    </td>
+                    <td className="py-4">${(product.basePrice / 100).toFixed(2)}</td>
                     <td className="py-4 text-center">
                       {product.isActive ? (
                         <Badge variant="default">Active</Badge>
@@ -145,9 +135,7 @@ export default async function AdminProductsPage() {
                         <Badge variant="secondary">Inactive</Badge>
                       )}
                     </td>
-                    <td className="py-4 text-center">
-                      {product._count.orderItems}
-                    </td>
+                    <td className="py-4 text-center">{product._count.orderItems}</td>
                     <td className="py-4 text-right">
                       <div className="flex justify-end gap-2">
                         <Link href={`/admin/products/${product.id}`}>
@@ -162,10 +150,7 @@ export default async function AdminProductsPage() {
                             Edit
                           </Button>
                         </Link>
-                        <ProductDuplicateButton
-                          productId={product.id}
-                          productName={product.name}
-                        />
+                        <ProductDuplicateButton productId={product.id} productName={product.name} />
                         <ProductDeleteDialog
                           productId={product.id}
                           productName={product.name}

@@ -19,37 +19,37 @@ export enum FedExServiceCategory {
 }
 
 export interface FedExService {
-  code: string
-  name: string
-  displayName: string
-  category: FedExServiceCategory
-  description: string
+  code: string;
+  name: string;
+  displayName: string;
+  category: FedExServiceCategory;
+  description: string;
 
   // Availability
-  domestic: boolean
-  international: boolean
+  domestic: boolean;
+  international: boolean;
 
   // Speed & Reliability
-  estimatedDaysMin: number
-  estimatedDaysMax: number
-  isGuaranteed: boolean
+  estimatedDaysMin: number;
+  estimatedDaysMax: number;
+  isGuaranteed: boolean;
 
   // Weight & Size Limits
-  maxWeightLbs: number
-  maxLengthInches?: number
+  maxWeightLbs: number;
+  maxLengthInches?: number;
 
   // Special Features
-  requiresSignature: boolean
-  allowsResidential: boolean
-  allowsHoldAtLocation: boolean
-  allowsSaturdayDelivery: boolean
+  requiresSignature: boolean;
+  allowsResidential: boolean;
+  allowsHoldAtLocation: boolean;
+  allowsSaturdayDelivery: boolean;
 
   // Pricing
-  premiumMultiplier: number // 1.0 = base, 2.0 = double cost
+  premiumMultiplier: number; // 1.0 = base, 2.0 = double cost
 
   // API Configuration
-  carrierCode: 'FDXE' | 'FDXG' | 'FXSP' | 'FXFR' // Express, Ground, SmartPost, Freight
-  apiServiceType: string // Exact FedEx API service code
+  carrierCode: 'FDXE' | 'FDXG' | 'FXSP' | 'FXFR'; // Express, Ground, SmartPost, Freight
+  apiServiceType: string; // Exact FedEx API service code
 }
 
 /**
@@ -584,94 +584,94 @@ export const FEDEX_SERVICES: Record<string, FedExService> = {
     carrierCode: 'FXFR',
     apiServiceType: 'INTERNATIONAL_PRIORITY_FREIGHT',
   },
-}
+};
 
 /**
  * Helper functions for service filtering
  */
 
 export function getDomesticServices(): FedExService[] {
-  return Object.values(FEDEX_SERVICES).filter((s) => s.domestic)
+  return Object.values(FEDEX_SERVICES).filter((s) => s.domestic);
 }
 
 export function getInternationalServices(): FedExService[] {
-  return Object.values(FEDEX_SERVICES).filter((s) => s.international)
+  return Object.values(FEDEX_SERVICES).filter((s) => s.international);
 }
 
 export function getServicesByCategory(category: FedExServiceCategory): FedExService[] {
-  return Object.values(FEDEX_SERVICES).filter((s) => s.category === category)
+  return Object.values(FEDEX_SERVICES).filter((s) => s.category === category);
 }
 
 export function getExpressServices(): FedExService[] {
-  return getServicesByCategory(FedExServiceCategory.EXPRESS)
+  return getServicesByCategory(FedExServiceCategory.EXPRESS);
 }
 
 export function getGroundServices(): FedExService[] {
-  return getServicesByCategory(FedExServiceCategory.GROUND)
+  return getServicesByCategory(FedExServiceCategory.GROUND);
 }
 
 export function getFreightServices(): FedExService[] {
-  return getServicesByCategory(FedExServiceCategory.FREIGHT)
+  return getServicesByCategory(FedExServiceCategory.FREIGHT);
 }
 
 export function getSmartPostServices(): FedExService[] {
-  return getServicesByCategory(FedExServiceCategory.SMARTPOST)
+  return getServicesByCategory(FedExServiceCategory.SMARTPOST);
 }
 
 export function getServiceByCode(code: string): FedExService | undefined {
-  return FEDEX_SERVICES[code]
+  return FEDEX_SERVICES[code];
 }
 
 export function getServicesForWeight(weightLbs: number): FedExService[] {
-  return Object.values(FEDEX_SERVICES).filter((s) => s.maxWeightLbs >= weightLbs)
+  return Object.values(FEDEX_SERVICES).filter((s) => s.maxWeightLbs >= weightLbs);
 }
 
 /**
  * Determine best service based on requirements
  */
 export interface ServiceRequirements {
-  weightLbs: number
-  isResidential: boolean
-  isInternational: boolean
-  needsGuarantee: boolean
-  maxDays?: number
-  preferEconomy?: boolean
+  weightLbs: number;
+  isResidential: boolean;
+  isInternational: boolean;
+  needsGuarantee: boolean;
+  maxDays?: number;
+  preferEconomy?: boolean;
 }
 
 export function recommendServices(requirements: ServiceRequirements): FedExService[] {
-  let services = Object.values(FEDEX_SERVICES)
+  let services = Object.values(FEDEX_SERVICES);
 
   // Filter by weight
-  services = services.filter((s) => s.maxWeightLbs >= requirements.weightLbs)
+  services = services.filter((s) => s.maxWeightLbs >= requirements.weightLbs);
 
   // Filter by location
   if (requirements.isInternational) {
-    services = services.filter((s) => s.international)
+    services = services.filter((s) => s.international);
   } else {
-    services = services.filter((s) => s.domestic)
+    services = services.filter((s) => s.domestic);
   }
 
   // Filter by residential
   if (requirements.isResidential) {
-    services = services.filter((s) => s.allowsResidential)
+    services = services.filter((s) => s.allowsResidential);
   }
 
   // Filter by guarantee
   if (requirements.needsGuarantee) {
-    services = services.filter((s) => s.isGuaranteed)
+    services = services.filter((s) => s.isGuaranteed);
   }
 
   // Filter by max days
   if (requirements.maxDays) {
-    services = services.filter((s) => s.estimatedDaysMax <= (requirements.maxDays ?? Infinity))
+    services = services.filter((s) => s.estimatedDaysMax <= (requirements.maxDays ?? Infinity));
   }
 
   // Sort by price (multiplier) if economy preferred
   if (requirements.preferEconomy) {
-    services.sort((a, b) => a.premiumMultiplier - b.premiumMultiplier)
+    services.sort((a, b) => a.premiumMultiplier - b.premiumMultiplier);
   } else {
-    services.sort((a, b) => a.estimatedDaysMin - b.estimatedDaysMin)
+    services.sort((a, b) => a.estimatedDaysMin - b.estimatedDaysMin);
   }
 
-  return services
+  return services;
 }

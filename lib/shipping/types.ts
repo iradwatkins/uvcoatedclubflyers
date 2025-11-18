@@ -11,4 +11,4 @@ export enum Carrier {
   FREIGHT = 'FREIGHT',
 }
 
-export type CarrierType = keyof typeof Carrier
+export type CarrierType = keyof typeof Carrier;

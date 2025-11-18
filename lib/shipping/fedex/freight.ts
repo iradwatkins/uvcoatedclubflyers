@@ -6,7 +6,12 @@
  * Uses NMFC (National Motor Freight Classification) classes
  */
 
-import type { FreightClass, FreightShipmentDetail, ShippingAddress, ShippingPackage } from '../types'
+import type {
+  FreightClass,
+  FreightShipmentDetail,
+  ShippingAddress,
+  ShippingPackage,
+} from '../types';
 
 /**
  * NMFC Freight Classes (50-500)
@@ -140,7 +145,7 @@ export const FREIGHT_CLASSES: Record<string, FreightClass> = {
     densityMin: 0,
     densityMax: 1,
   },
-}
+};
 
 /**
  * Calculate density (lbs per cubic foot)
@@ -151,9 +156,9 @@ export function calculateDensity(
   widthIn: number,
   heightIn: number
 ): number {
-  const cubicInches = lengthIn * widthIn * heightIn
-  const cubicFeet = cubicInches / 1728 // 1 cubic foot = 1728 cubic inches
-  return weightLbs / cubicFeet
+  const cubicInches = lengthIn * widthIn * heightIn;
+  const cubicFeet = cubicInches / 1728; // 1 cubic foot = 1728 cubic inches
+  return weightLbs / cubicFeet;
 }
 
 /**
@@ -163,12 +168,12 @@ export function determineFreightClass(density: number): FreightClass {
   // Find appropriate class based on density range
   for (const freightClass of Object.values(FREIGHT_CLASSES)) {
     if (density >= freightClass.densityMin && density < freightClass.densityMax) {
-      return freightClass
+      return freightClass;
     }
   }
 
   // Default to Class 100 if no match (common for general freight)
-  return FREIGHT_CLASSES.CLASS_100
+  return FREIGHT_CLASSES.CLASS_100;
 }
 
 /**
@@ -177,7 +182,7 @@ export function determineFreightClass(density: number): FreightClass {
 export function getFreightClassForPackage(pkg: ShippingPackage): FreightClass {
   if (!pkg.dimensions) {
     // Without dimensions, assume Class 100 (general freight)
-    return FREIGHT_CLASSES.CLASS_100
+    return FREIGHT_CLASSES.CLASS_100;
   }
 
   const density = calculateDensity(
@@ -185,9 +190,9 @@ export function getFreightClassForPackage(pkg: ShippingPackage): FreightClass {
     pkg.dimensions.length || 48, // Default to 4 feet if not specified
     pkg.dimensions.width,
     pkg.dimensions.height
-  )
+  );
 
-  return determineFreightClass(density)
+  return determineFreightClass(density);
 }
 
 /**
@@ -198,10 +203,10 @@ export function getFreightClassForPackage(pkg: ShippingPackage): FreightClass {
  * - Density suggests freight class
  */
 export function requiresFreight(packages: ShippingPackage[]): boolean {
-  const totalWeight = packages.reduce((sum, pkg) => sum + pkg.weight, 0)
+  const totalWeight = packages.reduce((sum, pkg) => sum + pkg.weight, 0);
 
   // Weight threshold
-  if (totalWeight > 150) return true
+  if (totalWeight > 150) return true;
 
   // Check dimensions
   for (const pkg of packages) {
@@ -210,12 +215,12 @@ export function requiresFreight(packages: ShippingPackage[]): boolean {
         pkg.dimensions.length || 0,
         pkg.dimensions.width || 0,
         pkg.dimensions.height || 0
-      )
-      if (maxDim > 96) return true
+      );
+      if (maxDim > 96) return true;
     }
   }
 
-  return false
+  return false;
 }
 
 /**
@@ -224,22 +229,22 @@ export function requiresFreight(packages: ShippingPackage[]): boolean {
  * Max weight per pallet: 2000 lbs
  */
 export function calculatePallets(packages: ShippingPackage[]): number {
-  const totalWeight = packages.reduce((sum, pkg) => sum + pkg.weight, 0)
+  const totalWeight = packages.reduce((sum, pkg) => sum + pkg.weight, 0);
   const totalVolume = packages.reduce((sum, pkg) => {
-    if (!pkg.dimensions) return sum
-    return sum + pkg.dimensions.length * pkg.dimensions.width * pkg.dimensions.height
-  }, 0)
+    if (!pkg.dimensions) return sum;
+    return sum + pkg.dimensions.length * pkg.dimensions.width * pkg.dimensions.height;
+  }, 0);
 
   // Pallet capacity
-  const palletVolume = 48 * 40 * 72 // 72 inches height (6 ft stacking)
-  const palletWeight = 2000 // lbs
+  const palletVolume = 48 * 40 * 72; // 72 inches height (6 ft stacking)
+  const palletWeight = 2000; // lbs
 
   // Calculate based on weight and volume
-  const palletsByWeight = Math.ceil(totalWeight / palletWeight)
-  const palletsByVolume = Math.ceil(totalVolume / palletVolume)
+  const palletsByWeight = Math.ceil(totalWeight / palletWeight);
+  const palletsByVolume = Math.ceil(totalVolume / palletVolume);
 
   // Return whichever requires more pallets
-  return Math.max(palletsByWeight, palletsByVolume, 1) // At least 1 pallet
+  return Math.max(palletsByWeight, palletsByVolume, 1); // At least 1 pallet
 }
 
 /**
@@ -249,13 +254,13 @@ export function buildFreightShipmentDetail(
   packages: ShippingPackage[],
   declaredValuePerPallet: number = 1000
 ): FreightShipmentDetail {
-  const totalPallets = calculatePallets(packages)
+  const totalPallets = calculatePallets(packages);
 
   // Get freight class from first package (or most representative)
   const representativePackage = packages.reduce((heaviest, pkg) =>
     pkg.weight > heaviest.weight ? pkg : heaviest
-  )
-  const freightClass = getFreightClassForPackage(representativePackage)
+  );
+  const freightClass = getFreightClassForPackage(representativePackage);
 
   return {
     role: 'SHIPPER',
@@ -265,7 +270,7 @@ export function buildFreightShipmentDetail(
       amount: declaredValuePerPallet * totalPallets,
       currency: 'USD',
     },
-  }
+  };
 }
 
 /**
@@ -277,14 +282,14 @@ export function estimateFreightCost(
   fromZip: string,
   toZip: string,
   options: {
-    liftgateRequired?: boolean
-    insideDelivery?: boolean
-    appointmentRequired?: boolean
+    liftgateRequired?: boolean;
+    insideDelivery?: boolean;
+    appointmentRequired?: boolean;
   } = {}
 ): number {
-  const totalWeight = packages.reduce((sum, pkg) => sum + pkg.weight, 0)
-  const totalPallets = calculatePallets(packages)
-  const freightClass = getFreightClassForPackage(packages[0])
+  const totalWeight = packages.reduce((sum, pkg) => sum + pkg.weight, 0);
+  const totalPallets = calculatePallets(packages);
+  const freightClass = getFreightClassForPackage(packages[0]);
 
   // Base rate per 100 lbs (class-dependent)
   const classMultiplier = {
@@ -306,27 +311,27 @@ export function estimateFreightCost(
     '300': 3.2,
     '400': 4.0,
     '500': 5.0,
-  }
+  };
 
-  const baseRatePer100lbs = 50
-  const multiplier = classMultiplier[freightClass.code as keyof typeof classMultiplier] || 1.2
+  const baseRatePer100lbs = 50;
+  const multiplier = classMultiplier[freightClass.code as keyof typeof classMultiplier] || 1.2;
 
   // Calculate distance surcharge
-  const zipDiff = Math.abs(parseInt(fromZip.substring(0, 3)) - parseInt(toZip.substring(0, 3)))
-  const distanceMultiplier = 1 + zipDiff / 1000 // ~10% increase per 100 zip codes
+  const zipDiff = Math.abs(parseInt(fromZip.substring(0, 3)) - parseInt(toZip.substring(0, 3)));
+  const distanceMultiplier = 1 + zipDiff / 1000; // ~10% increase per 100 zip codes
 
   // Base cost
-  let cost = (totalWeight / 100) * baseRatePer100lbs * multiplier * distanceMultiplier
+  let cost = (totalWeight / 100) * baseRatePer100lbs * multiplier * distanceMultiplier;
 
   // Pallet charge ($30 per pallet)
-  cost += totalPallets * 30
+  cost += totalPallets * 30;
 
   // Additional services
-  if (options.liftgateRequired) cost += 75
-  if (options.insideDelivery) cost += 100
-  if (options.appointmentRequired) cost += 50
+  if (options.liftgateRequired) cost += 75;
+  if (options.insideDelivery) cost += 100;
+  if (options.appointmentRequired) cost += 50;
 
-  return Math.round(cost * 100) / 100
+  return Math.round(cost * 100) / 100;
 }
 
 /**
@@ -340,9 +345,9 @@ export function getRecommendedFreightServices(
     standard: ['FEDEX_FREIGHT_PRIORITY', 'FEDEX_FREIGHT_ECONOMY'],
     priority: ['FEDEX_FREIGHT_PRIORITY', 'FEDEX_2_DAY_FREIGHT'],
     expedited: ['FEDEX_1_DAY_FREIGHT', 'FEDEX_2_DAY_FREIGHT', 'FEDEX_3_DAY_FREIGHT'],
-  }
+  };
 
-  return serviceMap[urgency] || serviceMap.standard
+  return serviceMap[urgency] || serviceMap.standard;
 }
 
 /**
@@ -362,10 +367,10 @@ export function getFreightClassForPrintProduct(
     'signage-foam': 'CLASS_150', // Foam core signs
     'display-stands': 'CLASS_125',
     'promotional-materials-bulk': 'CLASS_100',
-  }
+  };
 
-  const classCode = productClassMap[productType] || 'CLASS_100'
-  return FREIGHT_CLASSES[classCode]
+  const classCode = productClassMap[productType] || 'CLASS_100';
+  return FREIGHT_CLASSES[classCode];
 }
 
 /**
@@ -380,9 +385,9 @@ export function isResidentialFreightAvailable(serviceCode: string): boolean {
     'FEDEX_1_DAY_FREIGHT',
     'FEDEX_2_DAY_FREIGHT',
     'FEDEX_3_DAY_FREIGHT',
-  ]
+  ];
 
-  return residentialServices.includes(serviceCode)
+  return residentialServices.includes(serviceCode);
 }
 
 /**
@@ -390,5 +395,5 @@ export function isResidentialFreightAvailable(serviceCode: string): boolean {
  */
 export function calculateResidentialFreightSurcharge(baseCost: number): number {
   // Typically 20-30% surcharge for residential freight
-  return baseCost * 0.25 // 25% surcharge
+  return baseCost * 0.25; // 25% surcharge
 }

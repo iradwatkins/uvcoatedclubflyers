@@ -15,9 +15,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(cart);
   } catch (error) {
     console.error('Get cart error:', error);
-    return NextResponse.json(
-      { error: 'Failed to get cart' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to get cart' }, { status: 500 });
   }
 }

@@ -22,14 +22,19 @@ export async function POST(request: NextRequest) {
       width,
       height,
       sides = 'double',
-      addOns = []
+      addOns = [],
     } = body;
 
-    if (!productId || !paperStockId || !coatingId || !turnaroundId || !quantity || !width || !height) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+    if (
+      !productId ||
+      !paperStockId ||
+      !coatingId ||
+      !turnaroundId ||
+      !quantity ||
+      !width ||
+      !height
+    ) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     // Validate numeric values
@@ -41,18 +46,12 @@ export async function POST(request: NextRequest) {
       isNaN(width) ||
       isNaN(height)
     ) {
-      return NextResponse.json(
-        { error: 'Invalid numeric values' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid numeric values' }, { status: 400 });
     }
 
     // Validate sides
     if (sides !== 'single' && sides !== 'double') {
-      return NextResponse.json(
-        { error: 'Sides must be "single" or "double"' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Sides must be "single" or "double"' }, { status: 400 });
     }
 
     // Build calculation input
@@ -67,8 +66,8 @@ export async function POST(request: NextRequest) {
       sides,
       addOns: addOns.map((a: any) => ({
         addOnId: parseInt(a.addOnId),
-        subOptions: a.subOptions || {}
-      }))
+        subOptions: a.subOptions || {},
+      })),
     };
 
     // Calculate price
@@ -76,16 +75,15 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: priceBreakdown
+      data: priceBreakdown,
     });
-
   } catch (error: any) {
     console.error('[Pricing API] Error calculating price:', error);
 
     return NextResponse.json(
       {
         error: 'Failed to calculate price',
-        message: error.message
+        message: error.message,
       },
       { status: 500 }
     );

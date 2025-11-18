@@ -20,9 +20,23 @@ const timelineSteps = [
   { key: 'COMPLETED', label: 'Completed', icon: CheckCircle2, description: 'Delivered' },
 ];
 
-const statusOrder = ['PENDING', 'PENDING_PAYMENT', 'PROCESSING', 'PRINTING', 'SHIPPED', 'COMPLETED', 'CANCELLED'];
+const statusOrder = [
+  'PENDING',
+  'PENDING_PAYMENT',
+  'PROCESSING',
+  'PRINTING',
+  'SHIPPED',
+  'COMPLETED',
+  'CANCELLED',
+];
 
-export function OrderTimeline({ status, createdAt, paidAt, completedAt, trackingNumber }: OrderTimelineProps) {
+export function OrderTimeline({
+  status,
+  createdAt,
+  paidAt,
+  completedAt,
+  trackingNumber,
+}: OrderTimelineProps) {
   const currentStatusIndex = statusOrder.indexOf(status);
   const isCancelled = status === 'CANCELLED';
 
@@ -41,7 +55,9 @@ export function OrderTimeline({ status, createdAt, paidAt, completedAt, tracking
       case 'PENDING':
         return createdAt;
       case 'PROCESSING':
-        return paidAt || (currentStatusIndex >= statusOrder.indexOf('PROCESSING') ? createdAt : null);
+        return (
+          paidAt || (currentStatusIndex >= statusOrder.indexOf('PROCESSING') ? createdAt : null)
+        );
       case 'COMPLETED':
         return completedAt;
       default:
@@ -56,7 +72,9 @@ export function OrderTimeline({ status, createdAt, paidAt, completedAt, tracking
           <XCircle className="h-8 w-8 text-red-600" />
           <div>
             <h3 className="font-semibold text-red-900">Order Cancelled</h3>
-            <p className="text-sm text-red-700">This order was cancelled on {formatDate(completedAt || createdAt, 'MMMM d, yyyy')}</p>
+            <p className="text-sm text-red-700">
+              This order was cancelled on {formatDate(completedAt || createdAt, 'MMMM d, yyyy')}
+            </p>
           </div>
         </div>
       </div>

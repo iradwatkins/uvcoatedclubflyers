@@ -241,9 +241,7 @@ export default async function ProductionBoardPage() {
                 Pending ({stats.pending})
               </CardTitle>
             </div>
-            <CardDescription className="text-xs">
-              New orders awaiting file prep
-            </CardDescription>
+            <CardDescription className="text-xs">New orders awaiting file prep</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
@@ -253,9 +251,7 @@ export default async function ProductionBoardPage() {
                   <ProductionJobCard key={job.id} job={job} />
                 ))}
               {stats.pending === 0 && (
-                <p className="text-center py-8 text-sm text-muted-foreground">
-                  No pending orders
-                </p>
+                <p className="text-center py-8 text-sm text-muted-foreground">No pending orders</p>
               )}
             </div>
           </CardContent>
@@ -270,9 +266,7 @@ export default async function ProductionBoardPage() {
                 Processing ({stats.processing})
               </CardTitle>
             </div>
-            <CardDescription className="text-xs">
-              Files being prepared for print
-            </CardDescription>
+            <CardDescription className="text-xs">Files being prepared for print</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
@@ -299,9 +293,7 @@ export default async function ProductionBoardPage() {
                 Printing ({stats.printing})
               </CardTitle>
             </div>
-            <CardDescription className="text-xs">
-              Currently on the press
-            </CardDescription>
+            <CardDescription className="text-xs">Currently on the press</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
@@ -311,9 +303,7 @@ export default async function ProductionBoardPage() {
                   <ProductionJobCard key={job.id} job={job} />
                 ))}
               {stats.printing === 0 && (
-                <p className="text-center py-8 text-sm text-muted-foreground">
-                  No jobs printing
-                </p>
+                <p className="text-center py-8 text-sm text-muted-foreground">No jobs printing</p>
               )}
             </div>
           </CardContent>
@@ -328,9 +318,7 @@ export default async function ProductionBoardPage() {
                 Quality Check ({stats.quality_check})
               </CardTitle>
             </div>
-            <CardDescription className="text-xs">
-              Inspecting for quality
-            </CardDescription>
+            <CardDescription className="text-xs">Inspecting for quality</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
@@ -340,9 +328,7 @@ export default async function ProductionBoardPage() {
                   <ProductionJobCard key={job.id} job={job} />
                 ))}
               {stats.quality_check === 0 && (
-                <p className="text-center py-8 text-sm text-muted-foreground">
-                  No jobs in QC
-                </p>
+                <p className="text-center py-8 text-sm text-muted-foreground">No jobs in QC</p>
               )}
             </div>
           </CardContent>
@@ -357,9 +343,7 @@ export default async function ProductionBoardPage() {
                 Ready to Ship ({stats.ready_to_ship})
               </CardTitle>
             </div>
-            <CardDescription className="text-xs">
-              Completed and awaiting shipment
-            </CardDescription>
+            <CardDescription className="text-xs">Completed and awaiting shipment</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-[600px] overflow-y-auto">

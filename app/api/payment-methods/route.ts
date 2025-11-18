@@ -8,10 +8,7 @@ export async function GET(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const paymentMethods = await prisma.$queryRaw<any[]>`
@@ -35,7 +32,7 @@ export async function GET(request: NextRequest) {
     `;
 
     return NextResponse.json({
-      paymentMethods: paymentMethods.map(pm => ({
+      paymentMethods: paymentMethods.map((pm) => ({
         id: pm.id,
         userId: pm.user_id,
         provider: pm.provider,
@@ -48,15 +45,12 @@ export async function GET(request: NextRequest) {
         isDefault: pm.is_default,
         isExpired: pm.is_expired,
         createdAt: pm.created_at,
-        updatedAt: pm.updated_at
-      }))
+        updatedAt: pm.updated_at,
+      })),
     });
   } catch (error) {
     console.error('Fetch payment methods error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch payment methods' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch payment methods' }, { status: 500 });
   }
 }
 
@@ -66,10 +60,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -83,7 +74,7 @@ export async function POST(request: NextRequest) {
       expiryYear,
       cardholderName,
       isDefault = false,
-      metadata = null
+      metadata = null,
     } = body;
 
     // Validate required fields
@@ -153,14 +144,11 @@ export async function POST(request: NextRequest) {
         isDefault: paymentMethod.is_default,
         isExpired: paymentMethod.is_expired,
         createdAt: paymentMethod.created_at,
-        updatedAt: paymentMethod.updated_at
-      }
+        updatedAt: paymentMethod.updated_at,
+      },
     });
   } catch (error) {
     console.error('Save payment method error:', error);
-    return NextResponse.json(
-      { error: 'Failed to save payment method' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to save payment method' }, { status: 500 });
   }
 }

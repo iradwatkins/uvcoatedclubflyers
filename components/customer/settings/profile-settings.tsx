@@ -48,9 +48,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
     <Card>
       <CardHeader>
         <CardTitle>Profile Information</CardTitle>
-        <CardDescription>
-          Update your personal information
-        </CardDescription>
+        <CardDescription>Update your personal information</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

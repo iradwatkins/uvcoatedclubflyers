@@ -40,11 +40,7 @@ export async function uploadFile(
     });
 
     // Generate presigned URL (valid for 7 days)
-    const url = await minioClient.presignedGetObject(
-      BUCKET_NAME,
-      objectName,
-      7 * 24 * 60 * 60
-    );
+    const url = await minioClient.presignedGetObject(BUCKET_NAME, objectName, 7 * 24 * 60 * 60);
 
     return url;
   } catch (error) {
@@ -64,11 +60,7 @@ export async function deleteFile(fileName: string): Promise<void> {
 
 export async function getFileUrl(fileName: string): Promise<string> {
   try {
-    const url = await minioClient.presignedGetObject(
-      BUCKET_NAME,
-      fileName,
-      7 * 24 * 60 * 60
-    );
+    const url = await minioClient.presignedGetObject(BUCKET_NAME, fileName, 7 * 24 * 60 * 60);
     return url;
   } catch (error) {
     console.error('Error getting file URL:', error);

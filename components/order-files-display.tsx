@@ -25,7 +25,7 @@ export function OrderFilesDisplay({
   fileIds,
   className,
   showDownload = false,
-  variant = 'compact'
+  variant = 'compact',
 }: OrderFilesDisplayProps) {
   const [files, setFiles] = useState<FileData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -69,7 +69,7 @@ export function OrderFilesDisplay({
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   const getFileIcon = (mimeType: string) => {
@@ -113,11 +113,7 @@ export function OrderFilesDisplay({
   }
 
   if (error) {
-    return (
-      <div className={cn('text-sm text-destructive', className)}>
-        {error}
-      </div>
-    );
+    return <div className={cn('text-sm text-destructive', className)}>{error}</div>;
   }
 
   if (!files || files.length === 0) {
@@ -158,9 +154,7 @@ export function OrderFilesDisplay({
   // Detailed variant
   return (
     <div className={cn('space-y-2', className)}>
-      <p className="text-sm font-medium">
-        Uploaded Files ({files.length})
-      </p>
+      <p className="text-sm font-medium">Uploaded Files ({files.length})</p>
       <div className="space-y-2">
         {files.map((file) => (
           <div

@@ -18,10 +18,7 @@ export async function GET(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -55,9 +52,7 @@ export async function GET(request: NextRequest) {
       paramIndex++;
     }
 
-    const whereClause = whereConditions.length > 0
-      ? `WHERE ${whereConditions.join(' AND ')}`
-      : '';
+    const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
 
     // Get total count
     const countQuery = `
@@ -83,12 +78,7 @@ export async function GET(request: NextRequest) {
       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
     `;
 
-    const addons = await prisma.$queryRawUnsafe<any[]>(
-      addonsQuery,
-      ...params,
-      limit,
-      offset
-    );
+    const addons = await prisma.$queryRawUnsafe<any[]>(addonsQuery, ...params, limit, offset);
 
     return NextResponse.json({
       success: true,
@@ -104,10 +94,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('List addons error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch addons' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch addons' }, { status: 500 });
   }
 }
 
@@ -117,10 +104,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -145,10 +129,7 @@ export async function POST(request: NextRequest) {
 
     // Validation
     if (!name || !pricingModel || !uiComponent || !position) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     // Generate slug from name
@@ -169,7 +150,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate pricing based on model
-    if (pricingModel === 'FLAT' && (!basePrice && basePrice !== 0)) {
+    if (pricingModel === 'FLAT' && !basePrice && basePrice !== 0) {
       return NextResponse.json(
         { error: 'Base price is required for FLAT pricing model' },
         { status: 400 }
@@ -187,7 +168,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    if (pricingModel === 'CUSTOM' && (!basePrice && basePrice !== 0) && !perUnitPrice) {
+    if (pricingModel === 'CUSTOM' && !basePrice && basePrice !== 0 && !perUnitPrice) {
       return NextResponse.json(
         { error: 'At least one price field is required for CUSTOM pricing model' },
         { status: 400 }
@@ -301,9 +282,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Create addon error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create addon' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create addon' }, { status: 500 });
   }
 }

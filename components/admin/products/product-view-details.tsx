@@ -42,8 +42,12 @@ interface ProductViewDetailsProps {
 export function ProductViewDetails({ product }: ProductViewDetailsProps) {
   const quantities = product.quantities?.split(',') || [];
   const sizes = product.sizes?.split(',') || [];
-  const paperStocks = Array.isArray(product.availablePaperStocks) ? product.availablePaperStocks : [];
-  const turnarounds = Array.isArray(product.availableTurnarounds) ? product.availableTurnarounds : [];
+  const paperStocks = Array.isArray(product.availablePaperStocks)
+    ? product.availablePaperStocks
+    : [];
+  const turnarounds = Array.isArray(product.availableTurnarounds)
+    ? product.availableTurnarounds
+    : [];
 
   return (
     <div className="space-y-6">
@@ -71,9 +75,7 @@ export function ProductViewDetails({ product }: ProductViewDetailsProps) {
                     Featured
                   </Badge>
                 )}
-                {product.category && (
-                  <Badge variant="outline">{product.category.name}</Badge>
-                )}
+                {product.category && <Badge variant="outline">{product.category.name}</Badge>}
               </div>
             </div>
             <div className="text-right">
@@ -102,7 +104,8 @@ export function ProductViewDetails({ product }: ProductViewDetailsProps) {
                 Total Orders
               </h4>
               <p className="text-sm text-muted-foreground">
-                {product._count?.orderItems || 0} order{(product._count?.orderItems || 0) !== 1 ? 's' : ''}
+                {product._count?.orderItems || 0} order
+                {(product._count?.orderItems || 0) !== 1 ? 's' : ''}
               </p>
             </div>
             <div>
@@ -176,9 +179,7 @@ export function ProductViewDetails({ product }: ProductViewDetailsProps) {
               </div>
             )}
           </div>
-          {!product.imageUrl && (
-            <p className="text-sm text-muted-foreground">No images uploaded</p>
-          )}
+          {!product.imageUrl && <p className="text-sm text-muted-foreground">No images uploaded</p>}
         </CardContent>
       </Card>
 

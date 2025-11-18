@@ -31,9 +31,7 @@ export function CustomerDashboardWrapper({ user, children }: CustomerDashboardWr
       </div>
 
       {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <CustomerNavDrawer user={user} onClose={() => setMobileMenuOpen(false)} />
-      )}
+      {mobileMenuOpen && <CustomerNavDrawer user={user} onClose={() => setMobileMenuOpen(false)} />}
     </div>
   );
 }

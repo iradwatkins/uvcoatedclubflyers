@@ -44,7 +44,9 @@ export function ProductAddOnsManager({ productId, productName }: ProductAddOnsMa
 
       if (data.success) {
         setAddOns(data.addOns);
-        setSelectedAddOnIds(data.addOns.filter((a: AddOn) => a.is_assigned).map((a: AddOn) => a.id));
+        setSelectedAddOnIds(
+          data.addOns.filter((a: AddOn) => a.is_assigned).map((a: AddOn) => a.id)
+        );
       }
     } catch (error) {
       console.error('Error fetching add-ons:', error);
@@ -56,9 +58,7 @@ export function ProductAddOnsManager({ productId, productName }: ProductAddOnsMa
 
   const handleToggleAddOn = (addOnId: number) => {
     setSelectedAddOnIds((prev) =>
-      prev.includes(addOnId)
-        ? prev.filter((id) => id !== addOnId)
-        : [...prev, addOnId]
+      prev.includes(addOnId) ? prev.filter((id) => id !== addOnId) : [...prev, addOnId]
     );
   };
 
@@ -133,8 +133,8 @@ export function ProductAddOnsManager({ productId, productName }: ProductAddOnsMa
           <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>
-              Selected add-ons will appear in the product configurator for customers.
-              Display order is set by add-on display_order value.
+              Selected add-ons will appear in the product configurator for customers. Display order
+              is set by add-on display_order value.
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -196,9 +196,7 @@ export function ProductAddOnsManager({ productId, productName }: ProductAddOnsMa
                       </Badge>
                     </div>
                     {addOn.description && (
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {addOn.description}
-                      </p>
+                      <p className="mt-1 text-sm text-muted-foreground">{addOn.description}</p>
                     )}
                   </label>
                 </div>

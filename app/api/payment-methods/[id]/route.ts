@@ -7,28 +7,19 @@ type RouteContext = {
 };
 
 // PATCH /api/payment-methods/[id] - Update a payment method (e.g., set as default)
-export async function PATCH(
-  request: NextRequest,
-  context: RouteContext
-) {
+export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await context.params;
     const paymentMethodId = parseInt(id);
 
     if (isNaN(paymentMethodId)) {
-      return NextResponse.json(
-        { error: 'Invalid payment method ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid payment method ID' }, { status: 400 });
     }
 
     const body = await request.json();
@@ -42,10 +33,7 @@ export async function PATCH(
     `;
 
     if (existing.length === 0) {
-      return NextResponse.json(
-        { error: 'Payment method not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Payment method not found' }, { status: 404 });
     }
 
     // Update the payment method
@@ -79,41 +67,29 @@ export async function PATCH(
         isDefault: paymentMethod.is_default,
         isExpired: paymentMethod.is_expired,
         createdAt: paymentMethod.created_at,
-        updatedAt: paymentMethod.updated_at
-      }
+        updatedAt: paymentMethod.updated_at,
+      },
     });
   } catch (error) {
     console.error('Update payment method error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update payment method' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update payment method' }, { status: 500 });
   }
 }
 
 // DELETE /api/payment-methods/[id] - Remove a saved payment method
-export async function DELETE(
-  request: NextRequest,
-  context: RouteContext
-) {
+export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await context.params;
     const paymentMethodId = parseInt(id);
 
     if (isNaN(paymentMethodId)) {
-      return NextResponse.json(
-        { error: 'Invalid payment method ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid payment method ID' }, { status: 400 });
     }
 
     // Verify the payment method belongs to the current user
@@ -124,10 +100,7 @@ export async function DELETE(
     `;
 
     if (existing.length === 0) {
-      return NextResponse.json(
-        { error: 'Payment method not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Payment method not found' }, { status: 404 });
     }
 
     // Delete the payment method
@@ -138,13 +111,10 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Payment method deleted successfully'
+      message: 'Payment method deleted successfully',
     });
   } catch (error) {
     console.error('Delete payment method error:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete payment method' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete payment method' }, { status: 500 });
   }
 }

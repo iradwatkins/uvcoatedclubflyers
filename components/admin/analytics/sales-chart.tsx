@@ -11,7 +11,7 @@ export function SalesChart({ orders }: SalesChartProps) {
   // Group orders by date
   const salesByDate: Record<string, number> = {};
 
-  orders.forEach(order => {
+  orders.forEach((order) => {
     if (order.paymentStatus === 'COMPLETED') {
       const date = formatDate(new Date(order.createdAt), 'MMM dd');
       salesByDate[date] = (salesByDate[date] || 0) + order.totalAmount;
@@ -30,7 +30,7 @@ export function SalesChart({ orders }: SalesChartProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            {dates.slice(-10).map(date => {
+            {dates.slice(-10).map((date) => {
               const revenue = salesByDate[date];
               const percentage = (revenue / maxRevenue) * 100;
 
@@ -38,9 +38,7 @@ export function SalesChart({ orders }: SalesChartProps) {
                 <div key={date} className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">{date}</span>
-                    <span className="font-medium">
-                      ${(revenue / 100).toFixed(2)}
-                    </span>
+                    <span className="font-medium">${(revenue / 100).toFixed(2)}</span>
                   </div>
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                     <div
@@ -62,8 +60,8 @@ export function SalesChart({ orders }: SalesChartProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {['PENDING', 'PROCESSING', 'PRINTING', 'SHIPPED', 'COMPLETED'].map(status => {
-              const count = orders.filter(o => o.status === status).length;
+            {['PENDING', 'PROCESSING', 'PRINTING', 'SHIPPED', 'COMPLETED'].map((status) => {
+              const count = orders.filter((o) => o.status === status).length;
               const percentage = (count / orders.length) * 100;
 
               return (
@@ -92,8 +90,8 @@ export function SalesChart({ orders }: SalesChartProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {['COMPLETED', 'PENDING', 'FAILED'].map(status => {
-              const count = orders.filter(o => o.paymentStatus === status).length;
+            {['COMPLETED', 'PENDING', 'FAILED'].map((status) => {
+              const count = orders.filter((o) => o.paymentStatus === status).length;
               const percentage = orders.length > 0 ? (count / orders.length) * 100 : 0;
 
               return (

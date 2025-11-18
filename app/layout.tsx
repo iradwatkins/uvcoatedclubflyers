@@ -7,11 +7,7 @@ export const metadata: Metadata = {
   description: 'Create and order custom UV coated club flyers',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head></head>

@@ -7,10 +7,7 @@ export async function GET(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const favorites = await prisma.$queryRaw<any[]>`
@@ -24,10 +21,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ favorites });
   } catch (error) {
     console.error('Fetch favorites error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch favorites' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch favorites' }, { status: 500 });
   }
 }
 
@@ -36,10 +30,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { productId } = await request.json();
@@ -50,10 +41,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!product) {
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
     // Add to favorites (ignore if already exists)
@@ -69,9 +57,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Add favorite error:', error);
-    return NextResponse.json(
-      { error: 'Failed to add favorite' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to add favorite' }, { status: 500 });
   }
 }

@@ -5,7 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -249,9 +255,7 @@ export function AddonSubOptionEditor({
                   {/* Options (for select/radio/checkbox) */}
                   {['select', 'radio', 'checkbox'].includes(subOption.fieldType) && (
                     <div className="space-y-2">
-                      <Label htmlFor={`options-${index}`}>
-                        Options (JSON Array)
-                      </Label>
+                      <Label htmlFor={`options-${index}`}>Options (JSON Array)</Label>
                       <Textarea
                         id={`options-${index}`}
                         value={subOption.options || ''}
@@ -285,7 +289,13 @@ export function AddonSubOptionEditor({
                           id={`min-${index}`}
                           type="number"
                           value={subOption.minValue || ''}
-                          onChange={(e) => updateSubOption(index, 'minValue', e.target.value ? parseFloat(e.target.value) : undefined)}
+                          onChange={(e) =>
+                            updateSubOption(
+                              index,
+                              'minValue',
+                              e.target.value ? parseFloat(e.target.value) : undefined
+                            )
+                          }
                         />
                       </div>
                       <div className="space-y-2">
@@ -294,7 +304,13 @@ export function AddonSubOptionEditor({
                           id={`max-${index}`}
                           type="number"
                           value={subOption.maxValue || ''}
-                          onChange={(e) => updateSubOption(index, 'maxValue', e.target.value ? parseFloat(e.target.value) : undefined)}
+                          onChange={(e) =>
+                            updateSubOption(
+                              index,
+                              'maxValue',
+                              e.target.value ? parseFloat(e.target.value) : undefined
+                            )
+                          }
                         />
                       </div>
                     </div>

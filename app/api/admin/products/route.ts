@@ -7,10 +7,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const data = await request.json();
@@ -32,17 +29,11 @@ export async function POST(request: NextRequest) {
 
     // Validation
     if (!name || basePrice === undefined) {
-      return NextResponse.json(
-        { error: 'Name and base price are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Name and base price are required' }, { status: 400 });
     }
 
     if (basePrice < 0) {
-      return NextResponse.json(
-        { error: 'Base price must be positive' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Base price must be positive' }, { status: 400 });
     }
 
     // Check if SKU already exists
@@ -52,10 +43,7 @@ export async function POST(request: NextRequest) {
       `;
 
       if (existingSku.length > 0) {
-        return NextResponse.json(
-          { error: 'SKU already exists' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'SKU already exists' }, { status: 400 });
       }
     }
 
@@ -133,10 +121,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Create product error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create product' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
   }
 }
 
@@ -145,10 +130,7 @@ export async function GET(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const products = await prisma.product.findMany({
@@ -168,9 +150,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ products });
   } catch (error) {
     console.error('Get products error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch products' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
 }

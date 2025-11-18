@@ -3,22 +3,22 @@
  * Dynamically checks if Southwest Cargo serves a location based on 82 airports in database
  */
 
-import { prisma } from '@/lib/db/prisma-adapter'
+import { prisma } from '@/lib/db/prisma-adapter';
 
 // Cache for airport states to avoid repeated DB queries
-let cachedStates: Set<string> | null = null
-let cacheTimestamp: number = 0
-const CACHE_TTL = 1000 * 60 * 60 // 1 hour
+let cachedStates: Set<string> | null = null;
+let cacheTimestamp: number = 0;
+const CACHE_TTL = 1000 * 60 * 60; // 1 hour
 
 /**
  * Get all states that have Southwest Cargo airports (from 82 airports)
  */
 async function getAvailableStates(): Promise<Set<string>> {
-  const now = Date.now()
+  const now = Date.now();
 
   // Return cached data if still valid
   if (cachedStates && now - cacheTimestamp < CACHE_TTL) {
-    return cachedStates
+    return cachedStates;
   }
 
   try {
@@ -32,18 +32,18 @@ async function getAvailableStates(): Promise<Set<string>> {
         state: true,
       },
       distinct: ['state'],
-    })
+    });
 
     // Extract unique states
-    cachedStates = new Set(airports.map((airport) => airport.state.toUpperCase()))
-    cacheTimestamp = now
+    cachedStates = new Set(airports.map((airport) => airport.state.toUpperCase()));
+    cacheTimestamp = now;
 
-    return cachedStates
+    return cachedStates;
   } catch (error) {
-    console.error('[Southwest Cargo] Failed to load airport states from database:', error)
+    console.error('[Southwest Cargo] Failed to load airport states from database:', error);
 
     // Fallback: return empty set (will disable Southwest Cargo until DB is available)
-    return new Set()
+    return new Set();
   }
 }
 
@@ -52,26 +52,26 @@ async function getAvailableStates(): Promise<Set<string>> {
  * Based on 82 airports in database
  */
 export async function isStateAvailable(state: string): Promise<boolean> {
-  if (!state) return false
+  if (!state) return false;
 
-  const availableStates = await getAvailableStates()
-  const isAvailable = availableStates.has(state.toUpperCase())
+  const availableStates = await getAvailableStates();
+  const isAvailable = availableStates.has(state.toUpperCase());
 
-  return isAvailable
+  return isAvailable;
 }
 
 /**
  * Get count of airports (for logging/debugging)
  */
 export async function getAirportCount(): Promise<number> {
-  const states = await getAvailableStates()
-  return states.size
+  const states = await getAvailableStates();
+  return states.size;
 }
 
 /**
  * Clear cache (useful for testing or when airports are updated)
  */
 export function clearCache(): void {
-  cachedStates = null
-  cacheTimestamp = 0
+  cachedStates = null;
+  cacheTimestamp = 0;
 }

@@ -1,7 +1,7 @@
-import { Carrier } from './types'
-import { FedExProviderEnhanced } from './providers/fedex-enhanced'
-import { UPSProvider } from './providers/ups'
-import { SouthwestCargoProvider } from './modules/southwest-cargo'
+import { Carrier } from './types';
+import { FedExProviderEnhanced } from './providers/fedex-enhanced';
+import { UPSProvider } from './providers/ups';
+import { SouthwestCargoProvider } from './modules/southwest-cargo';
 import {
   type ShippingAddress,
   type ShippingPackage,
@@ -9,28 +9,28 @@ import {
   type ShippingLabel,
   type ShippingProvider,
   type TrackingInfo,
-} from './interfaces'
-import { fedexConfig, upsConfig } from './config'
-import { SOUTHWEST_CARGO_CONFIG as southwestCargoConfig } from './modules/southwest-cargo/config'
-import { prisma } from '@/lib/db/prisma-adapter'
+} from './interfaces';
+import { fedexConfig, upsConfig } from './config';
+import { SOUTHWEST_CARGO_CONFIG as southwestCargoConfig } from './modules/southwest-cargo/config';
+import { prisma } from '@/lib/db/prisma-adapter';
 // import redis from '@/lib/redis' // Optional: comment out if not using Redis
-const redis = null // Disable Redis for now
+const redis = null; // Disable Redis for now
 
 export class ShippingCalculator {
-  private providers: Map<Carrier, ShippingProvider>
+  private providers: Map<Carrier, ShippingProvider>;
 
   constructor() {
-    this.providers = new Map()
+    this.providers = new Map();
 
     // Initialize enabled providers
     if (fedexConfig.enabled) {
-      this.providers.set(Carrier.FEDEX, new FedExProviderEnhanced())
+      this.providers.set(Carrier.FEDEX, new FedExProviderEnhanced());
     }
     if (upsConfig.enabled) {
-      this.providers.set(Carrier.UPS, new UPSProvider())
+      this.providers.set(Carrier.UPS, new UPSProvider());
     }
     if (southwestCargoConfig.enabled) {
-      this.providers.set(Carrier.SOUTHWEST_CARGO, new SouthwestCargoProvider())
+      this.providers.set(Carrier.SOUTHWEST_CARGO, new SouthwestCargoProvider());
     }
   }
 
@@ -44,14 +44,14 @@ export class ShippingCalculator {
     useCache: boolean = true
   ): Promise<ShippingRate[]> {
     // Create cache key
-    const cacheKey = this.getCacheKey(fromAddress, toAddress, packages)
+    const cacheKey = this.getCacheKey(fromAddress, toAddress, packages);
 
     // Check cache if enabled
     if (useCache && redis) {
       try {
-        const cached = await redis.get(cacheKey)
+        const cached = await redis.get(cacheKey);
         if (cached) {
-          return JSON.parse(cached)
+          return JSON.parse(cached);
         }
       } catch (error) {}
     }
@@ -59,24 +59,24 @@ export class ShippingCalculator {
     // Get rates from all providers in parallel
     const ratePromises = Array.from(this.providers.values()).map((provider) =>
       provider.getRates(fromAddress, toAddress, packages).catch((error) => {
-        return []
+        return [];
       })
-    )
+    );
 
-    const rateArrays = await Promise.all(ratePromises)
-    const allRates = rateArrays.flat()
+    const rateArrays = await Promise.all(ratePromises);
+    const allRates = rateArrays.flat();
 
     // Sort by price (lowest first)
-    allRates.sort((a, b) => a.rateAmount - b.rateAmount)
+    allRates.sort((a, b) => a.rateAmount - b.rateAmount);
 
     // Cache the results for 30 minutes
     if (redis && allRates.length > 0) {
       try {
-        await redis.setex(cacheKey, 1800, JSON.stringify(allRates))
+        await redis.setex(cacheKey, 1800, JSON.stringify(allRates));
       } catch (error) {}
     }
 
-    return allRates
+    return allRates;
   }
 
   /**
@@ -88,12 +88,12 @@ export class ShippingCalculator {
     toAddress: ShippingAddress,
     packages: ShippingPackage[]
   ): Promise<ShippingRate[]> {
-    const provider = this.providers.get(carrier)
+    const provider = this.providers.get(carrier);
     if (!provider) {
-      throw new Error(`Carrier ${carrier} is not enabled`)
+      throw new Error(`Carrier ${carrier} is not enabled`);
     }
 
-    return provider.getRates(fromAddress, toAddress, packages)
+    return provider.getRates(fromAddress, toAddress, packages);
   }
 
   /**
@@ -106,24 +106,24 @@ export class ShippingCalculator {
     packages: ShippingPackage[],
     serviceCode: string
   ): Promise<ShippingLabel> {
-    const provider = this.providers.get(carrier)
+    const provider = this.providers.get(carrier);
     if (!provider) {
-      throw new Error(`Carrier ${carrier} is not enabled`)
+      throw new Error(`Carrier ${carrier} is not enabled`);
     }
 
-    return provider.createLabel(fromAddress, toAddress, packages, serviceCode)
+    return provider.createLabel(fromAddress, toAddress, packages, serviceCode);
   }
 
   /**
    * Track a shipment
    */
   async trackShipment(carrier: Carrier, trackingNumber: string): Promise<TrackingInfo> {
-    const provider = this.providers.get(carrier)
+    const provider = this.providers.get(carrier);
     if (!provider) {
-      throw new Error(`Carrier ${carrier} is not enabled`)
+      throw new Error(`Carrier ${carrier} is not enabled`);
     }
 
-    return provider.track(trackingNumber)
+    return provider.track(trackingNumber);
   }
 
   /**
@@ -132,34 +132,34 @@ export class ShippingCalculator {
   async validateAddress(address: ShippingAddress, carrier?: Carrier): Promise<boolean> {
     // If carrier specified, use that provider
     if (carrier) {
-      const provider = this.providers.get(carrier)
+      const provider = this.providers.get(carrier);
       if (provider) {
-        return provider.validateAddress(address)
+        return provider.validateAddress(address);
       }
-      return false
+      return false;
     }
 
     // Otherwise, validate with any available provider
     for (const provider of this.providers.values()) {
       try {
-        const isValid = await provider.validateAddress(address)
-        if (isValid) return true
+        const isValid = await provider.validateAddress(address);
+        if (isValid) return true;
       } catch (error) {}
     }
 
-    return false
+    return false;
   }
 
   /**
    * Cancel a shipment
    */
   async cancelShipment(carrier: Carrier, trackingNumber: string): Promise<boolean> {
-    const provider = this.providers.get(carrier)
+    const provider = this.providers.get(carrier);
     if (!provider || !provider.cancelShipment) {
-      return false
+      return false;
     }
 
-    return provider.cancelShipment(trackingNumber)
+    return provider.cancelShipment(trackingNumber);
   }
 
   /**
@@ -169,10 +169,10 @@ export class ShippingCalculator {
     // Delete existing rates for this order
     await prisma.shippingRate.deleteMany({
       where: { orderId },
-    })
+    });
 
     // Save new rates
-    const expiresAt = new Date(Date.now() + 30 * 60 * 1000) // 30 minutes
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
 
     await prisma.shippingRate.createMany({
       data: rates.map((rate) => ({
@@ -184,7 +184,7 @@ export class ShippingCalculator {
         rateAmount: rate.rateAmount,
         expiresAt,
       })) as any,
-    })
+    });
   }
 
   /**
@@ -198,7 +198,7 @@ export class ShippingCalculator {
           gt: new Date(),
         },
       },
-    })
+    });
 
     return savedRates.map((rate) => ({
       carrier: rate.carrier,
@@ -208,7 +208,7 @@ export class ShippingCalculator {
       currency: 'USD',
       estimatedDays: rate.estimatedDays,
       isGuaranteed: false,
-    }))
+    }));
   }
 
   /**
@@ -219,14 +219,14 @@ export class ShippingCalculator {
     toAddress: ShippingAddress,
     packages: ShippingPackage[]
   ): string {
-    const fromKey = `${fromAddress.zipCode}-${fromAddress.country || 'US'}`
-    const toKey = `${toAddress.zipCode}-${toAddress.country || 'US'}`
+    const fromKey = `${fromAddress.zipCode}-${fromAddress.country || 'US'}`;
+    const toKey = `${toAddress.zipCode}-${toAddress.country || 'US'}`;
     const packageKey = packages
       .map((p) => `${p.weight}-${p.dimensions?.width || 0}x${p.dimensions?.height || 0}`)
-      .join('-')
-    return `shipping:rates:${fromKey}:${toKey}:${packageKey}`
+      .join('-');
+    return `shipping:rates:${fromKey}:${toKey}:${packageKey}`;
   }
 }
 
 // Export singleton instance
-export const shippingCalculator = new ShippingCalculator()
+export const shippingCalculator = new ShippingCalculator();

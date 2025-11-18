@@ -124,9 +124,7 @@ export default function CartPage() {
               <CardTitle>Your cart is empty</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
-                Add some products to get started!
-              </p>
+              <p className="text-muted-foreground">Add some products to get started!</p>
             </CardContent>
             <CardFooter className="justify-center">
               <Link href="/products">
@@ -167,63 +165,61 @@ export default function CartPage() {
                       <div className="flex-1">
                         <h3 className="font-semibold">{item.productName}</h3>
 
-                      {/* Options */}
-                      {Object.keys(item.options).length > 0 && (
-                        <div className="mt-2 space-y-1">
-                          {Object.entries(item.options).map(([key, value]) => (
-                            <p key={key} className="text-sm text-muted-foreground">
-                              {key}: {value}
-                            </p>
-                          ))}
-                        </div>
-                      )}
+                        {/* Options */}
+                        {Object.keys(item.options).length > 0 && (
+                          <div className="mt-2 space-y-1">
+                            {Object.entries(item.options).map(([key, value]) => (
+                              <p key={key} className="text-sm text-muted-foreground">
+                                {key}: {value}
+                              </p>
+                            ))}
+                          </div>
+                        )}
 
-                      {/* Uploaded Files */}
-                      {item.uploadedFiles && item.uploadedFiles.length > 0 && (
-                        <div className="mt-3">
-                          <OrderFilesDisplay
-                            fileIds={item.uploadedFiles}
-                            variant="compact"
-                            showDownload={false}
-                          />
-                        </div>
-                      )}
+                        {/* Uploaded Files */}
+                        {item.uploadedFiles && item.uploadedFiles.length > 0 && (
+                          <div className="mt-3">
+                            <OrderFilesDisplay
+                              fileIds={item.uploadedFiles}
+                              variant="compact"
+                              showDownload={false}
+                            />
+                          </div>
+                        )}
 
-                      <div className="mt-4 flex items-center gap-4">
-                        {/* Quantity Controls */}
-                        <div className="flex items-center gap-2">
+                        <div className="mt-4 flex items-center gap-4">
+                          {/* Quantity Controls */}
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              disabled={updatingItems.has(item.id) || item.quantity <= 1}
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="w-12 text-center font-medium">{item.quantity}</span>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              disabled={updatingItems.has(item.id)}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+
+                          {/* Remove Button */}
                           <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            disabled={updatingItems.has(item.id) || item.quantity <= 1}
-                          >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="w-12 text-center font-medium">
-                            {item.quantity}
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeItem(item.id)}
                             disabled={updatingItems.has(item.id)}
                           >
-                            <Plus className="h-4 w-4" />
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Remove
                           </Button>
                         </div>
-
-                        {/* Remove Button */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeItem(item.id)}
-                          disabled={updatingItems.has(item.id)}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Remove
-                        </Button>
-                      </div>
                       </div>
                     </div>
 
@@ -232,9 +228,7 @@ export default function CartPage() {
                       <p className="text-sm text-muted-foreground">
                         {formatPrice(item.unitPrice)} each
                       </p>
-                      <p className="text-xl font-bold text-primary">
-                        {formatPrice(item.price)}
-                      </p>
+                      <p className="text-xl font-bold text-primary">{formatPrice(item.price)}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -259,17 +253,11 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between border-t pt-4">
                   <span className="text-lg font-semibold">Total</span>
-                  <span className="text-2xl font-bold text-primary">
-                    {formatPrice(cart.total)}
-                  </span>
+                  <span className="text-2xl font-bold text-primary">{formatPrice(cart.total)}</span>
                 </div>
               </CardContent>
               <CardFooter className="flex-col gap-3">
-                <Button
-                  className="w-full"
-                  size="lg"
-                  onClick={() => router.push('/checkout')}
-                >
+                <Button className="w-full" size="lg" onClick={() => router.push('/checkout')}>
                   Proceed to Checkout
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>

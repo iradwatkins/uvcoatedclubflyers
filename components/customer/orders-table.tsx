@@ -5,7 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Search, Eye, Download } from 'lucide-react';
@@ -95,7 +101,9 @@ export function OrdersTable({ orders, initialStatus, initialSearch }: OrdersTabl
         {orders.length === 0 ? (
           <div className="py-12 text-center text-muted-foreground">
             <p className="text-lg">No orders found</p>
-            <p className="text-sm">Try adjusting your filters or browse our products to create your first order</p>
+            <p className="text-sm">
+              Try adjusting your filters or browse our products to create your first order
+            </p>
             <Button asChild className="mt-4">
               <Link href="/products">Browse Products</Link>
             </Button>
@@ -149,9 +157,7 @@ export function OrdersTable({ orders, initialStatus, initialSearch }: OrdersTabl
 
                 <div>
                   <div className="text-sm font-medium md:hidden">Status</div>
-                  <Badge
-                    className={statusColors[order.status] || 'bg-gray-100 text-gray-800'}
-                  >
+                  <Badge className={statusColors[order.status] || 'bg-gray-100 text-gray-800'}>
                     {order.status.replace('_', ' ')}
                   </Badge>
                 </div>

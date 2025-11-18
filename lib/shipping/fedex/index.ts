@@ -9,7 +9,7 @@
  */
 
 // Main Provider
-export { FedExProviderEnhanced } from '../providers/fedex-enhanced'
+export { FedExProviderEnhanced } from '../providers/fedex-enhanced';
 
 // Services
 export {
@@ -27,7 +27,7 @@ export {
   recommendServices,
   type FedExService,
   type ServiceRequirements,
-} from './services'
+} from './services';
 
 // Box Packing
 export {
@@ -43,7 +43,7 @@ export {
   isPosterDimensions,
   recommendBoxForProduct,
   type FedExBox,
-} from './box-definitions'
+} from './box-definitions';
 
 export {
   packItems,
@@ -54,7 +54,7 @@ export {
   type PackingResult,
   type PackingOptions,
   type ShippingPackage,
-} from './box-packer'
+} from './box-packer';
 
 // Error Handling
 export {
@@ -64,7 +64,7 @@ export {
   DEFAULT_RETRY_CONFIG,
   withRetry,
   type RetryConfig,
-} from './error-handler'
+} from './error-handler';
 
 // SmartPost
 export {
@@ -74,7 +74,7 @@ export {
   getHubById,
   isStateServedBySmartPost,
   getAllServedStates,
-} from './smartpost-hubs'
+} from './smartpost-hubs';
 
 // Freight
 export {
@@ -90,7 +90,7 @@ export {
   getFreightClassForPrintProduct,
   isResidentialFreightAvailable,
   calculateResidentialFreightSurcharge,
-} from './freight'
+} from './freight';
 
 // TypeScript Types
 export type {
@@ -119,7 +119,7 @@ export type {
   FedExErrorCode,
   RateCalculationOptions,
   RateSurcharge,
-} from '../types'
+} from '../types';
 
 /**
  * Quick Start Example
@@ -164,7 +164,7 @@ export type {
  */
 
 // Version info
-export const FEDEX_MODULE_VERSION = '2.0.0'
-export const FEDEX_MODULE_DATE = '2025-10-15'
-export const FEDEX_MODULE_AUTHOR = 'Winston (Architect)'
-export const FEDEX_MODULE_BASED_ON = 'WooCommerce FedEx Plugin 4.4.6'
+export const FEDEX_MODULE_VERSION = '2.0.0';
+export const FEDEX_MODULE_DATE = '2025-10-15';
+export const FEDEX_MODULE_AUTHOR = 'Winston (Architect)';
+export const FEDEX_MODULE_BASED_ON = 'WooCommerce FedEx Plugin 4.4.6';

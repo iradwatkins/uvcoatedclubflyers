@@ -23,9 +23,7 @@ export function ProductPerformance({ products }: ProductPerformanceProps) {
             <TrendingUp className="h-5 w-5" />
             Top Performing Products
           </CardTitle>
-          <CardDescription>
-            Products ranked by revenue generated
-          </CardDescription>
+          <CardDescription>Products ranked by revenue generated</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -47,9 +45,7 @@ export function ProductPerformance({ products }: ProductPerformanceProps) {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">
-                        ${(product.revenue / 100).toFixed(2)}
-                      </p>
+                      <p className="font-semibold">${(product.revenue / 100).toFixed(2)}</p>
                       <p className="text-sm text-muted-foreground">
                         {percentage.toFixed(1)}% of total
                       </p>
@@ -104,7 +100,7 @@ export function ProductPerformance({ products }: ProductPerformanceProps) {
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Avg Revenue/Product</span>
               <span className="font-medium">
-                ${products.length > 0 ? ((totalRevenue / products.length) / 100).toFixed(2) : '0.00'}
+                ${products.length > 0 ? (totalRevenue / products.length / 100).toFixed(2) : '0.00'}
               </span>
             </div>
             <div className="flex justify-between text-sm">

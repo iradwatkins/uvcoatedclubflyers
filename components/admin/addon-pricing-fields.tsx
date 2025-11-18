@@ -100,9 +100,7 @@ export function AddonPricingFields({
               className="max-w-xs"
             />
           </div>
-          {errors.basePrice && (
-            <p className="text-sm text-red-500">{errors.basePrice}</p>
-          )}
+          {errors.basePrice && <p className="text-sm text-red-500">{errors.basePrice}</p>}
         </div>
       )}
 
@@ -127,9 +125,7 @@ export function AddonPricingFields({
           <p className="text-xs text-muted-foreground">
             Use positive values for markups (+20 = +20%) or negative values for discounts (-5 = -5%)
           </p>
-          {errors.percentage && (
-            <p className="text-sm text-red-500">{errors.percentage}</p>
-          )}
+          {errors.percentage && <p className="text-sm text-red-500">{errors.percentage}</p>}
         </div>
       )}
 
@@ -153,9 +149,7 @@ export function AddonPricingFields({
             />
             <span className="text-sm text-muted-foreground">per piece</span>
           </div>
-          {errors.perUnitPrice && (
-            <p className="text-sm text-red-500">{errors.perUnitPrice}</p>
-          )}
+          {errors.perUnitPrice && <p className="text-sm text-red-500">{errors.perUnitPrice}</p>}
         </div>
       )}
 
@@ -177,9 +171,7 @@ export function AddonPricingFields({
                 className="max-w-xs"
               />
             </div>
-            {errors.basePrice && (
-              <p className="text-sm text-red-500">{errors.basePrice}</p>
-            )}
+            {errors.basePrice && <p className="text-sm text-red-500">{errors.basePrice}</p>}
           </div>
 
           <div className="space-y-2">
@@ -198,13 +190,12 @@ export function AddonPricingFields({
               />
               <span className="text-sm text-muted-foreground">per piece</span>
             </div>
-            {errors.perUnitPrice && (
-              <p className="text-sm text-red-500">{errors.perUnitPrice}</p>
-            )}
+            {errors.perUnitPrice && <p className="text-sm text-red-500">{errors.perUnitPrice}</p>}
           </div>
 
           <p className="text-xs text-muted-foreground">
-            At least one price field is required for custom pricing. Formula will be: Base Price + (Per Unit Price × Quantity)
+            At least one price field is required for custom pricing. Formula will be: Base Price +
+            (Per Unit Price × Quantity)
           </p>
         </div>
       )}

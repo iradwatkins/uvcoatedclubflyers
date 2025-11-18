@@ -51,7 +51,9 @@ export function ProductDeleteDialog({
 
       if (!response.ok) {
         if (data.hasOrders) {
-          setError(`Cannot delete this product. It has ${data.orderCount} existing order(s). Consider archiving it instead.`);
+          setError(
+            `Cannot delete this product. It has ${data.orderCount} existing order(s). Consider archiving it instead.`
+          );
           return;
         }
 
@@ -93,7 +95,9 @@ export function ProductDeleteDialog({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <AlertTriangle className={`h-5 w-5 ${canDelete ? 'text-yellow-500' : 'text-red-500'}`} />
+              <AlertTriangle
+                className={`h-5 w-5 ${canDelete ? 'text-yellow-500' : 'text-red-500'}`}
+              />
               {canDelete ? 'Delete Product?' : 'Cannot Delete Product'}
             </AlertDialogTitle>
             <AlertDialogDescription>
@@ -106,7 +110,10 @@ export function ProductDeleteDialog({
               ) : (
                 <>
                   The product <strong>{productName}</strong> cannot be deleted because it has{' '}
-                  <strong>{orderCount} existing order{orderCount !== 1 ? 's' : ''}</strong>.
+                  <strong>
+                    {orderCount} existing order{orderCount !== 1 ? 's' : ''}
+                  </strong>
+                  .
                 </>
               )}
             </AlertDialogDescription>
@@ -115,8 +122,8 @@ export function ProductDeleteDialog({
           {!canDelete && (
             <Alert variant="destructive">
               <AlertDescription>
-                To delete this product, all existing orders using it must be removed first.
-                Consider archiving the product instead by setting its status to "Archived" in the edit page.
+                To delete this product, all existing orders using it must be removed first. Consider
+                archiving the product instead by setting its status to "Archived" in the edit page.
               </AlertDescription>
             </Alert>
           )}

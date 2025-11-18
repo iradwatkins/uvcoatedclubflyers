@@ -85,7 +85,7 @@ export function SavedPaymentSelector({
       }
 
       // Remove from local state
-      setPaymentMethods(prev => prev.filter(pm => pm.id !== id));
+      setPaymentMethods((prev) => prev.filter((pm) => pm.id !== id));
 
       // If this was the selected method, switch to new card
       if (selectedId === id.toString()) {
@@ -106,7 +106,7 @@ export function SavedPaymentSelector({
     if (value === 'new') {
       onSelectNew();
     } else {
-      const method = paymentMethods.find(pm => pm.id.toString() === value);
+      const method = paymentMethods.find((pm) => pm.id.toString() === value);
       if (method) {
         onSelectSaved(method);
       }
@@ -142,7 +142,7 @@ export function SavedPaymentSelector({
   }
 
   // Filter out expired cards
-  const activePaymentMethods = paymentMethods.filter(pm => !pm.isExpired);
+  const activePaymentMethods = paymentMethods.filter((pm) => !pm.isExpired);
   const hasActiveCards = activePaymentMethods.length > 0;
 
   return (
@@ -161,10 +161,8 @@ export function SavedPaymentSelector({
         <RadioGroup value={selectedId} onValueChange={handleSelectionChange}>
           {hasActiveCards && (
             <div className="space-y-3 mb-4">
-              <Label className="text-sm font-medium text-muted-foreground">
-                Saved Cards
-              </Label>
-              {activePaymentMethods.map(pm => (
+              <Label className="text-sm font-medium text-muted-foreground">Saved Cards</Label>
+              {activePaymentMethods.map((pm) => (
                 <div
                   key={pm.id}
                   className="flex items-center space-x-3 rounded-lg border p-4 hover:bg-accent/50 transition-colors"
@@ -218,21 +216,19 @@ export function SavedPaymentSelector({
                 <Plus className="h-5 w-5" />
                 <div>
                   <span className="font-medium">Use a new card</span>
-                  <p className="text-sm text-muted-foreground">
-                    Pay with a different card
-                  </p>
+                  <p className="text-sm text-muted-foreground">Pay with a different card</p>
                 </div>
               </Label>
             </div>
           </div>
         </RadioGroup>
 
-        {paymentMethods.some(pm => pm.isExpired) && (
+        {paymentMethods.some((pm) => pm.isExpired) && (
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              Some of your saved cards have expired and are not shown. You can manage
-              your payment methods in your account settings.
+              Some of your saved cards have expired and are not shown. You can manage your payment
+              methods in your account settings.
             </AlertDescription>
           </Alert>
         )}

@@ -4,18 +4,12 @@ import { prisma } from '@/lib/prisma';
 import PDFDocument from 'pdfkit';
 import { formatDate } from 'date-fns';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -39,18 +33,12 @@ export async function GET(
     });
 
     if (!order) {
-      return NextResponse.json(
-        { error: 'Order not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
     // Check authorization (user can only access their own orders, admins can access all)
     if (session.user.role !== 'admin' && order.userId !== session.user.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     // Create PDF
@@ -71,11 +59,7 @@ export async function GET(
       .moveDown(2);
 
     // Invoice Title
-    doc
-      .fontSize(24)
-      .font('Helvetica-Bold')
-      .text('INVOICE', { align: 'center' })
-      .moveDown(1);
+    doc.fontSize(24).font('Helvetica-Bold').text('INVOICE', { align: 'center' }).moveDown(1);
 
     // Order Information
     const startY = doc.y;
@@ -181,13 +165,19 @@ export async function GET(
     if (order.shippingRateAmount) {
       doc
         .text('Shipping:', 400, totalsY + 15)
-        .text(`$${(order.shippingRateAmount / 100).toFixed(2)}`, 450, totalsY + 15, { width: 100, align: 'right' });
+        .text(`$${(order.shippingRateAmount / 100).toFixed(2)}`, 450, totalsY + 15, {
+          width: 100,
+          align: 'right',
+        });
     }
 
     if (order.taxAmount) {
       doc
         .text('Tax:', 400, totalsY + 30)
-        .text(`$${(order.taxAmount / 100).toFixed(2)}`, 450, totalsY + 30, { width: 100, align: 'right' });
+        .text(`$${(order.taxAmount / 100).toFixed(2)}`, 450, totalsY + 30, {
+          width: 100,
+          align: 'right',
+        });
     }
 
     // Draw line before total
@@ -200,19 +190,17 @@ export async function GET(
       .fontSize(12)
       .font('Helvetica-Bold')
       .text('Total:', 400, totalsY + 50)
-      .text(`$${(order.totalAmount / 100).toFixed(2)}`, 450, totalsY + 50, { width: 100, align: 'right' });
+      .text(`$${(order.totalAmount / 100).toFixed(2)}`, 450, totalsY + 50, {
+        width: 100,
+        align: 'right',
+      });
 
     // Footer
     doc
       .fontSize(8)
       .font('Helvetica')
       .fillColor('#666666')
-      .text(
-        'Thank you for your business!',
-        50,
-        750,
-        { align: 'center', width: 500 }
-      )
+      .text('Thank you for your business!', 50, 750, { align: 'center', width: 500 })
       .text(
         'For questions about this invoice, please contact support@uvcoatedflyers.com',
         50,
@@ -238,9 +226,6 @@ export async function GET(
     });
   } catch (error) {
     console.error('Receipt generation error:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate receipt' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to generate receipt' }, { status: 500 });
   }
 }

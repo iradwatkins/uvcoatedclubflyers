@@ -39,9 +39,7 @@ export function SiteHeader({ user }: SiteHeaderProps) {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <span className="text-xl font-bold">UV</span>
             </div>
-            <span className="hidden font-bold sm:inline-block">
-              UV Coated Club Flyers
-            </span>
+            <span className="hidden font-bold sm:inline-block">UV Coated Club Flyers</span>
             <span className="font-bold sm:hidden">UV Flyers</span>
           </Link>
 
@@ -52,9 +50,7 @@ export function SiteHeader({ user }: SiteHeaderProps) {
                 key={link.href}
                 href={link.href}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
-                  isActive(link.href)
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
+                  isActive(link.href) ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
                 {link.label}
@@ -101,11 +97,7 @@ export function SiteHeader({ user }: SiteHeaderProps) {
               className="md:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
@@ -119,9 +111,7 @@ export function SiteHeader({ user }: SiteHeaderProps) {
                   key={link.href}
                   href={link.href}
                   className={`text-sm font-medium transition-colors hover:text-primary ${
-                    isActive(link.href)
-                      ? 'text-primary'
-                      : 'text-muted-foreground'
+                    isActive(link.href) ? 'text-primary' : 'text-muted-foreground'
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >

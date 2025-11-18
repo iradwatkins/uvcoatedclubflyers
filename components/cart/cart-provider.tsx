@@ -11,14 +11,7 @@ import { MiniCartTrigger } from './mini-cart-trigger';
  */
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const {
-    cart,
-    upsells,
-    updateQuantity,
-    removeItem,
-    addItem,
-    trackCartOpened,
-  } = useCart();
+  const { cart, upsells, updateQuantity, removeItem, addItem, trackCartOpened } = useCart();
 
   const openCart = () => {
     setIsCartOpen(true);
@@ -51,11 +44,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       {/* Mini Cart Trigger - Fixed position for quick access */}
       <div className="fixed bottom-6 right-6 z-30 md:hidden">
-        <MiniCartTrigger
-          itemCount={cart.itemCount}
-          total={cart.total}
-          onClick={openCart}
-        />
+        <MiniCartTrigger itemCount={cart.itemCount} total={cart.total} onClick={openCart} />
       </div>
     </>
   );

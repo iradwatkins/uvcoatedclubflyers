@@ -43,7 +43,7 @@ export default async function OrdersPage({
   query += ` ORDER BY o.created_at DESC`;
 
   // Fetch orders with filters using raw SQL
-  const orders = await prisma.$queryRawUnsafe(query) as any[];
+  const orders = (await prisma.$queryRawUnsafe(query)) as any[];
 
   // Calculate statistics using raw SQL
   const totalResult = await prisma.$queryRaw<[{ count: bigint }]>`
@@ -76,9 +76,7 @@ export default async function OrdersPage({
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">My Orders</h1>
-        <p className="text-muted-foreground">
-          View and track all your orders
-        </p>
+        <p className="text-muted-foreground">View and track all your orders</p>
       </div>
 
       {/* Stats Cards */}
@@ -110,7 +108,11 @@ export default async function OrdersPage({
       </div>
 
       {/* Orders Table with Filters */}
-      <OrdersTable orders={orders} initialStatus={searchParams.status} initialSearch={searchParams.search} />
+      <OrdersTable
+        orders={orders}
+        initialStatus={searchParams.status}
+        initialSearch={searchParams.search}
+      />
     </div>
   );
 }

@@ -78,7 +78,9 @@ export function CustomerSidebarNav({ user }: CustomerSidebarNavProps) {
         {/* Navigation */}
         <nav className="flex-1 space-y-1 p-4">
           {navItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname?.startsWith(item.href));
+            const isActive =
+              pathname === item.href ||
+              (item.href !== '/dashboard' && pathname?.startsWith(item.href));
             const Icon = item.icon;
 
             return (

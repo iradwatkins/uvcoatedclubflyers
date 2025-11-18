@@ -2,18 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -38,10 +32,7 @@ export async function PUT(
     `;
 
     if (existingAddress.length === 0) {
-      return NextResponse.json(
-        { error: 'Address not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Address not found' }, { status: 404 });
     }
 
     // If setting as default, unset other defaults
@@ -76,10 +67,7 @@ export async function PUT(
     });
   } catch (error) {
     console.error('Update address error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update address' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update address' }, { status: 500 });
   }
 }
 
@@ -91,10 +79,7 @@ export async function DELETE(
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -107,10 +92,7 @@ export async function DELETE(
     `;
 
     if (existingAddress.length === 0) {
-      return NextResponse.json(
-        { error: 'Address not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Address not found' }, { status: 404 });
     }
 
     // Delete address
@@ -125,9 +107,6 @@ export async function DELETE(
     });
   } catch (error) {
     console.error('Delete address error:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete address' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete address' }, { status: 500 });
   }
 }

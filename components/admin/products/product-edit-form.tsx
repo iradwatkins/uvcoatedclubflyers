@@ -8,7 +8,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, Save, ArrowLeft } from 'lucide-react';
@@ -59,7 +65,12 @@ interface ProductEditFormProps {
   turnarounds: Turnaround[];
 }
 
-export function ProductEditForm({ product, categories, paperStocks, turnarounds }: ProductEditFormProps) {
+export function ProductEditForm({
+  product,
+  categories,
+  paperStocks,
+  turnarounds,
+}: ProductEditFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -80,7 +91,9 @@ export function ProductEditForm({ product, categories, paperStocks, turnarounds 
   });
 
   // Product configuration state
-  const [quantities, setQuantities] = useState(product.quantities || '25,50,100,250,500,1000,2500,5000');
+  const [quantities, setQuantities] = useState(
+    product.quantities || '25,50,100,250,500,1000,2500,5000'
+  );
   const [sizes, setSizes] = useState(product.sizes || '4x6,5x7,6x9,8.5x11');
   const [selectedPaperStocks, setSelectedPaperStocks] = useState<number[]>(
     product.availablePaperStocks || []
@@ -88,7 +101,6 @@ export function ProductEditForm({ product, categories, paperStocks, turnarounds 
   const [selectedTurnarounds, setSelectedTurnarounds] = useState<number[]>(
     product.availableTurnarounds || []
   );
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +138,6 @@ export function ProductEditForm({ product, categories, paperStocks, turnarounds 
       setLoading(false);
     }
   };
-
 
   return (
     <form onSubmit={handleSubmit}>
@@ -278,9 +289,7 @@ export function ProductEditForm({ product, categories, paperStocks, turnarounds 
                   <Switch
                     id="isActive"
                     checked={formData.isActive}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, isActive: checked })
-                    }
+                    onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
                   />
                   <Label htmlFor="isActive" className="cursor-pointer">
                     Active (visible to customers)
@@ -291,9 +300,7 @@ export function ProductEditForm({ product, categories, paperStocks, turnarounds 
                   <Switch
                     id="isFeatured"
                     checked={formData.isFeatured}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, isFeatured: checked })
-                    }
+                    onCheckedChange={(checked) => setFormData({ ...formData, isFeatured: checked })}
                   />
                   <Label htmlFor="isFeatured" className="cursor-pointer">
                     Featured Product
@@ -361,12 +368,17 @@ export function ProductEditForm({ product, categories, paperStocks, turnarounds 
                           if (e.target.checked) {
                             setSelectedPaperStocks([...selectedPaperStocks, stock.id]);
                           } else {
-                            setSelectedPaperStocks(selectedPaperStocks.filter(id => id !== stock.id));
+                            setSelectedPaperStocks(
+                              selectedPaperStocks.filter((id) => id !== stock.id)
+                            );
                           }
                         }}
                         className="h-4 w-4"
                       />
-                      <Label htmlFor={`paper-stock-${stock.id}`} className="cursor-pointer font-normal">
+                      <Label
+                        htmlFor={`paper-stock-${stock.id}`}
+                        className="cursor-pointer font-normal"
+                      >
                         {stock.name}
                       </Label>
                     </div>
@@ -395,11 +407,16 @@ export function ProductEditForm({ product, categories, paperStocks, turnarounds 
                               setSelectedTurnarounds([...selectedTurnarounds, turnaround.id]);
                             }
                           } else {
-                            setSelectedTurnarounds(selectedTurnarounds.filter(id => id !== turnaround.id));
+                            setSelectedTurnarounds(
+                              selectedTurnarounds.filter((id) => id !== turnaround.id)
+                            );
                           }
                         }}
                         className="h-4 w-4"
-                        disabled={!selectedTurnarounds.includes(turnaround.id) && selectedTurnarounds.length >= 4}
+                        disabled={
+                          !selectedTurnarounds.includes(turnaround.id) &&
+                          selectedTurnarounds.length >= 4
+                        }
                       />
                       <Label
                         htmlFor={`turnaround-${turnaround.id}`}

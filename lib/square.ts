@@ -1,6 +1,6 @@
-import { SquareClient, SquareEnvironment, SquareError } from 'square'
-import * as crypto from 'crypto'
-import { SQUARE_CONFIG, PRICING } from '@/config/constants'
+import { SquareClient, SquareEnvironment, SquareError } from 'square';
+import * as crypto from 'crypto';
+import { SQUARE_CONFIG, PRICING } from '@/config/constants';
 
 // Initialize Square client
 const client = new SquareClient({
@@ -10,24 +10,24 @@ const client = new SquareClient({
     process.env.SQUARE_ENVIRONMENT === 'production'
       ? SquareEnvironment.Production
       : SquareEnvironment.Sandbox,
-} as any)
+} as any);
 
-export const SQUARE_LOCATION_ID = process.env.SQUARE_LOCATION_ID!
-export const SQUARE_APPLICATION_ID = process.env.SQUARE_APPLICATION_ID!
+export const SQUARE_LOCATION_ID = process.env.SQUARE_LOCATION_ID!;
+export const SQUARE_APPLICATION_ID = process.env.SQUARE_APPLICATION_ID!;
 
 // Create a payment link for checkout
 export async function createSquareCheckout(orderData: {
-  amount: number // Amount in cents
-  orderNumber: string
-  email: string
+  amount: number; // Amount in cents
+  orderNumber: string;
+  email: string;
   items?: Array<{
-    name: string
-    quantity: string
+    name: string;
+    quantity: string;
     basePriceMoney: {
-      amount: bigint
-      currency: string
-    }
-  }>
+      amount: bigint;
+      currency: string;
+    };
+  }>;
 }) {
   try {
     const { result } = await client.checkoutApi.createPaymentLink({
@@ -59,25 +59,25 @@ export async function createSquareCheckout(orderData: {
       prePopulatedData: {
         buyerEmail: orderData.email,
       },
-    })
+    });
 
     return {
       url: result.paymentLink?.url || '',
       id: result.paymentLink?.id || '',
       orderId: result.paymentLink?.orderId || '',
-    }
+    };
   } catch (error) {
     if (error instanceof SquareError) {
-      throw new Error(`Square checkout failed: ${error.message || 'Unknown error'}`)
+      throw new Error(`Square checkout failed: ${error.message || 'Unknown error'}`);
     }
-    throw error
+    throw error;
   }
 }
 
 // Retrieve payment details
 export async function retrieveSquarePayment(paymentId: string) {
   try {
-    const { result } = await client.paymentsApi.getPayment(paymentId)
+    const { result } = await client.paymentsApi.getPayment(paymentId);
 
     return {
       id: result.payment?.id,
@@ -87,12 +87,12 @@ export async function retrieveSquarePayment(paymentId: string) {
       orderId: result.payment?.orderId,
       customerId: result.payment?.customerId,
       createdAt: result.payment?.createdAt,
-    }
+    };
   } catch (error) {
     if (error instanceof SquareError) {
-      throw new Error(`Failed to retrieve payment: ${error.message || 'Unknown error'}`)
+      throw new Error(`Failed to retrieve payment: ${error.message || 'Unknown error'}`);
     }
-    throw error
+    throw error;
   }
 }
 
@@ -108,13 +108,13 @@ export async function createOrUpdateSquareCustomer(email: string, name?: string,
           },
         },
       },
-    })
+    });
 
-    let customerId: string | undefined
+    let customerId: string | undefined;
 
     if (searchResult.result.customers && searchResult.result.customers.length > 0) {
       // Update existing customer
-      customerId = searchResult.result.customers[0].id
+      customerId = searchResult.result.customers[0].id;
 
       await client.customersApi.updateCustomer(customerId, {
         emailAddress: email,
@@ -123,7 +123,7 @@ export async function createOrUpdateSquareCustomer(email: string, name?: string,
           familyName: name.split(' ').slice(1).join(' '),
         }),
         ...(phone && { phoneNumber: phone }),
-      })
+      });
     } else {
       // Create new customer
       const createResult = await client.customersApi.createCustomer({
@@ -133,9 +133,9 @@ export async function createOrUpdateSquareCustomer(email: string, name?: string,
           familyName: name.split(' ').slice(1).join(' '),
         }),
         ...(phone && { phoneNumber: phone }),
-      })
+      });
 
-      customerId = createResult.result.customer?.id
+      customerId = createResult.result.customer?.id;
     }
 
     return {
@@ -143,31 +143,31 @@ export async function createOrUpdateSquareCustomer(email: string, name?: string,
       email,
       name,
       phone,
-    }
+    };
   } catch (error) {
     if (error instanceof SquareError) {
-      throw new Error(`Customer operation failed: ${error.message || 'Unknown error'}`)
+      throw new Error(`Customer operation failed: ${error.message || 'Unknown error'}`);
     }
-    throw error
+    throw error;
   }
 }
 
 // Create an order in Square
 export async function createSquareOrder(orderData: {
-  referenceId: string
-  customerId?: string
+  referenceId: string;
+  customerId?: string;
   lineItems: Array<{
-    name: string
-    quantity: string
+    name: string;
+    quantity: string;
     basePriceMoney: {
-      amount: bigint
-      currency: string
-    }
-  }>
+      amount: bigint;
+      currency: string;
+    };
+  }>;
   taxes?: Array<{
-    name: string
-    percentage: string
-  }>
+    name: string;
+    percentage: string;
+  }>;
 }) {
   try {
     const { result } = await client.ordersApi.createOrder({
@@ -178,26 +178,26 @@ export async function createSquareOrder(orderData: {
         lineItems: orderData.lineItems,
         taxes: orderData.taxes,
       },
-    })
+    });
 
     return {
       id: result.order?.id || '',
       referenceId: result.order?.referenceId,
       totalMoney: result.order?.totalMoney?.amount ? Number(result.order.totalMoney.amount) : 0,
       state: result.order?.state,
-    }
+    };
   } catch (error) {
     if (error instanceof SquareError) {
-      throw new Error(`Order creation failed: ${error.message || 'Unknown error'}`)
+      throw new Error(`Order creation failed: ${error.message || 'Unknown error'}`);
     }
-    throw error
+    throw error;
   }
 }
 
 // Retrieve an order
 export async function retrieveSquareOrder(orderId: string) {
   try {
-    const { result } = await client.ordersApi.retrieveOrder(orderId)
+    const { result } = await client.ordersApi.retrieveOrder(orderId);
 
     return {
       id: result.order?.id,
@@ -206,12 +206,12 @@ export async function retrieveSquareOrder(orderId: string) {
       totalMoney: result.order?.totalMoney?.amount ? Number(result.order.totalMoney.amount) : 0,
       lineItems: result.order?.lineItems,
       fulfillments: result.order?.fulfillments,
-    }
+    };
   } catch (error) {
     if (error instanceof SquareError) {
-      throw new Error(`Failed to retrieve order: ${error.message || 'Unknown error'}`)
+      throw new Error(`Failed to retrieve order: ${error.message || 'Unknown error'}`);
     }
-    throw error
+    throw error;
   }
 }
 
@@ -232,19 +232,19 @@ export async function updateSquareFulfillment(
           },
         ],
       },
-    })
+    });
 
     return {
       success: true,
       order: result.order,
-    }
+    };
   } catch (error) {
     if (error instanceof SquareError) {
       throw new Error(
         `Fulfillment update failed: ${error.result.errors?.[0]?.detail || 'Unknown error'}`
-      )
+      );
     }
-    throw error
+    throw error;
   }
 }
 
@@ -253,18 +253,18 @@ export async function calculateOrderAmount(
   subtotal: number,
   taxRate: number = PRICING.SQUARE_TAX_RATE
 ): Promise<{
-  subtotal: number
-  tax: number
-  total: number
+  subtotal: number;
+  tax: number;
+  total: number;
 }> {
-  const tax = Math.round(subtotal * taxRate)
-  const total = subtotal + tax
+  const tax = Math.round(subtotal * taxRate);
+  const total = subtotal + tax;
 
   return {
     subtotal,
     tax,
     total,
-  }
+  };
 }
 
 // Verify webhook signature
@@ -274,10 +274,10 @@ export function verifyWebhookSignature(
   signatureKey: string,
   requestUrl: string
 ): boolean {
-  const hmac = crypto.createHmac(SQUARE_CONFIG.WEBHOOK_SIGNATURE_ALGORITHM, signatureKey)
-  hmac.update(requestUrl + body)
-  const hash = hmac.digest('base64')
-  return hash === signature
+  const hmac = crypto.createHmac(SQUARE_CONFIG.WEBHOOK_SIGNATURE_ALGORITHM, signatureKey);
+  hmac.update(requestUrl + body);
+  const hash = hmac.digest('base64');
+  return hash === signature;
 }
 
 // ============================================================================
@@ -289,18 +289,18 @@ export function verifyWebhookSignature(
  * This creates a card record associated with a customer for future payments
  */
 export async function saveCardOnFile(params: {
-  customerId: string
-  sourceId: string // Token from Square Web SDK
-  cardholderName?: string
+  customerId: string;
+  sourceId: string; // Token from Square Web SDK
+  cardholderName?: string;
   billingAddress?: {
-    addressLine1?: string
-    addressLine2?: string
-    locality?: string // City
-    administrativeDistrictLevel1?: string // State
-    postalCode?: string
-    country?: string // Two-letter country code (e.g., 'US')
-  }
-  verificationToken?: string // Optional 3DS verification token
+    addressLine1?: string;
+    addressLine2?: string;
+    locality?: string; // City
+    administrativeDistrictLevel1?: string; // State
+    postalCode?: string;
+    country?: string; // Two-letter country code (e.g., 'US')
+  };
+  verificationToken?: string; // Optional 3DS verification token
 }) {
   try {
     const { result } = await client.cardsApi.createCard({
@@ -312,7 +312,7 @@ export async function saveCardOnFile(params: {
         ...(params.verificationToken && { verificationToken: params.verificationToken }),
       },
       idempotencyKey: crypto.randomUUID(),
-    })
+    });
 
     return {
       id: result.card?.id || '',
@@ -325,12 +325,12 @@ export async function saveCardOnFile(params: {
       billingAddress: result.card?.billingAddress,
       enabled: result.card?.enabled || false,
       referenceId: result.card?.referenceId,
-    }
+    };
   } catch (error) {
     if (error instanceof SquareError) {
-      throw new Error(`Failed to save card: ${error.message || 'Unknown error'}`)
+      throw new Error(`Failed to save card: ${error.message || 'Unknown error'}`);
     }
-    throw error
+    throw error;
   }
 }
 
@@ -345,7 +345,7 @@ export async function listCustomerCards(customerId: string) {
       undefined, // includeDisabled
       undefined, // referenceId
       undefined // sortOrder
-    )
+    );
 
     return (
       result.cards?.map((card) => ({
@@ -358,12 +358,12 @@ export async function listCustomerCards(customerId: string) {
         cardholderName: card.cardholderName,
         enabled: card.enabled || false,
       })) || []
-    )
+    );
   } catch (error) {
     if (error instanceof SquareError) {
-      throw new Error(`Failed to list cards: ${error.message || 'Unknown error'}`)
+      throw new Error(`Failed to list cards: ${error.message || 'Unknown error'}`);
     }
-    throw error
+    throw error;
   }
 }
 
@@ -372,17 +372,17 @@ export async function listCustomerCards(customerId: string) {
  */
 export async function disableCard(cardId: string) {
   try {
-    const { result } = await client.cardsApi.disableCard(cardId)
+    const { result } = await client.cardsApi.disableCard(cardId);
 
     return {
       success: true,
       card: result.card,
-    }
+    };
   } catch (error) {
     if (error instanceof SquareError) {
-      throw new Error(`Failed to disable card: ${error.message || 'Unknown error'}`)
+      throw new Error(`Failed to disable card: ${error.message || 'Unknown error'}`);
     }
-    throw error
+    throw error;
   }
 }
 
@@ -390,13 +390,13 @@ export async function disableCard(cardId: string) {
  * Charge a saved card (Card on File payment)
  */
 export async function chargeCardOnFile(params: {
-  cardId: string
-  customerId: string
-  amount: number // Amount in cents
-  currency?: string
-  referenceId?: string // Order number or reference
-  note?: string
-  verificationToken?: string // Optional 3DS verification token
+  cardId: string;
+  customerId: string;
+  amount: number; // Amount in cents
+  currency?: string;
+  referenceId?: string; // Order number or reference
+  note?: string;
+  verificationToken?: string; // Optional 3DS verification token
 }) {
   try {
     const { result } = await client.paymentsApi.createPayment({
@@ -411,7 +411,7 @@ export async function chargeCardOnFile(params: {
       ...(params.referenceId && { referenceId: params.referenceId }),
       ...(params.note && { note: params.note }),
       ...(params.verificationToken && { verificationToken: params.verificationToken }),
-    })
+    });
 
     return {
       success: true,
@@ -421,12 +421,12 @@ export async function chargeCardOnFile(params: {
       orderId: result.payment?.orderId,
       customerId: result.payment?.customerId,
       createdAt: result.payment?.createdAt,
-    }
+    };
   } catch (error) {
     if (error instanceof SquareError) {
-      const errorMessage = error.result?.errors?.[0]?.detail || error.message || 'Unknown error'
-      throw new Error(`Failed to charge card: ${errorMessage}`)
+      const errorMessage = error.result?.errors?.[0]?.detail || error.message || 'Unknown error';
+      throw new Error(`Failed to charge card: ${errorMessage}`);
     }
-    throw error
+    throw error;
   }
 }

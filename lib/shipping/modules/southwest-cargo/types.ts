@@ -3,27 +3,27 @@
  */
 
 export interface WeightTier {
-  maxWeight: number
-  baseRate: number
-  additionalPerPound: number
-  handlingFee: number
+  maxWeight: number;
+  baseRate: number;
+  additionalPerPound: number;
+  handlingFee: number;
 }
 
 export interface ServiceRates {
-  weightTiers: WeightTier[]
+  weightTiers: WeightTier[];
 }
 
 export interface SouthwestCargoRates {
-  pickup: ServiceRates
-  dash: ServiceRates
+  pickup: ServiceRates;
+  dash: ServiceRates;
 }
 
 export interface Airport {
-  id: string
-  code: string
-  name: string
-  city: string
-  state: string
-  operator: string
-  isActive: boolean
+  id: string;
+  code: string;
+  name: string;
+  city: string;
+  state: string;
+  operator: string;
+  isActive: boolean;
 }

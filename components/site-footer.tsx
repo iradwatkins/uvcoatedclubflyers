@@ -16,7 +16,8 @@ export function SiteFooter() {
               <span className="font-bold">UV Coated Club Flyers</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Premium UV coated printing services for clubs, events, and businesses. Fast turnaround, exceptional quality.
+              Premium UV coated printing services for clubs, events, and businesses. Fast
+              turnaround, exceptional quality.
             </p>
             <div className="flex space-x-4">
               <Link href="#" className="text-muted-foreground hover:text-primary">
@@ -91,7 +92,11 @@ export function SiteFooter() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start space-x-3">
                 <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                <span>1300 Basswood Road<br />Schaumburg, IL 60173</span>
+                <span>
+                  1300 Basswood Road
+                  <br />
+                  Schaumburg, IL 60173
+                </span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="h-4 w-4 flex-shrink-0" />

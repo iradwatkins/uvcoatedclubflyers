@@ -4,18 +4,12 @@ import { prisma } from '@/lib/prisma';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -30,10 +24,7 @@ export async function GET(
     const file = files[0];
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'File not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'File not found' }, { status: 404 });
     }
 
     // Read file
@@ -49,9 +40,6 @@ export async function GET(
     });
   } catch (error) {
     console.error('File preview error:', error);
-    return NextResponse.json(
-      { error: 'Failed to preview file' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to preview file' }, { status: 500 });
   }
 }

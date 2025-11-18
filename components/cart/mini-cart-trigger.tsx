@@ -17,12 +17,7 @@ export function MiniCartTrigger({ itemCount, total, onClick }: MiniCartTriggerPr
   };
 
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={onClick}
-      className="relative gap-2"
-    >
+    <Button variant="outline" size="sm" onClick={onClick} className="relative gap-2">
       <div className="relative">
         <ShoppingCart className="h-5 w-5" />
         <AnimatePresence>
@@ -46,9 +41,7 @@ export function MiniCartTrigger({ itemCount, total, onClick }: MiniCartTriggerPr
       </div>
       <div className="hidden md:flex flex-col items-start">
         <span className="text-xs text-muted-foreground">Cart</span>
-        <span className="text-sm font-semibold leading-none">
-          {formatPrice(total)}
-        </span>
+        <span className="text-sm font-semibold leading-none">{formatPrice(total)}</span>
       </div>
     </Button>
   );

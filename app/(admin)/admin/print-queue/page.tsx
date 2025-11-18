@@ -3,7 +3,13 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Printer, Clock, CheckCircle2, Kanban } from 'lucide-react';
 
 async function getPrintJobs() {
@@ -61,9 +67,7 @@ export default async function PrintQueuePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="mb-2">Print Queue</h1>
-          <p className="text-muted-foreground">
-            Manage and track printing jobs
-          </p>
+          <p className="text-muted-foreground">Manage and track printing jobs</p>
         </div>
         <Link href="/admin/print-queue/kanban">
           <Button>
@@ -113,33 +117,22 @@ export default async function PrintQueuePage() {
       <Card>
         <CardHeader>
           <CardTitle>Print Jobs</CardTitle>
-          <CardDescription>
-            Orders ready for printing, sorted by oldest first
-          </CardDescription>
+          <CardDescription>Orders ready for printing, sorted by oldest first</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {jobs.map((job) => (
-              <div
-                key={job.id}
-                className="flex items-start justify-between rounded-lg border p-4"
-              >
+              <div key={job.id} className="flex items-start justify-between rounded-lg border p-4">
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-sm font-medium">
-                      {job.orderNumber}
-                    </span>
+                    <span className="font-mono text-sm font-medium">{job.orderNumber}</span>
                     {getPriorityBadge(job.createdAt)}
                     <Badge variant="secondary">{job.status}</Badge>
                   </div>
 
                   <div>
-                    <p className="text-sm font-medium">
-                      {job.user?.name || 'Guest'}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {job.user?.email}
-                    </p>
+                    <p className="text-sm font-medium">{job.user?.name || 'Guest'}</p>
+                    <p className="text-sm text-muted-foreground">{job.user?.email}</p>
                   </div>
 
                   <div className="space-y-1">
@@ -176,9 +169,7 @@ export default async function PrintQueuePage() {
 
             {jobs.length === 0 && (
               <div className="py-12 text-center">
-                <p className="text-muted-foreground">
-                  No jobs in the print queue
-                </p>
+                <p className="text-muted-foreground">No jobs in the print queue</p>
               </div>
             )}
           </div>

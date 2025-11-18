@@ -11,10 +11,7 @@ export interface UploadResult {
   url: string;
 }
 
-export async function uploadFile(
-  file: File,
-  userId: string
-): Promise<UploadResult> {
+export async function uploadFile(file: File, userId: string): Promise<UploadResult> {
   await ensureBucketExists();
 
   const fileExtension = path.extname(file.name);

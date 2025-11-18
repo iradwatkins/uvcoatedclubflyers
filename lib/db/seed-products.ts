@@ -9,7 +9,7 @@ export async function seedProducts() {
     slug: 'all-products',
     description: 'All available printing products',
     sortOrder: 0,
-    isActive: true
+    isActive: true,
   });
 
   console.log('✓ Created category:', allProductsCategory.name);
@@ -20,12 +20,13 @@ export async function seedProducts() {
   const flyerProduct = await prisma.product.create({
     sku: 'FLY-4X6-001',
     name: 'Flyer Pricing',
-    description: 'Premium UV coated club flyers - Professional quality printing with fast turnaround. Perfect for events, promotions, and marketing materials.',
-    basePrice: 175.00,
+    description:
+      'Premium UV coated club flyers - Professional quality printing with fast turnaround. Perfect for events, promotions, and marketing materials.',
+    basePrice: 175.0,
     status: 'active',
     productType: 'flyer',
     categoryId: allProductsCategory.id,
-    imageUrl: '/images/products/flyer-pricing-main.jpg'
+    imageUrl: '/images/products/flyer-pricing-main.jpg',
   });
 
   console.log('✓ Created product:', flyerProduct.name, `(ID: ${flyerProduct.id})`);
@@ -40,18 +41,18 @@ export async function seedProducts() {
       optionType: 'size',
       optionName: 'Size',
       optionValue: '4x6',
-      priceModifier: 0.00,
+      priceModifier: 0.0,
       isDefault: true,
-      sortOrder: 1
+      sortOrder: 1,
     },
     {
       productId: flyerProduct.id,
       optionType: 'size',
       optionName: 'Size',
       optionValue: '5x7',
-      priceModifier: 0.50,
+      priceModifier: 0.5,
       isDefault: false,
-      sortOrder: 2
+      sortOrder: 2,
     },
     {
       productId: flyerProduct.id,
@@ -60,7 +61,7 @@ export async function seedProducts() {
       optionValue: '8.5x11',
       priceModifier: 1.25,
       isDefault: false,
-      sortOrder: 3
+      sortOrder: 3,
     },
 
     // Coating Options
@@ -69,9 +70,9 @@ export async function seedProducts() {
       optionType: 'coating',
       optionName: 'Coating',
       optionValue: 'No Coating',
-      priceModifier: 0.00,
+      priceModifier: 0.0,
       isDefault: true,
-      sortOrder: 1
+      sortOrder: 1,
     },
     {
       productId: flyerProduct.id,
@@ -80,7 +81,7 @@ export async function seedProducts() {
       optionValue: 'Gloss Aqueous',
       priceModifier: 0.15,
       isDefault: false,
-      sortOrder: 2
+      sortOrder: 2,
     },
     {
       productId: flyerProduct.id,
@@ -89,7 +90,7 @@ export async function seedProducts() {
       optionValue: 'Matte Aqueous',
       priceModifier: 0.15,
       isDefault: false,
-      sortOrder: 3
+      sortOrder: 3,
     },
     {
       productId: flyerProduct.id,
@@ -98,16 +99,16 @@ export async function seedProducts() {
       optionValue: 'UV One Side',
       priceModifier: 0.25,
       isDefault: false,
-      sortOrder: 4
+      sortOrder: 4,
     },
     {
       productId: flyerProduct.id,
       optionType: 'coating',
       optionName: 'Coating',
       optionValue: 'UV Both Sides',
-      priceModifier: 0.40,
+      priceModifier: 0.4,
       isDefault: false,
-      sortOrder: 5
+      sortOrder: 5,
     },
 
     // Material Options
@@ -116,36 +117,36 @@ export async function seedProducts() {
       optionType: 'material',
       optionName: 'Material',
       optionValue: '9pt C2S Cardstock',
-      priceModifier: 0.00,
+      priceModifier: 0.0,
       isDefault: true,
-      sortOrder: 1
+      sortOrder: 1,
     },
     {
       productId: flyerProduct.id,
       optionType: 'material',
       optionName: 'Material',
       optionValue: '12pt C2S Cardstock',
-      priceModifier: 0.20,
+      priceModifier: 0.2,
       isDefault: false,
-      sortOrder: 2
+      sortOrder: 2,
     },
     {
       productId: flyerProduct.id,
       optionType: 'material',
       optionName: 'Material',
       optionValue: '14pt C2S Cardstock',
-      priceModifier: 0.30,
+      priceModifier: 0.3,
       isDefault: false,
-      sortOrder: 3
+      sortOrder: 3,
     },
     {
       productId: flyerProduct.id,
       optionType: 'material',
       optionName: 'Material',
       optionValue: '16pt C2S Cardstock',
-      priceModifier: 0.40,
+      priceModifier: 0.4,
       isDefault: false,
-      sortOrder: 4
+      sortOrder: 4,
     },
 
     // Sides Options
@@ -154,9 +155,9 @@ export async function seedProducts() {
       optionType: 'sides',
       optionName: 'Sides',
       optionValue: 'Single-Sided',
-      priceModifier: 0.00,
+      priceModifier: 0.0,
       isDefault: true,
-      sortOrder: 1
+      sortOrder: 1,
     },
     {
       productId: flyerProduct.id,
@@ -165,7 +166,7 @@ export async function seedProducts() {
       optionValue: 'Double-Sided',
       priceModifier: 0.35,
       isDefault: false,
-      sortOrder: 2
+      sortOrder: 2,
     },
 
     // Turnaround Options
@@ -174,41 +175,41 @@ export async function seedProducts() {
       optionType: 'turnaround',
       optionName: 'Turnaround',
       optionValue: '5-7 Days (Economy)',
-      priceModifier: 0.00,
+      priceModifier: 0.0,
       isDefault: true,
-      sortOrder: 1
+      sortOrder: 1,
     },
     {
       productId: flyerProduct.id,
       optionType: 'turnaround',
       optionName: 'Turnaround',
       optionValue: '2-4 Days (Fast)',
-      priceModifier: 15.00,
+      priceModifier: 15.0,
       isDefault: false,
-      sortOrder: 2
+      sortOrder: 2,
     },
     {
       productId: flyerProduct.id,
       optionType: 'turnaround',
       optionName: 'Turnaround',
       optionValue: 'Next Day (Faster)',
-      priceModifier: 35.00,
+      priceModifier: 35.0,
       isDefault: false,
-      sortOrder: 3
+      sortOrder: 3,
     },
     {
       productId: flyerProduct.id,
       optionType: 'turnaround',
       optionName: 'Turnaround',
       optionValue: 'Same Day (Crazy Fast)',
-      priceModifier: 75.00,
+      priceModifier: 75.0,
       isDefault: false,
-      sortOrder: 4
-    }
+      sortOrder: 4,
+    },
   ];
 
   await prisma.productOption.createMany({
-    data: options
+    data: options,
   });
 
   console.log(`✓ Created ${options.length} product options`);

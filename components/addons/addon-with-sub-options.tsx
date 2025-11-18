@@ -38,10 +38,7 @@ export interface AddOnWithSubOptionsProps {
 /**
  * Format price display for addon
  */
-const formatAddOnPrice = (
-  addOn: AddOn,
-  quantity?: number
-): string => {
+const formatAddOnPrice = (addOn: AddOn, quantity?: number): string => {
   const basePrice = parseFloat(addOn.base_price || '0');
   const perUnitPrice = parseFloat(addOn.per_unit_price || '0');
   const percentage = parseFloat(addOn.percentage || '0');
@@ -142,9 +139,7 @@ export function AddOnWithSubOptions({
               </Badge>
             )}
             {priceDisplay && (
-              <span className="text-xs text-muted-foreground font-medium">
-                {priceDisplay}
-              </span>
+              <span className="text-xs text-muted-foreground font-medium">{priceDisplay}</span>
             )}
             {hasSubOptions && isSelected && (
               <button
@@ -186,20 +181,21 @@ export function AddOnWithSubOptions({
                 Bundle Calculation:
               </p>
               <div className="space-y-1 text-sm text-blue-800 dark:text-blue-200">
-                <p>
-                  • Total Items: {quantity.toLocaleString()}
-                </p>
-                <p>
-                  • Items per Bundle: {subOptionValues['bundle_size']}
-                </p>
+                <p>• Total Items: {quantity.toLocaleString()}</p>
+                <p>• Items per Bundle: {subOptionValues['bundle_size']}</p>
                 <p className="font-medium">
                   • You'll receive: {Math.ceil(quantity / subOptionValues['bundle_size'])} bundles
                 </p>
                 {addOn.base_price && (
                   <p className="font-medium pt-2 border-t border-blue-200 dark:border-blue-800">
-                    Total Cost: ${(Math.ceil(quantity / subOptionValues['bundle_size']) * parseFloat(addOn.base_price)).toFixed(2)}
+                    Total Cost: $
+                    {(
+                      Math.ceil(quantity / subOptionValues['bundle_size']) *
+                      parseFloat(addOn.base_price)
+                    ).toFixed(2)}
                     <span className="text-xs font-normal ml-1">
-                      ({Math.ceil(quantity / subOptionValues['bundle_size'])} bundles × ${parseFloat(addOn.base_price).toFixed(2)}/bundle)
+                      ({Math.ceil(quantity / subOptionValues['bundle_size'])} bundles × $
+                      {parseFloat(addOn.base_price).toFixed(2)}/bundle)
                     </span>
                   </p>
                 )}

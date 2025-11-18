@@ -34,9 +34,7 @@ export function Navigation({ user, cartItemCount = 0 }: NavigationProps) {
         {/* Logo */}
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-primary">
-              UV Coated Club Flyers
-            </span>
+            <span className="text-2xl font-bold text-primary">UV Coated Club Flyers</span>
           </Link>
         </div>
 
@@ -48,9 +46,7 @@ export function Navigation({ user, cartItemCount = 0 }: NavigationProps) {
               href={item.href}
               className={cn(
                 'text-sm font-medium transition-colors hover:text-primary',
-                isActive(item.href)
-                  ? 'text-primary'
-                  : 'text-muted-foreground'
+                isActive(item.href) ? 'text-primary' : 'text-muted-foreground'
               )}
             >
               {item.name}
@@ -101,11 +97,7 @@ export function Navigation({ user, cartItemCount = 0 }: NavigationProps) {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
         </div>
       </nav>

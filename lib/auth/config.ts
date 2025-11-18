@@ -16,10 +16,9 @@ export const authConfig: NextAuthConfig = {
           return null;
         }
 
-        const result = await query(
-          'SELECT * FROM users WHERE email = $1',
-          [credentials.email as string]
-        );
+        const result = await query('SELECT * FROM users WHERE email = $1', [
+          credentials.email as string,
+        ]);
 
         const user = result.rows[0];
 
@@ -27,10 +26,7 @@ export const authConfig: NextAuthConfig = {
           return null;
         }
 
-        const isValidPassword = await compare(
-          credentials.password as string,
-          user.password_hash
-        );
+        const isValidPassword = await compare(credentials.password as string, user.password_hash);
 
         if (!isValidPassword) {
           return null;
@@ -80,10 +76,7 @@ export const authConfig: NextAuthConfig = {
       // Handle OAuth sign in
       if (account?.provider === 'google' && profile?.email) {
         // Check if user exists
-        const result = await query(
-          'SELECT * FROM users WHERE email = $1',
-          [profile.email]
-        );
+        const result = await query('SELECT * FROM users WHERE email = $1', [profile.email]);
 
         if (result.rows.length === 0) {
           // Create new user

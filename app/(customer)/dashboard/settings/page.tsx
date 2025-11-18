@@ -42,9 +42,7 @@ export default async function SettingsPage() {
     <div className="container mx-auto py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Account Settings</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your account settings and preferences
-        </p>
+        <p className="text-muted-foreground mt-2">Manage your account settings and preferences</p>
       </div>
 
       <SettingsTabs tabs={tabs} user={session.user} />

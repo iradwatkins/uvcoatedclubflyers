@@ -1,0 +1,30 @@
+.wcuf_link
+{
+	word-wrap: break-word;
+}
+.wcuf_image_preview_container 
+{
+	display: inline-block;
+	margin: 10px 10px 0px 0px;
+	max-width: 120px;
+	vertical-align: top;
+}
+.wcuf_file_name_text, .wcuf_file_quantity_text
+{
+	word-wrap: break-word;
+	display: block;
+	clear:both;
+}
+.wcuf_file_name_text
+{
+	font-weight: bold;
+}
+.wcuf_upload_field_title
+{
+	/* color: #96588a; */
+	margin-bottom:0px;
+}
+ul.wcuf_uploaded_files_list
+{
+	margin:0px;
+}

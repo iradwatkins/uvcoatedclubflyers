@@ -6,7 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -63,7 +69,9 @@ export function AddonForm({ mode, initialData, initialSubOptions = [] }: AddonFo
   const [uiComponent, setUiComponent] = useState(initialData?.uiComponent || 'checkbox');
   const [position, setPosition] = useState(initialData?.position || 'below_upload');
   const [displayOrder, setDisplayOrder] = useState(initialData?.displayOrder || 0);
-  const [isMandatoryDefault, setIsMandatoryDefault] = useState(initialData?.isMandatoryDefault || false);
+  const [isMandatoryDefault, setIsMandatoryDefault] = useState(
+    initialData?.isMandatoryDefault || false
+  );
   const [isEnabledDefault, setIsEnabledDefault] = useState(initialData?.isEnabledDefault || false);
   const [turnaroundDaysAdd, setTurnaroundDaysAdd] = useState(initialData?.turnaroundDaysAdd || 0);
   const [isActive, setIsActive] = useState(initialData?.isActive !== false);
@@ -101,7 +109,7 @@ export function AddonForm({ mode, initialData, initialSubOptions = [] }: AddonFo
     }
 
     // Pricing validation
-    if (pricingModel === 'FLAT' && (!basePrice && basePrice !== 0)) {
+    if (pricingModel === 'FLAT' && !basePrice && basePrice !== 0) {
       newErrors.basePrice = 'Base price is required for FLAT pricing';
     }
     if (pricingModel === 'PER_UNIT' && !perUnitPrice) {
@@ -110,7 +118,7 @@ export function AddonForm({ mode, initialData, initialSubOptions = [] }: AddonFo
     if (pricingModel === 'PERCENTAGE' && percentage === '') {
       newErrors.percentage = 'Percentage is required for PERCENTAGE pricing';
     }
-    if (pricingModel === 'CUSTOM' && (!basePrice && basePrice !== 0) && !perUnitPrice) {
+    if (pricingModel === 'CUSTOM' && !basePrice && basePrice !== 0 && !perUnitPrice) {
       newErrors.pricing = 'At least one price field is required for CUSTOM pricing';
     }
 
@@ -185,9 +193,7 @@ export function AddonForm({ mode, initialData, initialSubOptions = [] }: AddonFo
         subOptions: subOptionsPayload,
       };
 
-      const url = mode === 'create'
-        ? '/api/addons'
-        : `/api/addons/${initialData?.id}`;
+      const url = mode === 'create' ? '/api/addons' : `/api/addons/${initialData?.id}`;
 
       const method = mode === 'create' ? 'POST' : 'PUT';
 
@@ -317,14 +323,19 @@ export function AddonForm({ mode, initialData, initialSubOptions = [] }: AddonFo
               Pricing Model <span className="text-red-500">*</span>
             </Label>
             <Select value={pricingModel} onValueChange={setPricingModel}>
-              <SelectTrigger id="pricingModel" className={errors.pricingModel ? 'border-red-500' : ''}>
+              <SelectTrigger
+                id="pricingModel"
+                className={errors.pricingModel ? 'border-red-500' : ''}
+              >
                 <SelectValue placeholder="Select pricing model" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="FLAT">Flat Price (e.g., $5.00 for Digital Proof)</SelectItem>
                 <SelectItem value="PERCENTAGE">Percentage (e.g., +20% for Spot UV)</SelectItem>
                 <SelectItem value="PER_UNIT">Per Unit (e.g., $0.10/piece for Numbering)</SelectItem>
-                <SelectItem value="CUSTOM">Custom Formula (e.g., $20 + $0.01/piece for Perforation)</SelectItem>
+                <SelectItem value="CUSTOM">
+                  Custom Formula (e.g., $20 + $0.01/piece for Perforation)
+                </SelectItem>
               </SelectContent>
             </Select>
             {errors.pricingModel && <p className="text-sm text-red-500">{errors.pricingModel}</p>}
@@ -469,10 +480,7 @@ export function AddonForm({ mode, initialData, initialSubOptions = [] }: AddonFo
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <AddonSubOptionEditor
-            subOptions={subOptions}
-            onSubOptionsChange={setSubOptions}
-          />
+          <AddonSubOptionEditor subOptions={subOptions} onSubOptionsChange={setSubOptions} />
         </CardContent>
       </Card>
 

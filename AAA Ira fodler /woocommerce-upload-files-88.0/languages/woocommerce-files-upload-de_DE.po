@@ -1,0 +1,3480 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Upload Files\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-03 09:51+0200\n"
+"PO-Revision-Date: 2025-10-03 09:51+0200\n"
+"Last-Translator: \n"
+"Language-Team: Deutsch\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.7\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: upload-files.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Loco-Version: 2.5.3; wp-5.8.1\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SearchPathExcluded-1: classes/vendor\n"
+"X-Poedit-SearchPathExcluded-2: classes/acf\n"
+
+#: classes/admin/WCUF_CleanerPage.php:21
+msgid "Please select at least one order status!"
+msgstr "Bitte wählen Sie mindestens einen Bestellstatus aus!"
+
+#: classes/admin/WCUF_CleanerPage.php:22
+msgid "Date field cannot be empty!"
+msgstr "Datumsfeld darf nicht leer sein!"
+
+#: classes/admin/WCUF_CleanerPage.php:23
+msgid "Order to process: "
+msgstr "Auftrag zur Bearbeitung:"
+
+#: classes/admin/WCUF_CleanerPage.php:24
+msgid "Done!"
+msgstr "Fertig!"
+
+#: classes/admin/WCUF_CleanerPage.php:32
+msgid "Saved successfully!"
+msgstr "Erfolgreich gespeichert!"
+
+#: classes/admin/WCUF_CleanerPage.php:36 upload-files.php:390
+msgid "Cleaner"
+msgstr "Cleaner"
+
+#: classes/admin/WCUF_CleanerPage.php:37
+msgid ""
+"This tool allows you to delete uploaded files associated with orders older "
+"than a given date and belonging to the chosen statuses."
+msgstr ""
+"Mit diesem Tool können Sie hochgeladene Dateien löschen, die mit "
+"Bestellungen verknüpft sind, die älter als ein bestimmtes Datum sind und zu "
+"den ausgewählten Status gehören."
+
+#: classes/admin/WCUF_CleanerPage.php:40
+msgid "Order statuses"
+msgstr "Bestellstatus"
+
+#: classes/admin/WCUF_CleanerPage.php:41
+msgid "Select which order statuses has to be considered"
+msgstr "Wählen Sie aus, welcher Auftragsstatus berücksichtigt werden sollen"
+
+#: classes/admin/WCUF_CleanerPage.php:51
+msgid "Date"
+msgstr "Datum"
+
+#: classes/admin/WCUF_CleanerPage.php:52
+msgid ""
+"The tool will consider orders older than the selected date. Selected date "
+"will be included."
+msgstr ""
+"Das Tool berücksichtigt Bestellungen, die älter als das ausgewählte Datum "
+"sind. Das ausgewählte Datum wird berücksichtigt."
+
+#: classes/admin/WCUF_CleanerPage.php:59
+msgid "Processing"
+msgstr "Wird bearbeitet"
+
+#: classes/admin/WCUF_CleanerPage.php:70
+msgid "Start"
+msgstr "Starten"
+
+#: classes/admin/WCUF_CleanerPage.php:71
+msgid "Clean more"
+msgstr "Mehr bereinigen"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:28
+msgid "Individual ID:"
+msgstr "Individuelle ID:"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:104 classes/com/WCUF_Email.php:23
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:21
+#: template/email_admin_new_order_file_embedding.php:2
+msgid "Uploaded files"
+msgstr "Hochgeladene Dateien"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:128 upload-files.php:403
+msgid "Are you sure?"
+msgstr "Sind Sie sicher?"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:134
+#, fuzzy
+#| msgid ""
+#| "Here are listed uploaded files <strong>grouped per upload field</strong>."
+msgid ""
+"Here you find the uploaded files <strong>grouped per upload field</strong>."
+msgstr ""
+"Hier werden hochgeladene Dateien <strong>nach Upload-Feld gruppiert</strong> "
+"aufgelistet."
+
+#: classes/admin/WCUF_OrderDetailAddon.php:135
+#, fuzzy
+#| msgid ""
+#| "Note: Click \"Save Order\" button after one or more file has been delete "
+#| "in order to save changes."
+msgid ""
+"Click the order <a href=\"#woocommerce-order-actions\"><strong>Update</"
+"strong></a> button after one or more files has been deleted, rejected or "
+"approved in order to save changes."
+msgstr ""
+"Hinweis: Klicken Sie nach dem Löschen einer oder mehrerer Dateien auf die "
+"Schaltfläche \"Bestellung speichern\", um die Änderungen zu speichern."
+
+#: classes/admin/WCUF_OrderDetailAddon.php:136
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:42
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:23
+msgid "Customer hasn't uploaded any file...yet."
+msgstr "Der Kunde hat noch keine Datei hochgeladen."
+
+#: classes/admin/WCUF_OrderDetailAddon.php:157
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:61
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:34
+msgid "Multiple files"
+msgstr "Mehrere Dateien"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:173
+#: classes/admin/WCUF_OrderDetailAddon.php:194
+#: classes/admin/WCUF_OrderDetailAddon.php:196
+#: classes/admin/WCUF_OrderDetailAddon.php:221
+#: classes/admin/WCUF_OrderDetailAddon.php:263 classes/com/WCUF_Cart.php:249
+#: classes/com/WCUF_Cart.php:649 classes/com/WCUF_Cart.php:687
+#: classes/com/WCUF_Shortcode.php:338 classes/com/WCUF_Shortcode.php:388
+#: classes/com/WCUF_Shortcode.php:470 classes/com/WCUF_Shortcode.php:517
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:73
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:88
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:90
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:93
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:47
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:62
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:64
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:67
+#: template/admin_order_details_product_uploads_preview.php:29
+#: template/admin_order_details_product_uploads_preview.php:52
+#: template/email_product_uploads_preview.php:29
+#: template/email_product_uploads_preview.php:54
+#: template/uploads_details_sheet_page.php:190
+#: template/uploads_details_sheet_page.php:213
+#: template/uploads_details_sheet_page.php:279
+#: template/uploads_details_sheet_page.php:306
+msgid "Quantity: "
+msgstr "Menge:"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:204
+#: classes/admin/WCUF_OrderDetailAddon.php:236
+msgid "Approve or reject"
+msgstr ""
+
+#: classes/admin/WCUF_OrderDetailAddon.php:212 classes/com/WCUF_Html.php:452
+msgid "Feedback"
+msgstr "Rückmeldung"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:244
+#, fuzzy
+#| msgid "Feedback"
+msgid "feedback"
+msgstr "Rückmeldung"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:251
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:104
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:78
+msgid "User feedback"
+msgstr "Kundennachricht"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:258
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:111
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:85
+msgid "Media info"
+msgstr "Medieninformation"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:261
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:114
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:88
+msgid "Name: "
+msgstr "Name:"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:262
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:115
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:89
+msgid "Duration: "
+msgstr "Dauer:"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:273
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:125
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:99
+msgid "Download"
+msgstr "Download"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:277
+msgid "Note:"
+msgstr "Notiz:"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:277
+msgid "Only local files can be zipped."
+msgstr "Es können nur lokale Dateien gezippt werden."
+
+#: classes/admin/WCUF_OrderDetailAddon.php:278 classes/com/WCUF_Email.php:52
+#: template/email_admin_new_order_file_embedding.php:37
+msgid "Download as zip"
+msgstr "Als .zip herunterladen"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:281
+msgid "Delete file(s)"
+msgstr "Datei(en) löschen"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:287
+msgid "Download all files as zip"
+msgstr "Alle Dateien als .zip herunterladen"
+
+#: classes/admin/WCUF_OrderDetailAddon.php:289
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:109
+msgid "Uploads details sheet"
+msgstr "Upload-Details"
+
+#: classes/admin/WCUF_OrdersTableAddon.php:35
+#: classes/admin/WCUF_OrdersTableAddon.php:36
+msgid "Delete uploads"
+msgstr "Uploads löschen"
+
+#: classes/admin/WCUF_OrdersTableAddon.php:107
+#, php-format
+msgid "Order uploads deleted."
+msgid_plural "%s orders uploads deleted."
+msgstr[0] "Uploads der Bestellung wurden gelöscht."
+msgstr[1] "%s Uploads der Bestellungen wurden gelöscht."
+
+#: classes/admin/WCUF_OrdersTableAddon.php:123 classes/com/WCUF_Text.php:32
+msgid "View"
+msgstr "Anzeigen"
+
+#: classes/admin/WCUF_OrdersTableAddon.php:140
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:26
+msgid "Uploads"
+msgstr "Uploads"
+
+#: classes/admin/WCUF_OrdersTableAddon.php:141
+msgid "Details sheet"
+msgstr "Details"
+
+#: classes/admin/WCUF_OrdersTableAddon.php:155
+msgid "Orders with and without uploads"
+msgstr "Bestellungen mit und ohne Upload"
+
+#: classes/admin/WCUF_OrdersTableAddon.php:156
+msgid "Orders with uploads"
+msgstr "Bestellungen mit Uploads"
+
+#: classes/admin/WCUF_UploadFieldsConfiguratorPage.php:49
+msgid ""
+"Please fill all the required fields (the ones marked with a red asterisk) "
+"before switching tab."
+msgstr ""
+"Bitte füllen Sie alle Pflichtfelder (die mit einem roten Stern "
+"gekennzeichnet sind) aus, bevor Sie die Registerkarte wechseln."
+
+#: classes/admin/WCUF_UploadFieldsConfiguratorPage.php:98
+msgid "Are you sure you want to delete the field?"
+msgstr "Möchten Sie das Feld wirklich löschen?"
+
+#: classes/admin/WCUF_UploadFieldsConfiguratorPage.php:100
+#, fuzzy
+#| msgid "Loading, please wait..."
+msgid "Processing request, please wait..."
+msgstr "Lade, bitte warten..."
+
+#: classes/admin/WCUF_UploadFieldsConfiguratorPage.php:107
+msgid "Uploads options"
+msgstr "Upload-Optionen"
+
+#: classes/admin/WCUF_UploadFieldsConfiguratorPage.php:110
+msgid "Saved successfully."
+msgstr "Erfolgreich gespeichert."
+
+#: classes/admin/WCUF_UploadFieldsConfiguratorPage.php:115
+#: classes/admin/WCUF_UploadFieldsConfiguratorPage.php:120
+msgid "Add new Upload Field"
+msgstr "Neues Upload-Feld hinzufügen"
+
+#: classes/admin/WCUF_UploadFieldsConfiguratorPage.php:124
+msgid "Save Changes"
+msgstr "Änderungen speichern"
+
+#: classes/com/WCUF_Cart.php:73
+#, php-format
+msgid ""
+"Upload <strong>%s</strong> for product <strong>%s</strong> requires "
+"<strong>%s file(s)</strong>. You have uploaded: <strong>%s file(s)</strong>. "
+"Please upload the requested number of files."
+msgstr ""
+"Das Hochladen von <strong>%s</strong> für das Produkt <strong>%s</strong> "
+"erfordert <strong>%s Datei(en)</strong>. Sie haben hochgeladen: <strong>%s "
+"Datei(en)</strong>. Bitte laden Sie die gewünschte Anzahl von Dateien hoch."
+
+#: classes/com/WCUF_Cart.php:76
+#, php-format
+msgid "Upload <strong>%s</strong> for product <strong>%s</strong> requires"
+msgstr ""
+"Hochladen von <strong>%s</strong> für Produkt <strong>%s</strong> erfordert"
+
+#: classes/com/WCUF_Cart.php:77 classes/frontend/WCUF_CheckoutPage.php:277
+#, php-format
+msgid " a minimum of <strong>%s file(s)</strong>"
+msgstr " mindestens <strong>%s Datei(en)</strong>"
+
+#: classes/com/WCUF_Cart.php:78 classes/frontend/WCUF_CheckoutPage.php:278
+msgid " and "
+msgstr " und "
+
+#: classes/com/WCUF_Cart.php:79 classes/frontend/WCUF_CheckoutPage.php:279
+#, php-format
+msgid " a maximum of <strong>%s file(s)</strong>"
+msgstr " maximal <strong>%s Datei(en)</strong>"
+
+#: classes/com/WCUF_Cart.php:80 classes/frontend/WCUF_CheckoutPage.php:280
+msgid "Please upload all the required files."
+msgstr "Bitte laden Sie alle benötigten Dateien hoch."
+
+#: classes/com/WCUF_Cart.php:174
+#, php-format
+msgid "%s was removed from the cart because the uploaded files expired."
+msgstr ""
+
+#: classes/com/WCUF_Cart.php:582
+msgid "Product"
+msgstr "Produkt"
+
+#: classes/com/WCUF_Cart.php:646 classes/com/WCUF_Cart.php:719
+#: classes/com/WCUF_Cart.php:747
+msgid " Files"
+msgstr " Dateien"
+
+#: classes/com/WCUF_Cart.php:685
+msgid " per second "
+msgstr " pro Sekunde "
+
+#: classes/com/WCUF_Cart.php:974
+msgid "Invalid item(s) were removed from your cart."
+msgstr "Ungültige Artikel wurden aus Ihrem Warenkorb entfernt."
+
+#: classes/com/WCUF_Cron.php:17
+msgid "Once every 60 Minutes"
+msgstr "Einmal alle 60 Minuten"
+
+#: classes/com/WCUF_Email.php:17 classes/com/WCUF_Email.php:19
+msgid "User submitted new upload for order number: "
+msgstr ""
+"Der Benutzer hat einen neuen Upload für folgende Bestellnummer eingereicht: "
+
+#: classes/com/WCUF_Email.php:21
+msgid "Customer personal data"
+msgstr "Persönliche Kundendaten"
+
+#: classes/com/WCUF_Email.php:24
+#: template/email_admin_new_order_file_embedding.php:3
+#, fuzzy
+#| msgid "You can directly download by clicking on following link(s): "
+msgid "You can directly download by clicking on following links: "
+msgstr ""
+"Sie können direkt herunterladen, indem Sie auf die folgenden Links klicken: "
+
+#: classes/com/WCUF_Email.php:36 classes/com/WCUF_Email.php:38
+#: template/email_admin_new_order_file_embedding.php:19
+msgid "(Quantity: "
+msgstr "(Menge: "
+
+#: classes/com/WCUF_Email.php:43
+#: template/email_admin_new_order_file_embedding.php:27
+msgid "User feedback: "
+msgstr "Kundennachricht: "
+
+#: classes/com/WCUF_Email.php:83
+msgid "Something needs your attention..."
+msgstr "Etwas braucht Ihre Aufmerksamkeit..."
+
+#: classes/com/WCUF_Email.php:104
+#, php-format
+msgid "Order #%s has been updated"
+msgstr ""
+
+#: classes/com/WCUF_File.php:169 classes/com/WCUF_File.php:243
+msgid "You are not authorized"
+msgstr "Sie sind nicht berechtigt"
+
+#: classes/com/WCUF_File.php:267
+msgid "Error opening the file"
+msgstr "Fehler beim Öffnen der Datei"
+
+#: classes/com/WCUF_File.php:508
+#, fuzzy
+#| msgid " size is incorrect or its type is not allowed.  "
+msgid "File type is not allowed, Validation error:"
+msgstr " Dateigröße oder -typ ist nicht erlaubt. "
+
+#: classes/com/WCUF_File.php:510
+#, fuzzy
+#| msgid " size is incorrect or its type is not allowed.  "
+msgid "File type is not allowed."
+msgstr " Dateigröße oder -typ ist nicht erlaubt. "
+
+#: classes/com/WCUF_File.php:534
+msgid "Final upload check: file not allowed. Deleting it. Validation errors: "
+msgstr ""
+
+#: classes/com/WCUF_File.php:547
+msgid "Final upload check: file not allowed. Deleting it"
+msgstr ""
+
+#: classes/com/WCUF_File.php:944
+#, fuzzy, php-format
+#| msgid ""
+#| "During the connection to the gDrive service.<br><br>Please check the "
+#| "<strong>Api key</strong>.<br><br>Error for file:%s<br><br><strong>DON'T "
+#| "WORRY!</strong> files have been stored in the local <i>wp-content/wcuf</"
+#| "i> folder :)<br>You can normally manage the uploaded file(s) via the "
+#| "admin <a href='%s'>order edit page</a>."
+msgid ""
+"During the connection to the Google Drive service.<br><br>Please check the "
+"<strong>Auth data</strong>.<br><br>Error for file:%s<br><br><strong>DON'T "
+"WORRY!</strong> files have been stored in the local <i>wp-content/wcuf</i> "
+"folder :)<br>You can normally manage the uploaded file(s) via the admin <a "
+"href='%s'>order edit page</a>."
+msgstr ""
+"Während der Verbindung zum gDrive-Dienst.<br><br>Bitte überprüfen Sie den "
+"<strong>Api-Schlüssel</strong>.<br><br>Fehler bei Datei:"
+"%s<br><br><strong>DON' T SORRY!</strong> Dateien wurden im lokalen <i>wp-"
+"content/wcuf</i> Ordner gespeichert :)<br>Normalerweise können Sie die "
+"hochgeladene(n) Datei(en) über den Admin <a href=' "
+"%s'>Bestellbearbeitungsseite</a>."
+
+#: classes/com/WCUF_File.php:984
+#, php-format
+msgid ""
+"During the connection to the S3 service.<br><br>Please check the "
+"<strong>Access key id</strong>, the <strong>Secret access key id</strong> "
+"and the <strong>Bucket region</strong><br><br>Error for file:"
+"%s<br><br><strong>DON'T WORRY!</strong> files have been stored in the local "
+"<i>wp-content/wcuf</i> folder :)<br>You can normally manage the uploaded "
+"file(s) via the admin <a href='%s'>order edit page</a>."
+msgstr ""
+"Während der Verbindung zum S3-Dienst.<br><br>Bitte überprüfen Sie die "
+"<strong>Zugriffsschlüssel-ID</strong>, die <strong>Geheime Zugriffsschlüssel-"
+"ID</strong> und die <strong>Bucket-Region</strong ><br><br>Fehler bei Datei:"
+"%s<br><br><strong>Keine Sorge!</strong> Dateien wurden im lokalen <i>wp-"
+"content/wcuf</i> gespeichert Ordner :)<br>Sie können die hochgeladene(n) "
+"Datei(en) normalerweise über die Admin-<a "
+"href='%s'>Bestellbearbeitungsseite</a> verwalten."
+
+#: classes/com/WCUF_File.php:1025
+#, php-format
+msgid ""
+"During the file(s) upload process on Dropbox, the plugin got this error:"
+"<br><br>%s<br><br>For file:%s<br><br><strong>DON'T WORRY!</strong> files "
+"have been stored in the local <i>wp-content/wcuf</i> folder :)<br>You can "
+"normally manage the uploaded file(s) via the admin <a href='%s'>order edit "
+"page</a>."
+msgstr ""
+"Beim Hochladen der Datei(en) auf Dropbox hat das Plugin diesen Fehler "
+"erhalten:<br><br>%s<br><br>Für Datei:%s<br><br><strong>Mach dir keinen Kopf! "
+"</strong> Dateien wurden im lokalen <i>wp-content/wcuf</i> Ordner "
+"gespeichert :)<br>Normalerweise können Sie die hochgeladene(n) Datei(en) "
+"über den Admin <a href='%s' verwalten. >Bestellseite bearbeiten</a>."
+
+#: classes/com/WCUF_Globals.php:32
+msgid ""
+"Upload cannot be performed!<br/>Please use a fully HTML5 compliant browser "
+"like Chrome or FireFox."
+msgstr ""
+"Upload nicht möglich!<br/>Bitte verwenden Sie einen vollständig HTML5-"
+"kompatiblen Browser wie Chrome oder FireFox."
+
+#: classes/com/WCUF_Html.php:42
+msgid "Invalid security token"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:53
+msgid "Template restored!"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:67
+#, php-format
+msgid "<h4>Uploaded files:</h4> %s"
+msgstr "<h4>Hochgeladene Dateien:</h4> %s"
+
+#: classes/com/WCUF_Html.php:68
+#, fuzzy
+#| msgid ""
+#| "By default one upload field will be displayed per product. Disabling the "
+#| "following options will display one upload field per order."
+msgid ""
+"By default, one upload field will be displayed per product. Disabling the "
+"following options will display one upload field per order."
+msgstr ""
+"Standardmäßig wird pro Produkt ein Upload-Feld angezeigt. Wenn Sie die "
+"folgenden Optionen deaktivieren, wird ein Upload-Feld pro Bestellung "
+"angezeigt."
+
+#: classes/com/WCUF_Html.php:69
+#, fuzzy
+#| msgid ""
+#| "<strong>NOTE:</strong> By default the upload field will appear "
+#| "<strong>AFTER</strong> the product has been added to the cart. Enabling "
+#| "this option the following features will not work: <ol><li><strong>Max "
+#| "number of uploadable files depends on product quantity</strong></li></ol>"
+msgid ""
+"<strong>NOTE:</strong> By default, the upload field will appear "
+"<strong>AFTER</strong> the product has been added to the cart. Enabling this "
+"option the following features will not work: <ol><li><strong>Max number of "
+"uploadable files depends on product quantity</strong></li></ol>"
+msgstr ""
+"<strong>HINWEIS:</strong> Standardmäßig erscheint das Upload-Feld "
+"<strong>nachdem</strong> das Produkt in den Warenkorb gelegt wurde. Wenn Sie "
+"diese Option aktivieren, funktionieren die folgenden Funktionen nicht: "
+"<ol><li><strong>Die maximale Anzahl hochladbarer Dateien hängt von der "
+"Produktmenge ab</strong></li></ol>"
+
+#: classes/com/WCUF_Html.php:70
+msgid "Select products (search typing product name, id or sku code)"
+msgstr "Produkte auswählen (Suche nach Produktname, ID oder SKU-Code)"
+
+#: classes/com/WCUF_Html.php:71
+msgid ""
+"Select attribute (search by typing the attribute name, for example \"Size\". "
+"The selector will display the available values for that attribute, for "
+"example \"Small, Medium, Large\")"
+msgstr ""
+"Attribut auswählen (Suche durch Eingabe des Attributnamens, zum Beispiel "
+"\"Größe\". Der Selektor zeigt die verfügbaren Werte für dieses Attribut an, "
+"zum Beispiel \"Klein, Mittel, Groß\")"
+
+#: classes/com/WCUF_Html.php:72
+#, fuzzy
+#| msgid ""
+#| "In case the field is visible before adding the product to the cart, the "
+#| "plugin will try to hide <strong>Add to cart button</strong> (with some "
+#| "themes not 100% WooCommerce compliant this feature could not work). In "
+#| "case the product has been added to the cart, the plugin will <strong>try "
+#| "to deny the page leaving</strong> until all the required files have not "
+#| "been uploaded <strong>propting a warning dialog</strong> (some browsers, "
+#| "for security reasons, may not permit this denial)."
+msgid ""
+"In case the field is visible before adding the product to the cart, the "
+"plugin will try to hide <strong>Add to cart button</strong> (with some "
+"themes not 100% WooCommerce compliant this feature could not work). In case "
+"the product has been added to the cart, the plugin will <strong>try to deny "
+"the page leaving</strong> until all the required files have not been "
+"uploaded <strong>prompting a warning dialog</strong> (some browsers, for "
+"security reasons, may not permit this denial)."
+msgstr ""
+"Falls das Feld sichtbar ist, bevor das Produkt in den Warenkorb gelegt wird, "
+"versucht das Plugin, die <strong>In den Warenkorb hinzufügen-Schaltfläche</"
+"strong> auszublenden (bei einigen Themes, die nicht 100% WooCommerce-"
+"kompatibel sind, funktioniert das eventuell nicht). Falls das Produkt dem "
+"Warenkorb hinzugefügt wurde, versucht das Plugin <strong>das Verlassen der "
+"Seite zu verweigern</strong>, bis alle erforderlichen Dateien hochgeladen "
+"wurden <strong>ein Warndialogfeld wird eingeblendet</strong> (einige "
+"Browser , aus Sicherheitsgründen diese Verweigerung möglicherweise nicht "
+"zulassen)."
+
+#: classes/com/WCUF_Html.php:74
+msgid "Visible for every product"
+msgstr "Sichtbar für jedes Produkt"
+
+#: classes/com/WCUF_Html.php:75
+msgid "Visible for the selected categories, products and attributes"
+msgstr "Sichtbar für die ausgewählten Kategorien, Produkte und Attribute"
+
+#: classes/com/WCUF_Html.php:76
+msgid ""
+"Visible for the selected categories (and all its children), products and "
+"attributes"
+msgstr ""
+"Sichtbar für die ausgewählten Kategorien (und Subkategorien), Produkte und "
+"Attribute"
+
+#: classes/com/WCUF_Html.php:77
+msgid "Hidden for the selected categories, products and attribute"
+msgstr "Ausgeblendet für die ausgewählten Kategorien, Produkte und Attribute"
+
+#: classes/com/WCUF_Html.php:78
+msgid ""
+"Hidden for the selected categories (and all its children), products and "
+"attributes"
+msgstr ""
+"Ausgeblendet für die ausgewählten Kategorien (und Subkategorien), Produkte "
+"und Attribute"
+
+#: classes/com/WCUF_Html.php:85
+#, php-format
+msgid ""
+"The plugin has detected that your host has the following PHP settings: "
+"<strong>post_max_size</strong> value is <strong>%s</strong> and "
+"<strong>upload_max_filesize</strong> value is <strong>%s</strong>. The first "
+"setting means that <strong>the sum of the files sizes you are trying to "
+"upload cannot be greater than %s</strong> and the <strong>single uploadable "
+"file size cannot be greater than %s</strong> (min value between "
+"post_max_size and upload_max_filesize)."
+msgstr ""
+"Das Plugin hat erkannt, dass Ihr Host die folgenden PHP-Einstellungen hat: "
+"<strong>post_max_size</strong> Wert ist <strong>%s</strong> und "
+"<strong>upload_max_filesize</strong> Wert ist <strong>%s</ strong>. Die "
+"erste Einstellung bedeutet, dass <strong>die Summe der Dateigrößen, die Sie "
+"hochladen möchten, nicht größer als %s sein darf</strong> und die "
+"<strong>einzelne hochzuladende Dateigröße nicht größer als %s sein darf</"
+"strong> (min Wert zwischen post_max_size und upload_max_filesize)."
+
+#: classes/com/WCUF_Html.php:132
+msgid "Drag to sort"
+msgstr "Zum Sortieren ziehen"
+
+#: classes/com/WCUF_Html.php:136
+#, php-format
+msgid "ID: %d - Title"
+msgstr "ID: %d - Titel"
+
+#: classes/com/WCUF_Html.php:139
+msgid "Type the upload field title. HTML code is not allowed."
+msgstr ""
+"Geben Sie den Titel des Upload-Felds ein. HTML-Code ist nicht zulässig."
+
+#: classes/com/WCUF_Html.php:140
+msgid "Options"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:144
+msgid "Duplicate field*"
+msgstr "Doppeltes Feld*"
+
+#: classes/com/WCUF_Html.php:144
+msgid "Duplication available only after the field has been saved"
+msgstr "Duplizieren erst möglich, nachdem das Feld gespeichert wurde"
+
+#: classes/com/WCUF_Html.php:145
+msgid ""
+"The latest saved version will be the one that will be duplicated. So before "
+"duplicating a field, save it before."
+msgstr ""
+"Die zuletzt gespeicherte Version wird dupliziert. Bevor Sie also ein Feld "
+"duplizieren, speichern Sie es vorher."
+
+#: classes/com/WCUF_Html.php:148 classes/com/WCUF_Html.php:1421
+msgid "Delete field"
+msgstr "Feld löschen"
+
+#: classes/com/WCUF_Html.php:151
+msgid "VISIBILITY:"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:157
+#, fuzzy
+#| msgid ""
+#| "(product visibility can be customized through the <strong>Visibility tab "
+#| "-> Product/Category restriction</strong> area)"
+msgid ""
+"(Visibility can be customized through the <strong>Visibility tab -> Product/"
+"Category restriction</strong> area)"
+msgstr ""
+"(Die Produktsichtbarkeit kann über den Bereich <strong>Sichtbarkeit -> "
+"Bereich Produkt-/Kategorieeinschränkung</strong> angepasst werden)"
+
+#: classes/com/WCUF_Html.php:177
+msgid "Categories:"
+msgstr "Kategorien:"
+
+#: classes/com/WCUF_Html.php:188
+msgid "Products:"
+msgstr "Produkte:"
+
+#: classes/com/WCUF_Html.php:199
+msgid "Atrtibutes:"
+msgstr "Eigenschaften:"
+
+#: classes/com/WCUF_Html.php:212
+msgid "General "
+msgstr "Allgemein "
+
+#: classes/com/WCUF_Html.php:213
+msgid "Visibility "
+msgstr "Sichtbarkeit "
+
+#: classes/com/WCUF_Html.php:214
+msgid "Media"
+msgstr "Medien"
+
+#: classes/com/WCUF_Html.php:215
+msgid "Price, fee & discount"
+msgstr "Preis, Gebühr & Rabatt"
+
+#: classes/com/WCUF_Html.php:220
+msgid "Description, file types restriction, etc."
+msgstr "Beschreibung, Dateitypbeschränkung usw."
+
+#: classes/com/WCUF_Html.php:224
+msgid "Description (HTML code permitted)"
+msgstr "Beschreibung (HTML-Code erlaubt)"
+
+#: classes/com/WCUF_Html.php:225
+msgid "Description (you can use HTML code)"
+msgstr "Beschreibung (Sie können HTML-Code verwenden)"
+
+#: classes/com/WCUF_Html.php:227
+#, fuzzy
+#| msgid "Hide description after an upload has been completed?"
+msgid "Hide description after an upload has been completed"
+msgstr "Beschreibung ausblenden, nachdem ein Upload abgeschlossen wurde?"
+
+#: classes/com/WCUF_Html.php:235
+msgid "Allowed file type(s)"
+msgstr "Zulässige Dateitypen"
+
+#: classes/com/WCUF_Html.php:236
+msgid "File type(s), ex: .jpg,.bmp,.png leave empty to accept all file types. "
+msgstr ""
+"Dateityp(en), zB: .jpg,.bmp,.png leer lassen, um alle Dateitypen zu "
+"akzeptieren. "
+
+#: classes/com/WCUF_Html.php:239
+#, fuzzy
+#| msgid "In case of Variable Product, display full product name?"
+msgid "In case of Variable Product, display full product name"
+msgstr "Bei variablen Produkten den vollständigen Produktnamen anzeigen?"
+
+#: classes/com/WCUF_Html.php:240
+msgid ""
+"Product name and variant details will be displayed. If unchecked will be "
+"displayed only product name"
+msgstr ""
+"Produktname und Variantendetails werden angezeigt. Wenn nicht ausgewählt, "
+"wird nur der Produktname angezeigt"
+
+#: classes/com/WCUF_Html.php:246
+#, fuzzy
+#| msgid ""
+#| "In case of Simple Product with attributes, display them next to the "
+#| "product name?"
+msgid ""
+"In case of Simple Product with attributes, display them next to the product "
+"name"
+msgstr ""
+"Im Falle eines einfachen Produkts mit Attributen...diese neben dem "
+"Produktnamen anzeigen?"
+
+#: classes/com/WCUF_Html.php:247
+msgid "This option will display product attributes next to the product name"
+msgstr "Diese Option zeigt Produktattribute neben dem Produktnamen an"
+
+#: classes/com/WCUF_Html.php:255
+msgid "Text to show after the upload has been completed (HTML code permitted)"
+msgstr ""
+"Text, der nach Abschluss des Uploads angezeigt werden soll (HTML-Code "
+"zulässig)"
+
+#: classes/com/WCUF_Html.php:256
+#, fuzzy
+#| msgid ""
+#| "Permitted shortcodes:<br/><strong>[file_name]</strong> to display the "
+#| "file(s) name list. For every file is also reported the additional cost "
+#| "(only if any of the extra costs option have been enabled)<br/"
+#| "><strong>[file_name_no_cost]</strong> like previous but without costs "
+#| "display<br/><strong>[file_name_with_media_preview]</strong> like "
+#| "[file_name] shotcode with image preview (if the file(s) is a jpg/png) and "
+#| "audio files (mp3/wav) <br/"
+#| "><strong>[file_name_with_media_preview_no_cost]</strong> like previous "
+#| "shotcode without costs display<br/><strong>[image_preview_list]</strong> "
+#| "to display image preview (if the file(s) is a jpg/png) and audio files "
+#| "(mp3/wav) <br/><strong>[uploaded_files_num]</strong> to display total "
+#| "number of the uploaded files (useful if the \"Multiple files upload\" "
+#| "option has been enabled)<br/><strong>[additional_costs]</strong> (tax "
+#| "excluded) to display the sum of the additional costs of all the uploaded "
+#| "files"
+msgid ""
+"Permitted shortcodes:<br/><strong>[file_name]</strong> to display the "
+"file(s) name list. For every file is also reported the additional cost (only "
+"if any of the extra costs option have been enabled)<br/"
+"><strong>[file_name_no_cost]</strong> like previous but without costs "
+"display<br/><strong>[file_name_with_media_preview]</strong> like [file_name] "
+"shotcode with image preview (if the file(s) is a jpg/png) and audio files "
+"(mp3/wav) <br/><strong>[file_name_with_media_preview_no_cost]</strong> like "
+"previous shotcode without costs display<br/><strong>[image_preview_list]</"
+"strong> to display image preview (if the file(s) is a jpg/png) and audio "
+"files (mp3/wav) <br/><strong>[pdf_total_pag_num]</strong> to display the "
+"total number of uploaded pages (total sum of all files)<br/"
+"><strong>[uploaded_files_num]</strong> to display total number of the "
+"uploaded files (useful if the \"Multiple files upload\" option has been "
+"enabled)<br/><strong>[additional_costs]</strong> (tax excluded) to display "
+"the sum of the additional costs of all the uploaded files"
+msgstr ""
+"Zulässige Shortcodes:<br/><strong>[file_name]</strong> zum Anzeigen der "
+"Dateinamenliste. Für jede Datei werden auch die Zusatzkosten gemeldet (nur "
+"wenn eine der Zusatzkostenoptionen aktiviert wurde)<br/"
+"><strong>[file_name_no_cost]</strong> wie vorher, aber ohne Kostenanzeige<br/"
+"><strong>[ file_name_with_media_preview]</strong> wie [file_name] Shotcode "
+"mit Bildvorschau (wenn die Datei(en) eine jpg/png ist) und Audiodateien (mp3/"
+"wav) <br/><strong>[file_name_with_media_preview_no_cost]</strong> wie "
+"vorheriger Shotcode ohne Kosten anzeigen<br/><strong>[image_preview_list]</"
+"strong> zum Anzeigen der Bildvorschau (wenn die Datei(en) eine jpg/png ist) "
+"und Audiodateien (mp3/wav) <br/><strong >[uploaded_files_num]</strong> zum "
+"Anzeigen der Gesamtzahl der hochgeladenen Dateien (nützlich, wenn die Option "
+"\"Mehrere Dateien hochladen\" aktiviert wurde)<br/"
+"><strong>[additional_costs]</strong> (ohne Steuern) zum Anzeigen die Summe "
+"der zusätzlichen Kosten aller hochgeladenen Dateien"
+
+#: classes/com/WCUF_Html.php:257
+msgid ""
+"This message is displayed after file description only if a file have been "
+"uploaded (you can use HTML code)"
+msgstr ""
+"Diese Meldung wird nach der Dateibeschreibung nur angezeigt, wenn eine Datei "
+"hochgeladen wurde (Sie können HTML-Code verwenden)"
+
+#: classes/com/WCUF_Html.php:261
+#, fuzzy
+#| msgid "Can user delete file(s)?"
+msgid "Can user delete files?"
+msgstr "Kann der Kunde Datei(en) löschen?"
+
+#: classes/com/WCUF_Html.php:262 classes/com/WCUF_Html.php:281
+#, fuzzy
+#| msgid ""
+#| "This options ill not take effect on Order details and Thank you pages"
+msgid ""
+"Valid only for the Order details and the Thank you/Order confirmation pages"
+msgstr ""
+"Diese Optionen wirken sich nicht auf Bestelldetails und Dankesseiten aus"
+
+#: classes/com/WCUF_Html.php:280
+msgid "Can user download uploaded file?"
+msgstr "Kann der Kunde hochgeladene Dateien herunterladen?"
+
+#: classes/com/WCUF_Html.php:286
+#, fuzzy
+#| msgid "Hide extra info?"
+msgid "Hide extra info"
+msgstr "Zusätzliche Informationen ausblenden?"
+
+#: classes/com/WCUF_Html.php:287
+msgid ""
+"This option will hide the info related to the min/max files, min/max width, "
+"min/max DPI, etc"
+msgstr ""
+"Diese Option blendet die Informationen zu den Min/Max-Dateien, Min/Max-"
+"Breite, Min/Max-DPI usw. aus"
+
+#: classes/com/WCUF_Html.php:294
+#, fuzzy
+#| msgid "Custom CSS"
+msgid "Custom CSS id"
+msgstr "Custom CSS"
+
+#: classes/com/WCUF_Html.php:295
+msgid "Assign a custom CSS id to the upload field"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:297
+msgid "css-id"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:302
+msgid "Global options override"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:305
+#, fuzzy
+#| msgid ""
+#| "Exclude field from the \"Product cart quantity as number of uploaded "
+#| "files\" option"
+msgid ""
+"Exclude field from the \"Product cart quantity as number of uploaded files\""
+msgstr ""
+"Feld aus der Option \"Warenkorbmenge als Anzahl hochgeladener Dateien\" "
+"ausschließen"
+
+#: classes/com/WCUF_Html.php:313
+#, fuzzy
+#| msgid "To upload:"
+msgid "Toggle auto upload"
+msgstr "Hochzuladen:"
+
+#: classes/com/WCUF_Html.php:314
+msgid ""
+"Toggles the auto upload option that can be set via the main Options menu. "
+"This option works only for the product, cart and checkout pages."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:322
+#, fuzzy
+#| msgid "Single/Multiple files upload & size restriction"
+msgid "Single/Multiple files upload management"
+msgstr "Upload einzelner/mehrerer Dateien und Größenbeschränkungen"
+
+#: classes/com/WCUF_Html.php:325
+#, fuzzy
+#| msgid "Enable multiple files upload per single field?"
+msgid "Enable multiple files upload per single field"
+msgstr "Hochladen mehrerer Dateien pro einzelnem Feld aktivieren?"
+
+#: classes/com/WCUF_Html.php:335
+msgid "Min file size (MB) limit"
+msgstr "Begrenzung der Mindestdateigröße (MB)"
+
+#: classes/com/WCUF_Html.php:336 classes/com/WCUF_Html.php:341
+msgid ""
+"Leave 0 for no limits. In case of multiple files upload field, each uploaded "
+"file size cannot be greater of the specified value."
+msgstr ""
+"Lassen Sie 0 für keine Grenzen. Bei einem Upload-Feld für mehrere Dateien "
+"darf die Größe jeder hochgeladenen Datei nicht größer als der angegebene "
+"Wert sein."
+
+#: classes/com/WCUF_Html.php:340
+msgid "Max file size (MB) limit"
+msgstr "Begrenzung der maximalen Dateigröße (MB)"
+
+#: classes/com/WCUF_Html.php:348
+#, fuzzy
+#| msgid "Disable images preview before uploading (jpg/png)?"
+msgid "Disable images preview before uploading (jpg/png)"
+msgstr "Bildervorschau vor dem Hochladen deaktivieren (jpg/png)?"
+
+#: classes/com/WCUF_Html.php:349
+msgid "No image preview will be displayed ofr jpg/png files"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:356
+#, fuzzy
+#| msgid "Cart quantity restriction"
+msgid "Disable quantity selector"
+msgstr "Beschränkung der Warenkorbmenge"
+
+#: classes/com/WCUF_Html.php:357
+msgid ""
+"This option overrides the global <strong>Quantity selection</strong> option "
+"you find in the main Options menu. If that option is enabled, you can "
+"disable it for this field via this option."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:366
+msgid "Size sum restriction"
+msgstr "Beschränkung der Gesamtgröße"
+
+#: classes/com/WCUF_Html.php:368
+msgid "Min file sizes sum limit (MB)"
+msgstr "Summenlimit für minimale Dateigrößen (MB)"
+
+#: classes/com/WCUF_Html.php:369
+msgid ""
+"Leave 0 for no limit. The <strong>sum of the uploaded file sizes</strong> "
+"cannot be lesser of the following value."
+msgstr ""
+"Lassen Sie 0 für keine Begrenzung. Die <strong>Summe der hochgeladenen "
+"Dateigrößen</strong> darf den folgenden Wert nicht unterschreiten."
+
+#: classes/com/WCUF_Html.php:373
+msgid "Max file sizes sum limit (MB)"
+msgstr "Summenlimit für maximale Dateigrößen (MB)"
+
+#: classes/com/WCUF_Html.php:374
+msgid ""
+"Leave 0 for no limit. The <strong>sum of the uploaded file sizes</strong> "
+"cannot be greater of than following value."
+msgstr ""
+"Lassen Sie 0 für keine Begrenzung. Die <strong>Summe der hochgeladenen "
+"Dateigrößen</strong> darf den folgenden Wert nicht überschreiten."
+
+#: classes/com/WCUF_Html.php:381
+msgid "Quantity restriction"
+msgstr "Mengenbeschränkung"
+
+#: classes/com/WCUF_Html.php:382
+msgid ""
+"Click on the <i>Upload files Configurator -> Options</i> menu to enable the "
+"special <strong>Enable quantity selection</strong> option that allows your "
+"customers to specify a quantity value for each uploaded file."
+msgstr ""
+"Klicken Sie auf das Menü <i>Dateien hochladen -> Optionen</i>, um die "
+"spezielle Option <strong>Mengenauswahl aktivieren</strong> zu aktivieren, "
+"mit der Ihre Kunden einen Menge für jede hochgeladene Datei angeben können."
+
+#: classes/com/WCUF_Html.php:384
+msgid "Minimum number of files that can uploaded"
+msgstr "Mindestanzahl von Dateien, die hochgeladen werden können"
+
+#: classes/com/WCUF_Html.php:385 classes/com/WCUF_Html.php:390
+msgid ""
+"Leave 0 for no limits. This option will work <strong>ONLY</strong> if the "
+"<strong>Multiple files upload per single field</strong> option has been "
+"enabled"
+msgstr ""
+"Lassen Sie 0 für keine Grenzen. Diese Option funktioniert <strong>NUR</"
+"strong>, wenn die Option <strong>Mehrere Dateien pro einzelnem Feld</strong> "
+"aktiviert wurde"
+
+#: classes/com/WCUF_Html.php:389
+msgid "Max number of files that can be uploaded"
+msgstr "Maximale Anzahl von Dateien, die hochgeladen werden können"
+
+#: classes/com/WCUF_Html.php:396
+msgid "Cart quantity restriction"
+msgstr "Beschränkung der Warenkorbmenge"
+
+#: classes/com/WCUF_Html.php:398
+#, fuzzy
+#| msgid "Max number of uploadable files  depends on product quantity?"
+msgid "Max number of uploadable files depends on product quantity"
+msgstr ""
+"Die maximale Anzahl hochladbarer Dateien hängt von der Produktmenge ab?"
+
+#: classes/com/WCUF_Html.php:399 classes/com/WCUF_Html.php:407
+msgid ""
+"This option will work <strong>ONLY</strong> if the <strong>Upload per "
+"product</strong> and the <strong>Multiple files upload per single field</"
+"strong> options have been enabled and <strong>if the field is not displayed "
+"BEFORE adding items to the cart</strong> on product page"
+msgstr ""
+"Diese Option funktioniert <strong>NUR</strong>, wenn die Optionen "
+"<strong>Upload pro Produkt</strong> und <strong>Upload mehrerer Dateien pro "
+"einzelnem Feld</strong> aktiviert wurden und <strong>wenn das Feld nicht "
+"angezeigt wird, BEVOR Artikel auf der Produktseite in den Warenkorb gelegt "
+"werden</strong>"
+
+#: classes/com/WCUF_Html.php:406
+#, fuzzy
+#| msgid "Minimum number of uploadable files  depends on product quantity?"
+msgid "Minimum number of uploadable files  depends on product quantity"
+msgstr "Die Mindestanzahl hochladbarer Dateien hängt von der Produktmenge ab?"
+
+#: classes/com/WCUF_Html.php:418
+msgid "File approval"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:420
+msgid "Enable file approval mechanism"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:421
+msgid ""
+"The files submitted by the customer can be approved/rejected by the admin."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:429
+msgid "Enable the file approval mechanism at the \"upload field\" level"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:430
+msgid ""
+"This means that the admin will approve/reject in bulk all the uploaded files "
+"associated with this upload field instead of approving/rejecting each "
+"uploaded files."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:439
+msgid "Mandatory"
+msgstr "Verpflichtend"
+
+#: classes/com/WCUF_Html.php:441
+msgid "Upload is required"
+msgstr "Hochladen ist erforderlich"
+
+#: classes/com/WCUF_Html.php:447
+#, fuzzy
+#| msgid ""
+#| "In case you want to <strong>give the possibility to leave the page</"
+#| "strong>, go to the <strong>Options</strong> menu and under <strong>Allow "
+#| "user to leave page in case of required field</strong> section select "
+#| "<strong>Yes</strong> option."
+msgid ""
+"In case you want to <strong>give the possibility to leave the page</strong>, "
+"go to the <strong>Options</strong> menu and under <strong>Allow user to "
+"leave the page in case of required field</strong> section select "
+"<strong>Yes</strong> option."
+msgstr ""
+"Falls Sie <strong>die Möglichkeit geben möchten, die Seite zu verlassen</"
+"strong>, gehen Sie zum Menü <strong>Optionen</strong> und unter dem "
+"Abschnitt <strong>Benutzern erlauben, die Seite zu verlassen, falls ein "
+"Pflichtfeld vorhanden ist</strong > wählen Sie die Option <strong>Ja</"
+"strong>."
+
+#: classes/com/WCUF_Html.php:448
+msgid "NOTE"
+msgstr "HINWEIS"
+
+#: classes/com/WCUF_Html.php:448
+#, fuzzy
+#| msgid ""
+#| "if enabling this option your are experiencing multiple \"Add to cart\" "
+#| "buttons issues on your shop page, go to the Option menu and set False for "
+#| "the Disable View Button option"
+msgid ""
+"if enabling this option you are experiencing multiple \"Add to cart\" "
+"buttons issues on your shop page, go to the Options menu and set False for "
+"the Disable View Button option"
+msgstr ""
+"Wenn Sie diese Option aktivieren und Probleme mehreren Schaltflächen \"In "
+"den Warenkorb\" haben, gehen Sie zum Optionsmenü und setzen Sie \"False\" "
+"für die Option Ansichtsschaltfläche deaktivieren"
+
+#: classes/com/WCUF_Html.php:455
+#, fuzzy
+#| msgid "Add a text field where the customer can enter a text?"
+msgid "Add a text field where the customer can enter a text"
+msgstr "Ein Textfeld hinzufügen, in das der Kunde einen Text eingeben kann?"
+
+#: classes/com/WCUF_Html.php:456
+msgid "<strong>NOTE</strong>: text must be inserted before files are uploaded."
+msgstr ""
+"<strong>HINWEIS</strong>: Text muss eingefügt werden, bevor Dateien "
+"hochgeladen werden."
+
+#: classes/com/WCUF_Html.php:464 classes/com/WCUF_Html.php:847
+msgid "Label"
+msgstr "Label"
+
+#: classes/com/WCUF_Html.php:467
+msgid "Description (HTML  allowed)"
+msgstr "Beschreibung (HTML zulässig)"
+
+#: classes/com/WCUF_Html.php:472
+#, fuzzy
+#| msgid "Is required?"
+msgid "Required"
+msgstr "Erforderlich?"
+
+#: classes/com/WCUF_Html.php:477
+msgid "Max input characters"
+msgstr "Maximale Eingabezeichen"
+
+#: classes/com/WCUF_Html.php:478 classes/com/WCUF_Html.php:1125
+#: classes/com/WCUF_Html.php:1130 classes/com/WCUF_Html.php:1142
+#: classes/com/WCUF_Html.php:1147 classes/com/WCUF_Html.php:1188
+#: classes/com/WCUF_Html.php:1193
+msgid "Leave 0 for no limits."
+msgstr "Lassen Sie 0 für keine Grenzen."
+
+#: classes/com/WCUF_Html.php:484
+msgid "Disclaimer"
+msgstr "Haftungsausschluss"
+
+#: classes/com/WCUF_Html.php:487
+#, fuzzy
+#| msgid "Add a disclaimer checkbox?"
+msgid "Add a disclaimer checkbox"
+msgstr "Kontrollkästchen für Haftungsausschluss hinzufügen?"
+
+#: classes/com/WCUF_Html.php:494
+msgid "Disclameir checkbox label"
+msgstr "Label des Kontrollkästchens \"Disclaimer\""
+
+#: classes/com/WCUF_Html.php:495
+msgid ""
+"HTML accepted. Ex: \"I have read and accepted the &lt;a href=\"www.link.to/"
+"disclaimer\"&gt; Disclaimer &lt;/a&gt;\"."
+msgstr ""
+"HTML akzeptiert. Beispiel: \"Ich habe den &lt;a href=\"www.link.to/"
+"disclaimer\"&gt; Haftungsausschluss &lt;/a&gt; gelesen und akzeptiert\"."
+
+#: classes/com/WCUF_Html.php:499
+msgid "Notifications & emails"
+msgstr "Benachrichtigungen und E-Mails"
+
+#: classes/com/WCUF_Html.php:503
+msgid ""
+"Send a special notification email to the admin when an upload is completed"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:511
+#, fuzzy
+#| msgid "Attach uploaded file to admin notification email?"
+msgid "Attach the uploaded files to the admin notification email"
+msgstr ""
+"Hochgeladene Datei an die Benachrichtigungs-E-Mail des Administrators "
+"anhängen?"
+
+#: classes/com/WCUF_Html.php:512
+msgid ""
+"This option works only if admin notification email option has been enabled "
+"and for files stored locally."
+msgstr ""
+"Diese Option funktioniert nur, wenn die E-Mail-Option für "
+"Administratorbenachrichtigungen aktiviert wurde und Dateien lokal "
+"gespeichert werden."
+
+#: classes/com/WCUF_Html.php:512
+msgid ""
+"<strong>Note:</strong> some some server email provider will not receive "
+"emails with attachments bigger than 10MB (<a target=\"_blank\" "
+"href=\"https://www.outlook-apps.com/maximum-email-size/\">Gmail: 25MB, "
+"Outlook and Hotmail 10MB,...</a>)"
+msgstr ""
+"<strong>Hinweis:</strong> Einige E-Mail-Anbieter empfangen keine E-Mails mit "
+"Anhängen, die größer als 10 MB sind (<a target=\"_blank\" href=\"https://"
+"www.outlook-apps.com/maximum-email- Größe/\">Gmail: 25MB, Outlook und "
+"Hotmail 10MB,...</a>)"
+
+#: classes/com/WCUF_Html.php:519
+#, fuzzy
+#| msgid "Recipient(s)"
+msgid "Recipients"
+msgstr "Empfänger"
+
+#: classes/com/WCUF_Html.php:520
+msgid "Leave empty to send notifications to site admin email address."
+msgstr ""
+"Lassen Sie das Feld leer, um Benachrichtigungen an die E-Mail-Adresse des "
+"Site-Administrators zu senden."
+
+#: classes/com/WCUF_Html.php:521
+msgid ""
+"You can insert multiple email addresses comma separated, ex.: "
+"'admin@site.com, managment@site.com'"
+msgstr ""
+"Sie können mehrere E-Mail-Adressen durch Kommas getrennt einfügen, z. B.: "
+"'admin@site.com, managment@site.com'"
+
+#: classes/com/WCUF_Html.php:525
+#, fuzzy
+#| msgid "Attach files to \"New Order\" email?"
+msgid "Attach files to the \"New Order\" email sent to the admin"
+msgstr "Dateien an E-Mail \"Neue Bestellung\" anhängen?"
+
+#: classes/com/WCUF_Html.php:526
+#, fuzzy
+#| msgid ""
+#| "This option requires to enable the previous <strong>Notify admin via "
+#| "email when customer completed the upload</strong> option, the files to be "
+#| "stored locally (<strong>Options</strong> -> <strong>Cloud storage "
+#| "service</strong> -> <strong>Locally</strong>) and that in the "
+#| "<strong>Options</strong> -> <strong>Checkout - Files to order association "
+#| "method</strong> the <strong>When the order is placed</strong> option to "
+#| "be selected."
+msgid ""
+"This option requires the files to be stored locally (<strong>Options</"
+"strong> -> <strong>Cloud storage service</strong> -> <strong>Locally</"
+"strong>) and that in the <strong>Options</strong> -> <strong>Checkout - "
+"Files to order association method</strong> the <strong>When the order is "
+"placed</strong> option to be selected."
+msgstr ""
+"Diese Option erfordert, dass die vorherige Option <strong>Administrator per "
+"E-Mail benachrichtigen, wenn der Kunde den Upload abgeschlossen hat</strong> "
+"aktiviert ist, die Dateien lokal gespeichert werden (<strong>Optionen</"
+"strong> -> <strong>Cloud-Speicherdienst</strong> strong> -> <strong>Lokal</"
+"strong>) und dass in den <strong>Optionen</strong> -> <strong>Zur Kasse - "
+"Zuordnungsmethode für Dateien zu Bestellungen</strong> die "
+"Option<strong>Wenn die Bestellung aufgegeben wird </strong> ausgewählt wurde."
+
+#: classes/com/WCUF_Html.php:533
+#, fuzzy
+#| msgid "Attach files to \"New Order\" email?"
+msgid "Embed file links into the new \"New Order\" email sent to the admin"
+msgstr "Dateien an E-Mail \"Neue Bestellung\" anhängen?"
+
+#: classes/com/WCUF_Html.php:534
+#, fuzzy
+#| msgid ""
+#| "This option requires to enable the previous <strong>Notify admin via "
+#| "email when customer completed the upload</strong> option, the files to be "
+#| "stored locally (<strong>Options</strong> -> <strong>Cloud storage "
+#| "service</strong> -> <strong>Locally</strong>) and that in the "
+#| "<strong>Options</strong> -> <strong>Checkout - Files to order association "
+#| "method</strong> the <strong>When the order is placed</strong> option to "
+#| "be selected."
+msgid ""
+"The uploaded files links will be embedded into the new order email according "
+"to the following setting. This requires the <strong>Options</strong> -> "
+"<strong>Checkout - Files to order association method</strong> the "
+"<strong>When the order is placed</strong> option to be selected"
+msgstr ""
+"Diese Option erfordert, dass die vorherige Option <strong>Administrator per "
+"E-Mail benachrichtigen, wenn der Kunde den Upload abgeschlossen hat</strong> "
+"aktiviert ist, die Dateien lokal gespeichert werden (<strong>Optionen</"
+"strong> -> <strong>Cloud-Speicherdienst</strong> strong> -> <strong>Lokal</"
+"strong>) und dass in den <strong>Optionen</strong> -> <strong>Zur Kasse - "
+"Zuordnungsmethode für Dateien zu Bestellungen</strong> die "
+"Option<strong>Wenn die Bestellung aufgegeben wird </strong> ausgewählt wurde."
+
+#: classes/com/WCUF_Html.php:536
+msgid "No"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:537
+msgid "Before product table"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:538
+msgid "After product table"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:542
+msgid "Disable file approval/rejection notification"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:543
+msgid ""
+"By default, if you have enabled the File approval option, the plugin will "
+"send a notification to the customer every time the status of a file changes. "
+"You can disable the notification via this option."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:549 classes/com/WCUF_Html.php:815
+#: classes/com/WCUF_Html.php:1202 classes/com/WCUF_Html.php:1417
+msgid "Go to top"
+msgstr "Nach oben"
+
+#: classes/com/WCUF_Html.php:556
+msgid "Pages & form"
+msgstr "Seiten & Formular"
+
+#: classes/com/WCUF_Html.php:560
+#, fuzzy
+#| msgid "Display field on Checkout page?"
+msgid "Display field on the Checkout page"
+msgstr "Feld auf der Checkout-Seite anzeigen?"
+
+#: classes/com/WCUF_Html.php:562
+msgid ""
+"<span class=\"wcuf-warning-text\">WARNING:</span> You are using WooCommerce "
+"blocks instead of the Checkout template ([woocommerce_checkout]). This will "
+"prevent the upload field from being displayed. Click <a href=\"#\" "
+"class=\"wcuf-restore-checkout-template-button\">HERE</a> to restore the "
+"checkout template (the page content will be overwritten with the "
+"[woocommerce_checkout] shortcode)."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:571
+#, fuzzy
+#| msgid "Display field on Cart page?"
+msgid "Display field on the Cart page"
+msgstr "Feld auf der Warenkorbseite anzeigen?"
+
+#: classes/com/WCUF_Html.php:573
+msgid ""
+"<span class=\"wcuf-warning-text\">WARNING:</span> You are using WooCommerce "
+"blocks instead of the Cart template ([woocommerce_cart]). This will prevent "
+"the upload field from being displayed. Click <a href=\"#\" class=\"wcuf-"
+"restore-cart-template-button\">HERE</a> to restore the cart template (the "
+"page content will be overwritten with the [woocommerce_cart] shortcode)."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:582
+#, fuzzy
+#| msgid "Display field on Product page?"
+msgid "Display field on Product page"
+msgstr "Feld auf der Produktseite anzeigen?"
+
+#: classes/com/WCUF_Html.php:583
+#, fuzzy
+#| msgid ""
+#| "This will enable the <strong>Upload per product</strong> option. "
+#| "<strong>NOTE:</strong> for products for which has been enabled the "
+#| "<strong>Addable multiple times to cart</strong> feature (through the "
+#| "special options menu) the upload field will appear automatically "
+#| "<strong>BEFORE</strong> adding them to cart. "
+msgid ""
+"This will enable the <strong>Upload per product</strong> option. "
+"<strong>NOTE:</strong> for products that have been enabled the "
+"<strong>Addable multiple times to cart</strong> feature (through the special "
+"options menu) the upload field will appear automatically <strong>BEFORE</"
+"strong> adding them to the cart. "
+msgstr ""
+"Dadurch wird die Option <strong>Upload pro Produkt</strong> aktiviert. "
+"<strong>HINWEIS:</strong> Für Produkte, für die die Funktion "
+"<strong>Mehrmals zum Warenkorb hinzufügen</strong> aktiviert wurde (über das "
+"spezielle Optionsmenü), wird das Upload-Feld automatisch <strong>VOR</"
+"strong> dem in den Warenkorb legen angezeigt."
+
+#: classes/com/WCUF_Html.php:589
+#, fuzzy
+#| msgid ""
+#| "on Product page, display the field BEFORE adding an item to the cart?"
+msgid ""
+"on the Product page, display the field BEFORE adding an item to the cart"
+msgstr ""
+"auf der Produktseite das Feld anzeigen, BEVOR Sie einen Artikel in den "
+"Warenkorb legen?"
+
+#: classes/com/WCUF_Html.php:598
+#, fuzzy
+#| msgid "Display field on Thank you page?"
+msgid "Display field on the Thank you/Order confirmation page"
+msgstr "Feld auf der \"Danke-Seite\" anzeigen?"
+
+#: classes/com/WCUF_Html.php:599
+#, fuzzy
+#| msgid ""
+#| "Thank you page is the one in which the user lands after the checkout "
+#| "process is completed."
+msgid ""
+"The Thank you/Order confirmation page is the one in which the user lands "
+"after the checkout process is completed."
+msgstr ""
+"Die Danke-Seite ist die Seite, auf der der Benutzer landet, nachdem der "
+"Checkout-Prozess abgeschlossen ist."
+
+#: classes/com/WCUF_Html.php:606
+#, fuzzy
+#| msgid "Display field on Order detail page?"
+msgid "Display field on the Order detail page"
+msgstr "Feld auf der Seite der Bestellungen anzeigen?"
+
+#: classes/com/WCUF_Html.php:613
+#, fuzzy
+#| msgid "Hide on shortcode upload form?"
+msgid "Hide on shortcode upload form"
+msgstr "Im Shortcode-Upload-Formular ausblenden?"
+
+#: classes/com/WCUF_Html.php:614
+#, fuzzy
+#| msgid ""
+#| "By default using the <strong>[wcuf_upload_form]</strong> shortcode all "
+#| "the upload fields that  match products in the cart are visible. Enabling "
+#| "this option this field will be hidden."
+msgid ""
+"By default, using the <strong>[wcuf_upload_form]</strong> shortcode all the "
+"upload fields that  match products in the cart are visible. Enabling this "
+"option this field will be hidden."
+msgstr ""
+"Standardmäßig sind bei Verwendung des <strong>[wcuf_upload_form]</strong>-"
+"Shortcodes alle Upload-Felder sichtbar, die den Produkten im Warenkorb "
+"entsprechen. Durch Aktivieren dieser Option wird dieses Feld ausgeblendet."
+
+#: classes/com/WCUF_Html.php:622
+msgid "Show the upload field for each product on cart/order"
+msgstr ""
+"Zeigen Sie das Upload-Feld für jedes Produkt im Warenkorb/der Bestellung an"
+
+#: classes/com/WCUF_Html.php:626
+msgid "Upload per product"
+msgstr "Upload pro Produkt"
+
+#: classes/com/WCUF_Html.php:627
+#, fuzzy
+#| msgid ""
+#| "This option <strong>cannot</strong> be disalbled id if the "
+#| "<strong>Display field on Product page</strong> has been turned on."
+msgid ""
+"This option <strong>cannot</strong> be disabled id if the <strong>Display "
+"field on Product page</strong> has been turned on."
+msgstr ""
+"Diese Option <strong>kann nicht</strong> deaktiviert werden, wenn das "
+"Feld<strong>auf der Produktseite anzeigen</strong> aktiviert wurde."
+
+#: classes/com/WCUF_Html.php:635
+msgid "Display the upload field for every product variation? "
+msgstr "Das Upload-Feld für jede Produktvariante anzeigen? "
+
+#: classes/com/WCUF_Html.php:636
+#, fuzzy
+#| msgid ""
+#| "Valid only for variable products. This options works only if the previous "
+#| "<strong>Upload per product</strong> option has been enabled. In case of "
+#| "generic variations (the ones for which has been assigned the \"Any\" "
+#| "value to any attribute), the upload field will not work."
+msgid ""
+"Valid only for variable products. This option works only if the previous "
+"<strong>Upload per product</strong> option has been enabled. In the case of "
+"generic variations (the ones for which have been assigned the \"Any\" value "
+"to any attribute), the upload field will not work."
+msgstr ""
+"Gilt nur für variable Produkte. Diese Option funktioniert nur, wenn die "
+"vorherige Option <strong>Upload pro Produkt</strong> aktiviert wurde. Bei "
+"generischen Varianten (bei denen einem beliebigen Attribut der Wert "
+"\"Beliebig\" zugewiesen wurde) funktioniert das Upload-Feld nicht."
+
+#: classes/com/WCUF_Html.php:644
+msgid "Product/Category restriction"
+msgstr "Produkt-/Kategoriebeschränkung"
+
+#: classes/com/WCUF_Html.php:647
+msgid ""
+"Upload field can optionally <strong>visible/hidden</strong> only if the "
+"selected products are in cart/order."
+msgstr ""
+"Das Upload-Feld kann optional nur dann <strong>sichtbar/ausgeblendet</"
+"strong> sein, wenn sich die ausgewählten Produkte im Warenkorb/in der "
+"Bestellung befinden."
+
+#: classes/com/WCUF_Html.php:648
+msgid "This upload field will be"
+msgstr "Dieses Upload-Feld wird"
+
+#: classes/com/WCUF_Html.php:658
+msgid "Select categories (search typing category name)"
+msgstr "Kategorien auswählen (Suche indem du den Kategorienamen eintippst)"
+
+#: classes/com/WCUF_Html.php:693
+msgid "Time"
+msgstr "Zeit"
+
+#: classes/com/WCUF_Html.php:695
+msgid ""
+"The field will no longer be visible after the selected date or amount of "
+"time after the order has been placed."
+msgstr ""
+"Das Feld ist nach einer bestimmten Zeit oder einem bestimmten Datum nach "
+"Bestellabschluss nicht mehr sichtbar"
+
+#: classes/com/WCUF_Html.php:696 classes/com/WCUF_Html.php:755
+#: classes/com/WCUF_Html.php:948
+msgid "Type"
+msgstr "Typ"
+
+#: classes/com/WCUF_Html.php:698
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+#: classes/com/WCUF_Html.php:699
+msgid "Specific date"
+msgstr "Bestimmtes Datum"
+
+#: classes/com/WCUF_Html.php:700
+msgid "Amount of time after the order creation date"
+msgstr "Zeit nach dem Erstellungsdatum der Bestellung"
+
+#: classes/com/WCUF_Html.php:705
+msgid "Month"
+msgstr "Monat"
+
+#: classes/com/WCUF_Html.php:706
+msgid "Select the month (where 1 is January and 12 is December)"
+msgstr ""
+"Wählen Sie den Monat aus (wobei 1 für Januar und 12 für Dezember steht)"
+
+#: classes/com/WCUF_Html.php:715
+msgid "Day"
+msgstr "Tag"
+
+#: classes/com/WCUF_Html.php:716
+msgid "Select the day"
+msgstr "Tag auswählen"
+
+#: classes/com/WCUF_Html.php:725
+msgid "Hour"
+msgstr "Stunde"
+
+#: classes/com/WCUF_Html.php:726
+msgid "Select the hour (format: 0-24)"
+msgstr "Wählen Sie die Stunde (24h-Format)"
+
+#: classes/com/WCUF_Html.php:735
+msgid "Minute"
+msgstr "Minute"
+
+#: classes/com/WCUF_Html.php:736
+msgid "Select the minute"
+msgstr "Minute auswählen"
+
+#: classes/com/WCUF_Html.php:746
+#, fuzzy
+#| msgid ""
+#| "This options only applies to the \"Thank you page\" and \"Order details "
+#| "page\". If you configure the field to be visible in the product, cart or "
+#| "checkout pages, <strong>it will not be displayed</strong>."
+msgid ""
+"This options only applies to the \"Thank you/Order confirmation page\" and "
+"\"Order details page\". If you configure the field to be visible in the "
+"product, cart or checkout pages, <strong>it will not be displayed</strong>."
+msgstr ""
+"Diese Option gilt nur für die Seiten \"Dankeschön\" und "
+"\"Bestelldetailseite\". Wenn Sie das Feld so konfigurieren, dass es auf den "
+"Produkt-, Warenkorb- oder Checkout-Seiten sichtbar ist, <strong>wird es "
+"nicht angezeigt</strong>."
+
+#: classes/com/WCUF_Html.php:749 template/uploads_details_sheet_page.php:129
+msgid "Quantity"
+msgstr "Menge"
+
+#: classes/com/WCUF_Html.php:750
+msgid "Select the amount of time"
+msgstr "Wählen Sie die Dauer"
+
+#: classes/com/WCUF_Html.php:756
+msgid "Select the type"
+msgstr "Wählen Sie den Typ"
+
+#: classes/com/WCUF_Html.php:759
+msgid "Minutes"
+msgstr "Minuten"
+
+#: classes/com/WCUF_Html.php:760
+msgid "Days"
+msgstr "Tage"
+
+#: classes/com/WCUF_Html.php:761
+msgid "Months"
+msgstr "Monate"
+
+#: classes/com/WCUF_Html.php:768
+msgid "Order status"
+msgstr "Bestellstatus"
+
+#: classes/com/WCUF_Html.php:770
+msgid ""
+"Select for which status the upload field will be <strong>hidden</strong>. "
+"This option only affects the <strong>Order details / Thank</strong> page and "
+"if no option is selected the field will be <strong>always visible</strong>."
+msgstr ""
+"Wählen Sie aus, für welchen Status das Upload-Feld <strong>ausgeblendet</"
+"strong> sein soll. Diese Option betrifft nur die Seiten "
+"<strong>Bestelldetails / Danke</strong> und wenn keine Option ausgewählt "
+"ist, ist das Feld <strong>immer sichtbar</strong>."
+
+#: classes/com/WCUF_Html.php:780
+msgid "User role"
+msgstr "Benutzer-Rolle"
+
+#: classes/com/WCUF_Html.php:782
+#, fuzzy
+#| msgid ""
+#| "<strong>Leave unselected to leave the upload field visible for all.</"
+#| "strong> Selecting at least one role will make the upload field to be "
+#| "visible/unvisible to that role."
+msgid ""
+"<strong>Leave unselected to leave the upload field visible for all.</strong> "
+"Selecting at least one role will make the upload field to be visible/"
+"invisible to that role."
+msgstr ""
+"<strong>Nichts auswählen, um das Upload-Feld für alle sichtbar zu machen.</"
+"strong> Wenn Sie mindestens eine Rolle auswählen, wird das Upload-Feld für "
+"diese Rolle sichtbar/unsichtbar."
+
+#: classes/com/WCUF_Html.php:783 classes/com/WCUF_Html.php:803
+msgid "Visibility type"
+msgstr "Sichtbarkeitstyp"
+
+#: classes/com/WCUF_Html.php:785
+msgid "Allow for selected roles"
+msgstr "Für ausgewählte Rollen erlauben"
+
+#: classes/com/WCUF_Html.php:786
+msgid "Deny for selected roles"
+msgstr "Für ausgewählte Rollen verbieten"
+
+#: classes/com/WCUF_Html.php:789
+msgid "Select roles"
+msgstr "Rollen auswählen"
+
+#: classes/com/WCUF_Html.php:795
+msgid "Guest (<strong>Not logged user</strong>)"
+msgstr "Gast (<strong>Nicht angemeldeter Benutzer</strong>)"
+
+#: classes/com/WCUF_Html.php:798
+msgid "Payment gateway"
+msgstr "Zahlungs-Gateway"
+
+#: classes/com/WCUF_Html.php:801
+#, fuzzy
+#| msgid ""
+#| "<strong>Leave unselected to leave the upload field visible for all "
+#| "gateways.</strong> Selecting at least one gateway option will make the "
+#| "upload field to be visible/unvisible to that gateway and only in "
+#| "<strong>Order details</strong>, <strong>Thank you</strong> and "
+#| "<strong>Checkout</strong> pages. If any option is selected, the field "
+#| "will be <strong>always invisible</strong> on Product and Cart pages."
+msgid ""
+"<strong>Leave unselected to leave the upload field visible for all gateways."
+"</strong> Selecting at least one gateway option will make the upload field "
+"to be visible/invisible to that gateway and only in the <strong>Order "
+"details</strong>, <strong>Thank you/Order confirmation</strong> and "
+"<strong>Checkout</strong> pages. If any option is selected, the field will "
+"be <strong>always invisible</strong> on the Product and the Cart pages."
+msgstr ""
+"<strong>Nicht ausgewählt lassen, um das Upload-Feld für alle Gateways "
+"sichtbar zu lassen.</strong> Wenn Sie mindestens eine Gateway-Option "
+"auswählen, wird das Upload-Feld für dieses Gateway sichtbar/unsichtbar und "
+"nur in <strong>Bestelldetails</strong> , <strong>Danke</strong> und "
+"<strong>Checkout</strong>-Seiten. Wenn eine Option ausgewählt ist, ist das "
+"Feld auf den Produkt- und Warenkorbseiten <strong>immer unsichtbar</strong>."
+
+#: classes/com/WCUF_Html.php:805
+msgid "Allow for selected gateways"
+msgstr "Ausgewählte Gateways zulassen"
+
+#: classes/com/WCUF_Html.php:806
+msgid "Deny for selected gateways"
+msgstr "Verweigern für ausgewählte Gateways"
+
+#: classes/com/WCUF_Html.php:809
+msgid "Select gateways"
+msgstr "Gateways auswählen"
+
+#: classes/com/WCUF_Html.php:818
+msgid "Shipping method"
+msgstr "Versandart"
+
+#: classes/com/WCUF_Html.php:820
+#, fuzzy
+#| msgid ""
+#| "<strong>Leave unselected to leave the upload field visible for all the "
+#| "shipping methods.</strong> Selecting at least one shipping method will "
+#| "make the upload field to be visible/unvisible to that gateway and only in "
+#| "<strong>Order details</strong>, <strong>Thank you</strong> and "
+#| "<strong>Checkout</strong> pages. If any option is selected, the field "
+#| "will be <strong>always invisible</strong> on Product and Cart pages."
+msgid ""
+"<strong>Leave unselected to leave the upload field visible for all the "
+"shipping methods.</strong> Selecting at least one shipping method will make "
+"the upload field to be visible/invisible  to that gateway and only in "
+"<strong>Order details</strong>, <strong>Thank you/Order confirmation</"
+"strong> and <strong>Checkout</strong> pages. If any option is selected, the "
+"field will be <strong>always invisible</strong> on the Product and the Cart "
+"pages."
+msgstr ""
+"<strong>Nicht ausgewählt lassen, um das Upload-Feld für alle Versandmethoden "
+"sichtbar zu lassen.</strong> Wenn Sie mindestens eine Versandmethode "
+"auswählen, wird das Upload-Feld für dieses Gateway und nur in "
+"<strong>Bestelldetails, Danke- und Checkoutseiten</strong> sichtbar/"
+"unsichtbar. Wenn eine Option ausgewählt ist, ist das Feld auf den Produkt- "
+"und Warenkorbseiten <strong>immer unsichtbar</strong>."
+
+#: classes/com/WCUF_Html.php:841 classes/com/WCUF_Html.php:942
+msgid "Methods"
+msgstr "Methoden"
+
+#: classes/com/WCUF_Html.php:846 classes/com/WCUF_Html.php:947
+#: classes/com/WCUF_Html.php:990
+msgid "Name"
+msgstr "Name"
+
+#: classes/com/WCUF_Html.php:900 template/uploads_details_sheet_page.php:322
+msgid "N/A"
+msgstr "N/A"
+
+#: classes/com/WCUF_Html.php:940
+msgid "Rest of the World"
+msgstr "Rest der Welt"
+
+#: classes/com/WCUF_Html.php:987
+msgid "Other Methods"
+msgstr "Other Methods"
+
+#: classes/com/WCUF_Html.php:991
+msgid "ID"
+msgstr "ID"
+
+#: classes/com/WCUF_Html.php:992
+msgid "From (days)"
+msgstr "Ab (Tage)"
+
+#: classes/com/WCUF_Html.php:992
+msgid "The earliest estimated arrival. Can be left blank."
+msgstr "Die früheste geschätzte Ankunft. Kann leer bleiben."
+
+#: classes/com/WCUF_Html.php:993
+msgid "To (days)"
+msgstr "Bis (Tage)"
+
+#: classes/com/WCUF_Html.php:993
+msgid "The latest estimated arrival. Can be left blank."
+msgstr "Die späteste geschätzte Ankunft. Kann leer bleiben."
+
+#: classes/com/WCUF_Html.php:1032
+msgid "Images"
+msgstr "Bilder"
+
+#: classes/com/WCUF_Html.php:1035
+msgid "The following options will have effects only for or jpg/png media files"
+msgstr "Die folgenden Optionen wirken sich nur auf jpg/png-Mediendateien aus"
+
+#: classes/com/WCUF_Html.php:1038
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:15
+#: js/wcuf-frontend-order-details-page.js.php:13
+msgid "Crop"
+msgstr "Zuschneiden"
+
+#: classes/com/WCUF_Html.php:1040
+msgid "Enable crop editor"
+msgstr "Editor zum Zuschneiden aktivieren"
+
+#: classes/com/WCUF_Html.php:1047
+#, fuzzy
+#| msgid "Cropped image width"
+msgid "Cropped  width / Ratio x"
+msgstr "Beschnittene Bildbreite"
+
+#: classes/com/WCUF_Html.php:1048
+#, fuzzy
+#| msgid "Cropped image width"
+msgid "Width or Ratio X"
+msgstr "Beschnittene Bildbreite"
+
+#: classes/com/WCUF_Html.php:1052
+#, fuzzy
+#| msgid "Cropped image height"
+msgid "Cropped image height / Ratio y"
+msgstr "Beschnittene Bildhöhe"
+
+#: classes/com/WCUF_Html.php:1053
+#, fuzzy
+#| msgid "Cropped image width"
+msgid "Width or Ratio Y"
+msgstr "Beschnittene Bildbreite"
+
+#: classes/com/WCUF_Html.php:1057
+msgid "Width and Height as Ratio"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:1058
+msgid ""
+"The Cropped width and height parameters will be used as Ratio. This means "
+"that the final image won't be resized according to those parameters."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:1065
+msgid "Allow resize"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:1066
+msgid ""
+"By default, the crop area is a fixed area. The size is computed according to "
+"the width/height or the ratio. If enabled, the area can be resized by the "
+"user. The area will have the ratio set via the width/height/ratio "
+"parameters. If using the width and height, the final image will be resized "
+"according to those images. If width and height are set to zero, the area "
+"freely resizable in width and height."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:1074
+msgid "Cropped image shape"
+msgstr "Zugeschnittene Bildform"
+
+#: classes/com/WCUF_Html.php:1075
+msgid ""
+"Accroding the selected width and height the cropped image will be shaped as "
+"square (rectangle if the width and height are not equal) or a cirle (ellipse "
+"if the width and height are not equal)."
+msgstr ""
+"Entsprechend der gewählten Breite und Höhe wird das zugeschnittene Bild als "
+"Quadrat (Rechteck, wenn Breite und Höhe nicht gleich sind) oder als Kreis "
+"(Ellipse, wenn Breite und Höhe nicht gleich sind) geformt."
+
+#: classes/com/WCUF_Html.php:1077
+msgid "Square / rectangle"
+msgstr "Quadrat / Rechteck"
+
+#: classes/com/WCUF_Html.php:1078
+msgid "Circle / ellipse"
+msgstr "Kreis / Ellipse"
+
+#: classes/com/WCUF_Html.php:1082
+msgid "Cropping is mandatory in case of multiple files upload"
+msgstr "Beim Hochladen mehrerer Dateien ist das Zuschneiden obligatorisch"
+
+#: classes/com/WCUF_Html.php:1083
+msgid ""
+"In case of multiple files upload, the user will be force to cropp all the "
+"selected files. For single file upload, the cropping is always mandatory."
+msgstr ""
+"Beim Hochladen mehrerer Dateien wird der Benutzer gezwungen, alle "
+"ausgewählten Dateien zuzuschneiden. Beim Hochladen einzelner Dateien ist das "
+"Zuschneiden immer obligatorisch."
+
+#: classes/com/WCUF_Html.php:1090
+msgid "Auto adjust crop area orientation"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:1091
+msgid ""
+"In the case of a fixed crop area in which width and height are different "
+"values, the cropper detects the longest edge adapting the area (Example: the "
+"image is 600x400, the cropper area is 200x300, the new area will be "
+"automatically adjusted as 300x200)."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:1100
+msgid "Fit image to canvas"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:1101
+msgid ""
+"By default the image will be adapted to FIT the whole crop canvas area.  "
+"When enabled, the image will be adapted to FILL the whole crop canvas area."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:1108
+#, fuzzy
+#| msgid "Cropped image shape"
+msgid "Compress cropped image"
+msgstr "Zugeschnittene Bildform"
+
+#: classes/com/WCUF_Html.php:1109
+msgid ""
+"This option allows to compress the cropped image. Works only for JPEG images "
+"and value goes from 0.1 to 1, where 1 is maximum quality (no compression)"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:1116
+msgid "Compression quality"
+msgstr ""
+
+#: classes/com/WCUF_Html.php:1117
+msgid "Quality of the cropeed image crompression."
+msgstr ""
+
+#: classes/com/WCUF_Html.php:1122
+msgid "Size restriction"
+msgstr "Größenbeschränkung"
+
+#: classes/com/WCUF_Html.php:1124
+msgid "Input image min width in px"
+msgstr "Mindestbreite des Bildes in px"
+
+#: classes/com/WCUF_Html.php:1129
+msgid "Input image min height in px"
+msgstr "Mindesthöhe des Bildes in px"
+
+#: classes/com/WCUF_Html.php:1136
+msgid "AND"
+msgstr "UND"
+
+#: classes/com/WCUF_Html.php:1137
+msgid "OR"
+msgstr "ODER"
+
+#: classes/com/WCUF_Html.php:1141
+msgid "Input image max width in px"
+msgstr "Maximale Breite des Bildes in px"
+
+#: classes/com/WCUF_Html.php:1146
+msgid "Input image max height in px"
+msgstr "Maximale Höhe des Bildes in px"
+
+#: classes/com/WCUF_Html.php:1153
+msgid "Ratio restriction"
+msgstr "Seitenverhältnis-Beschränkung"
+
+#: classes/com/WCUF_Html.php:1155
+msgid "x ratio"
+msgstr "x-Verhältnis"
+
+#: classes/com/WCUF_Html.php:1156
+msgid ""
+"Leave 0 to ignore. <strong>NOTE:</strong> if any of the two settings are "
+"left 0, the ratio restriction will be ignored."
+msgstr ""
+"Lassen Sie 0 zum Ignorieren. <strong>HINWEIS:</strong> Wenn eine der beiden "
+"Einstellungen 0 ist, wird die Verhältnisbeschränkung ignoriert."
+
+#: classes/com/WCUF_Html.php:1160
+msgid "y ratio"
+msgstr "y-Verhältnis"
+
+#: classes/com/WCUF_Html.php:1161
+msgid ""
+"Leave 0 for ignore. <strong>NOTE:</strong> if any of the two settings are "
+"left 0, the ratio restriction will be ignored."
+msgstr ""
+"Lassen Sie 0 für Ignorieren. <strong>HINWEIS:</strong> Wenn eine der beiden "
+"Einstellungen 0 ist, wird die Verhältnisbeschränkung ignoriert."
+
+#: classes/com/WCUF_Html.php:1167
+msgid "DPI restriction"
+msgstr "DPI-Beschränkung"
+
+#: classes/com/WCUF_Html.php:1169
+msgid "Input image min DPI"
+msgstr "Min. DPI des Bildes"
+
+#: classes/com/WCUF_Html.php:1170 classes/com/WCUF_Html.php:1175
+msgid ""
+"Leave 0 for no limits. <strong>NOTE:</strong> DPI are read from EXIF so If "
+"an image has no valid EXIF data check will fail and the upload will not be "
+"performed."
+msgstr ""
+"Lassen Sie 0 für keine Grenzen. <strong>HINWEIS:</strong> DPI werden aus "
+"EXIF ​​gelesen. Wenn ein Bild keine gültigen EXIF-Daten hat, schlägt die "
+"Prüfung fehl und der Upload wird nicht durchgeführt."
+
+#: classes/com/WCUF_Html.php:1174
+msgid "Input image max DPI"
+msgstr "Max. DPI des Bildes"
+
+#: classes/com/WCUF_Html.php:1181
+msgid "Audio/Video length restriction"
+msgstr "Beschränkung der Audio-/Videolänge"
+
+#: classes/com/WCUF_Html.php:1184
+msgid ""
+"The following options will have effects only for mp3/mp4/wav/webm/m4v/flac "
+"media files"
+msgstr ""
+"Die folgenden Optionen haben nur Auswirkungen auf mp3/mp4/wav/webm/m4v/flac-"
+"Mediendateien"
+
+#: classes/com/WCUF_Html.php:1187
+msgid "Min length (seconds)"
+msgstr "Minimale Länge in Sekunden"
+
+#: classes/com/WCUF_Html.php:1192
+msgid "Max length (seconds)"
+msgstr "Maximale Länger in Sekunden"
+
+#: classes/com/WCUF_Html.php:1197
+#, fuzzy
+#| msgid ""
+#| "In case of multiple files upload, consider as length the sum of all file "
+#| "seconds?"
+msgid ""
+"In case of multiple files upload, consider as length the sum of all file "
+"seconds"
+msgstr "Zählt im Falle mehrerer Uploads die Summe der Längen aller Dateien?"
+
+#: classes/com/WCUF_Html.php:1209
+msgid "Order sub total percentage discount"
+msgstr "Zwischensummenrabatt der Bestellung"
+
+#: classes/com/WCUF_Html.php:1211
+#, fuzzy
+#| msgid ""
+#| "This options ill not take effect on Order details and Thank you pages"
+msgid ""
+"This options ill not take effect on Order details and Thank you/Order "
+"confirmation pages"
+msgstr ""
+"Diese Optionen wirken sich nicht auf Bestelldetails und Dankesseiten aus"
+
+#: classes/com/WCUF_Html.php:1213
+#, fuzzy
+#| msgid "Enable checkout discount?"
+msgid "Enable checkout discount"
+msgstr "Checkout-Rabatt aktivieren?"
+
+#: classes/com/WCUF_Html.php:1214
+msgid ""
+"If at least one upload has been performed, a percentage discount will be "
+"applied to the order sub total."
+msgstr ""
+"Wenn mindestens ein Upload durchgeführt wurde, wird ein prozentualer Rabatt "
+"auf die Zwischensumme der Bestellung angewendet."
+
+#: classes/com/WCUF_Html.php:1222
+msgid "Percentage"
+msgstr "Prozentsatz"
+
+#: classes/com/WCUF_Html.php:1223
+msgid "This is the percentage discount applied to sub total."
+msgstr ""
+"Dies ist der prozentuale Rabatt, der auf die Zwischensumme angewendet wird."
+
+#: classes/com/WCUF_Html.php:1228
+msgid "Discount description to show on cart"
+msgstr "Rabattbeschreibung, die im Warenkorb angezeigt werden soll"
+
+#: classes/com/WCUF_Html.php:1229
+#, php-format
+msgid ""
+"If left black will be used as description the upload field name. Use the "
+"<strong>%field_title</strong> placeholder to print the upload field title "
+"inside the discount description."
+msgstr ""
+"Wenn schwarz gelassen wird als Beschreibung der Upload-Feldname verwendet. "
+"Verwenden Sie den Platzhalter <strong>%field_title</strong>, um den Titel "
+"des Upload-Felds in der Rabattbeschreibung anzeigen zu lassen."
+
+#: classes/com/WCUF_Html.php:1230
+#, php-format
+msgid "Discount for %field_title"
+msgstr "Rabatt für %field_title"
+
+#: classes/com/WCUF_Html.php:1234
+msgid "Apply only once"
+msgstr "Nur einmal anwenden"
+
+#: classes/com/WCUF_Html.php:1235
+msgid ""
+"Enable this option if you do not want to apply the order sub total discount "
+"if another upload field already has."
+msgstr ""
+"Aktivieren Sie diese Option, wenn Sie den Zwischensummenrabatt der "
+"Bestellung nicht anwenden möchten, wenn dieser bereits in einem anderen "
+"Upload-Feld angewandt wurde."
+
+#: classes/com/WCUF_Html.php:1243
+msgid "Cart fee/discount"
+msgstr "Warenkorbgebühr/-rabatt"
+
+#: classes/com/WCUF_Html.php:1245
+#, fuzzy
+#| msgid "This options ill not take effect on Order and Thank you pages"
+msgid ""
+"This options ill not take effect on Order and Thank you/Order confirmation "
+"pages"
+msgstr "Diese Optionen wirken sich nicht auf die Bestell- und Dankesseiten aus"
+
+#: classes/com/WCUF_Html.php:1248
+#, fuzzy
+#| msgid "Enable fee/discount per upload?"
+msgid "Enable fee/discount per upload"
+msgstr "Gebühr/Rabatt pro Upload aktivieren?"
+
+#: classes/com/WCUF_Html.php:1249
+msgid ""
+"For each uploaded file the plugin will compute additional costs according "
+"the following options. The extra costs will be added to cart as fee."
+msgstr ""
+"Für jede hochgeladene Datei berechnet das Plugin zusätzliche Kosten gemäß "
+"den folgenden Optionen. Die zusätzlichen Kosten werden dem Warenkorb als "
+"Gebühr hinzugefügt."
+
+#: classes/com/WCUF_Html.php:1257
+msgid "Overcharge type"
+msgstr "Überladungsart"
+
+#: classes/com/WCUF_Html.php:1258
+msgid ""
+"<strong>NOTE:</strong> <strong>Percentage</strong> option will work with "
+"Variations/Variable products, only if: <ol><li><strong>Display the upload "
+"field for every product variation</strong> option has been enabled</li></ol>"
+msgstr ""
+"<strong>HINWEIS:</strong> Die Option <strong>Prozentsatz</strong> "
+"funktioniert nur mit Variationen/Variablenprodukten, wenn: "
+"<ol><li><strong>Upload-Feld für jede Produktvariation anzeigen</strong> "
+"aktiviert wurde</li></ol>"
+
+#: classes/com/WCUF_Html.php:1261
+msgid "Fixed value"
+msgstr "Fester Wert"
+
+#: classes/com/WCUF_Html.php:1262
+msgid "Percentage of item price"
+msgstr "Prozentsatz des Artikelpreises"
+
+#: classes/com/WCUF_Html.php:1267
+msgid "Value"
+msgstr "Wert"
+
+#: classes/com/WCUF_Html.php:1268
+msgid ""
+"This will be the percentage or the fixed value added/subtracted to the "
+"original item price. Using <strong>negative</strong> values, the fixed/"
+"percentage value will be subtracted to the cart (applying then a "
+"<strong>discount</strong>)."
+msgstr ""
+"Dies ist der Prozentsatz oder der feste Wert, der vom ursprünglichen "
+"Artikelpreis hinzugefügt/abgezogen wird. Bei <strong>negativen</strong> "
+"Werten wird der feste/prozentuale Wert vom Warenkorb abgezogen (wobei dann "
+"ein <strong>Rabatt</strong> angewendet wird)."
+
+#: classes/com/WCUF_Html.php:1274 classes/com/WCUF_Html.php:1349
+msgid "Fee/Discount description to show on cart"
+msgstr ""
+"Beschreibung der Gebühr/des Rabatts, die/der im Warenkorb angezeigt wird"
+
+#: classes/com/WCUF_Html.php:1275 classes/com/WCUF_Html.php:1350
+msgid ""
+"If left black will be used as description the upload field name. Use the "
+"<strong>%prod_name</strong> placeholder to print the product name and the "
+"<strong>%field_title</strong> placeholder to print the upload field title "
+"inside the fee description."
+msgstr ""
+"Wenn leer gelassen, wird als Beschreibung der Upload-Feldname verwendet. "
+"Verwenden Sie den Platzhalter <strong>%prod_name</strong>, um den "
+"Produktnamen anzuzeigen, und den Platzhalter <strong>%field_title</strong>, "
+"um den Titel des Upload-Felds in der Gebührenbeschreibung anzuzeigen."
+
+#: classes/com/WCUF_Html.php:1276 classes/com/WCUF_Html.php:1351
+msgid "Extra costs %field_title for %prod_name"
+msgstr "Zusätzliche Kosten %field_title für %prod_name"
+
+#: classes/com/WCUF_Html.php:1279 classes/com/WCUF_Html.php:1340
+#, fuzzy
+#| msgid "Is taxable?"
+msgid "Taxable"
+msgstr "Versteuerbar?"
+
+#: classes/com/WCUF_Html.php:1280 classes/com/WCUF_Html.php:1341
+msgid ""
+"Note that in case of negative values (discount) due to a WooCommerce bug, "
+"the fee will be always taxes included."
+msgstr ""
+"Beachten Sie, dass bei negativen Werten (Rabatt) aufgrund eines WooCommerce-"
+"Fehlers die Gebühr immer inklusive Steuern enthalten ist."
+
+#: classes/com/WCUF_Html.php:1288
+msgid "Apply extra costs/discount considering the item cart quantity"
+msgstr ""
+"Wenden Sie zusätzliche Kosten/Rabatt unter Berücksichtigung der Artikel-"
+"Warenkorbmenge an"
+
+#: classes/com/WCUF_Html.php:1289
+#, fuzzy
+#| msgid ""
+#| "The computed extra cost will be multiplied for the product cart quantity. "
+#| "If not, the extra cost will be applied only once regardles of item cart "
+#| "quantity. <strong>NOTE:</strong> This option will only work if the "
+#| "<strong>Upload per product</strong> option has been enabled."
+msgid ""
+"The computed extra cost will be multiplied for the product cart quantity. If "
+"not, the extra cost will be applied only once regardles of item cart "
+"quantity. <strong>NOTE:</strong> This option will only work if the "
+"<strong>Upload per product</strong> option has been enabled. It will not be "
+"applied if any of the <strong>Product cart price</strong> is enabled."
+msgstr ""
+"Die berechneten Zusatzkosten werden mit der Menge des Produkt-Warenkorbs "
+"multipliziert. Wenn nicht, werden die zusätzlichen Kosten unabhängig von der "
+"Artikelmenge im Warenkorb nur einmal berechnet. <strong>HINWEIS:</strong> "
+"Diese Option funktioniert nur, wenn die Option <strong>Upload pro Produkt</"
+"strong> aktiviert wurde."
+
+#: classes/com/WCUF_Html.php:1298
+msgid "Detect <span class=\"wcuf_pdf_label\">PDF</span>"
+msgstr "<span class=\"wcuf_pdf_label\">PDF</span> erkennen"
+
+#: classes/com/WCUF_Html.php:1299
+msgid "The extra costs will be applied to each detected page."
+msgstr "Die zusätzlichen Kosten werden auf jede erkannte Seite angewendet."
+
+#: classes/com/WCUF_Html.php:1307
+msgid "Overcharge uploads limit"
+msgstr "Upload-Limit überhöht"
+
+#: classes/com/WCUF_Html.php:1308
+#, fuzzy
+#| msgid ""
+#| "Leave 0 for no limits. Applies only if the <strong>Multiple files upload "
+#| "per single field</strong> option has been enabled. If the number of "
+#| "uploaded files (excluding the \"Free items\" defined in the option below) "
+#| "will pass this value will not be added extra overcharge for exceding "
+#| "uploads."
+msgid ""
+"Leave 0 for no limits. This applies only if the <strong>Multiple files "
+"upload per single field</strong> option has been enabled. If the number of "
+"uploaded files (excluding the \"Free items\" defined in the option below) "
+"will pass this value will not be added the extra overcharge for exceeding "
+"uploads."
+msgstr ""
+"Lassen Sie 0 für keine Grenzen. Gilt nur, wenn die Option <strong>Upload "
+"mehrerer Dateien pro einzelnem Feld</strong> aktiviert wurde. Wenn die "
+"Anzahl der hochgeladenen Dateien (mit Ausnahme der \"Kostenlose Artikel\", "
+"die in der Option unten definiert sind) überschritten wird, wird dieser Wert "
+"nicht für überhöhte Uploads berechnet."
+
+#: classes/com/WCUF_Html.php:1310
+msgid ""
+"In case of PDF detection: this will option will be applied to pages and in "
+"case di multiple uploads, extra cost pages limit is considered globally per "
+"field and not per each pdf."
+msgstr ""
+"Bei PDF-Erkennung: Diese Option wird auf Seiten angewendet und bei mehreren "
+"Uploads wird das Seitenlimit für zusätzliche Kosten global pro Feld und "
+"nicht pro PDF berücksichtigt."
+
+#: classes/com/WCUF_Html.php:1316
+msgid "Free items"
+msgstr "Kostenlose Artikel"
+
+#: classes/com/WCUF_Html.php:1317
+msgid ""
+"Leave 0 for no free items. This option works only if the <strong>Multiple "
+"files upload per single field</strong> option has been enabled. For the "
+"first N uploads will not be applied any extra cost (where N is the value "
+"specified using the following number field). "
+msgstr ""
+"Lassen Sie 0 für keine kostenlosen Artikel. Diese Option funktioniert nur, "
+"wenn die Option <strong>Upload mehrerer Dateien pro einzelnem Feld</strong> "
+"aktiviert wurde. Für die ersten N Uploads fallen keine zusätzlichen Kosten "
+"an (wobei N der im folgenden Zahlenfeld angegebene Wert ist)."
+
+#: classes/com/WCUF_Html.php:1319
+msgid ""
+"In case of PDF detection: this will be considered as \"free pages number\" "
+"and in case di multiple uploads, free pages are computed globally per field "
+"and not per each pdf."
+msgstr ""
+"Bei PDF-Erkennung: Dies wird als \"freie Seitenzahl\" betrachtet und bei "
+"mehreren Uploads werden freie Seiten global pro Feld und nicht pro PDF "
+"berechnet."
+
+#: classes/com/WCUF_Html.php:1326
+msgid "Fee per second"
+msgstr "Gebühr pro Sekunde"
+
+#: classes/com/WCUF_Html.php:1328
+msgid ""
+"These option will apply <strong>only for Video/Audio files</strong>. WCUF "
+"will try do detect media file the duration (in seconds) extracting the info "
+"from its ID3 data (if any and well encoded). For each detected second the "
+"plugin will compute the extra costs according the following options."
+msgstr ""
+"Diese Option gilt <strong>nur für Video-/Audiodateien</strong>. WCUF wird "
+"versuchen, die Dauer (in Sekunden) der Mediendatei zu erkennen und die "
+"Informationen aus ihren ID3-Daten (falls vorhanden und gut codiert) zu "
+"extrahieren. Für jede erkannte Sekunde berechnet das Plugin die zusätzlichen "
+"Kosten gemäß den folgenden Optionen."
+
+#: classes/com/WCUF_Html.php:1331
+#, fuzzy
+#| msgid "Enable extra cost per second?"
+msgid "Enable extra cost per second"
+msgstr "Extragebühren pro Sekunde aktivieren?"
+
+#: classes/com/WCUF_Html.php:1332
+msgid "The computed extra cost will be added as Cart fee."
+msgstr ""
+"Die berechneten zusätzlichen Kosten werden als Warenkorbgebühr hinzugefügt."
+
+#: classes/com/WCUF_Html.php:1355
+#, fuzzy
+#| msgid "Display the \"Cost per second\" text on cart?"
+msgid "Display the \"Cost per second\" text on cart"
+msgstr "Den Text \"Kosten pro Sekunde\" im Warenkorb anzeigen?"
+
+#: classes/com/WCUF_Html.php:1356
+msgid "An extra text will be added reporting how much costs a second."
+msgstr ""
+"Ein zusätzlicher Text wird hinzugefügt, der angibt, wie viel eine Sekunde "
+"kostet."
+
+#: classes/com/WCUF_Html.php:1364
+msgid "Cost per second"
+msgstr "Kosten pro Sekunde"
+
+#: classes/com/WCUF_Html.php:1365
+msgid "This is the cost per each detected second."
+msgstr "Dies sind die Kosten pro erkannter Sekunde."
+
+#: classes/com/WCUF_Html.php:1369
+msgid "Maximun seconds overcharge limit"
+msgstr "Maximales Überladelimit in Sekunden"
+
+#: classes/com/WCUF_Html.php:1370
+#, fuzzy
+#| msgid ""
+#| "Leave 0 for no limits. If the number of seconds (excluding the \"Free "
+#| "seconds\" defined in the option below) will pass this value will not be "
+#| "added extra overcharge for exceding seconds."
+msgid ""
+"Leave 0 for no limits. If the number of seconds (excluding the \"Free "
+"seconds\" defined in the option below) will pass this value will not be "
+"added extra overcharge for exceeding seconds."
+msgstr ""
+"Lassen Sie 0 für keine Grenzen. Wenn die Anzahl der Sekunden (mit Ausnahme "
+"der \"Freien Sekunden\", die in der Option unten definiert sind) "
+"überschritten wird, wird dieser Wert nicht extra berechnet, wenn Sekunden "
+"überschritten werden."
+
+#: classes/com/WCUF_Html.php:1374
+msgid "Free seconds"
+msgstr "Kostenlose Sekunden"
+
+#: classes/com/WCUF_Html.php:1375
+msgid ""
+"First N seconds can be free, set the desidered values. Leave 0 for no free "
+"seconds."
+msgstr ""
+"Die ersten N Sekunden können frei sein, stellen Sie die gewünschten Werte "
+"ein. Lassen Sie 0 für keine freien Sekunden."
+
+#: classes/com/WCUF_Html.php:1380
+#, fuzzy
+#| msgid ""
+#| "In case of multiple files upload, apply the Overcharge limit and the Free "
+#| "seconds considering the sum of all files seconds?"
+msgid ""
+"In case of multiple files upload, apply the Overcharge limit and the Free "
+"seconds considering the sum of all files seconds"
+msgstr ""
+"Wenden Sie im Falle des Hochladens mehrerer Dateien das Überladungslimit und "
+"die Freie Sekunden unter Berücksichtigung der Summe aller Dateien an "
+"Sekunden?"
+
+#: classes/com/WCUF_Html.php:1388
+msgid "Product cart price"
+msgstr "Preis im Warenkorb"
+
+#: classes/com/WCUF_Html.php:1391
+msgid "The computed fee will be used as product cart price"
+msgstr "Die berechnete Gebühr wird als Warenkorbpreis verwendet"
+
+#: classes/com/WCUF_Html.php:1392
+#, fuzzy
+#| msgid ""
+#| "Use the computed as product price on cart. <strong>NOTE:</strong> in case "
+#| "of multiple extra costs due to multiple upload fields bounded to the "
+#| "product, the product price will be the sum of the all the existing extra "
+#| "costs."
+msgid ""
+"Use the computed as product price on the cart. <strong>NOTE:</strong> in "
+"case of multiple extra costs due to multiple upload fields associated with "
+"the product, the product price will be the sum of all the existing extra "
+"costs."
+msgstr ""
+"Verwenden Sie den berechneten Produktpreis im Warenkorb. <strong>HINWEIS:</"
+"strong> Bei mehreren zusätzlichen Kosten aufgrund mehrerer an das Produkt "
+"gebundener Uploadfelder ist der Produktpreis die Summe aller bestehenden "
+"zusätzlichen Kosten."
+
+#: classes/com/WCUF_Html.php:1400
+msgid "The computed fee will be added to product cart price"
+msgstr "Die berechnete Gebühr wird zum Warenkorbpreis hinzugefügt"
+
+#: classes/com/WCUF_Html.php:1401
+#, fuzzy
+#| msgid ""
+#| "The computed fee will be added to the product price. <strong>NOTE:</"
+#| "strong> in case of multiple extra costs due to multiple upload fields "
+#| "bounded to the product, the product price will be the sum of the all the "
+#| "existing extra costs. In case some fields bounded to the same product "
+#| "have the \"computed fee as product price\" active, it will be ignored an "
+#| "used this option instead."
+msgid ""
+"The computed fee will be added to the product price. <strong>NOTE:</strong> "
+"in case of multiple extra costs due to multiple upload fields associated "
+"with the product, the product price will be the sum of all the existing "
+"extra costs. In case some fields associated with the same product have the "
+"\"computed fee as product price\" active, it will be ignored an used this "
+"option instead."
+msgstr ""
+"Die berechnete Gebühr wird zum Produktpreis hinzugerechnet. <strong>HINWEIS:"
+"</strong> Bei mehreren zusätzlichen Kosten aufgrund mehrerer an das Produkt "
+"gebundener Upload-Felder ist der Produktpreis die Summe aller bestehenden "
+"zusätzlichen Kosten. Falls in einigen Feldern, die an das gleiche Produkt "
+"gebunden sind, die \"berechnete Gebühr als Produktpreis\" aktiviert ist, "
+"wird dies ignoriert und stattdessen diese Option verwendet."
+
+#: classes/com/WCUF_Html.php:1409
+#, fuzzy
+#| msgid ""
+#| "Exclude field from the \"Product cart quantity as number of uploaded "
+#| "files\" option"
+msgid "The product cart price is multiplied by the number of uploaded files"
+msgstr ""
+"Feld aus der Option \"Warenkorbmenge als Anzahl hochgeladener Dateien\" "
+"ausschließen"
+
+#: classes/com/WCUF_Html.php:1410
+msgid ""
+"The product price will be computed as the product priced multiplied for the "
+"number of uploaded files. <strong>NOTE:</strong> this option will override "
+"any other options that alters the product price (Product cart prices or Cart "
+"fee/discount options)"
+msgstr ""
+
+#: classes/com/WCUF_Media.php:284 classes/com/WCUF_Media.php:296
+#: classes/com/WCUF_Media.php:308 classes/com/WCUF_Media.php:320
+#, fuzzy
+#| msgid "Preview Size"
+msgid "Preview"
+msgstr "Größe der Vorschau"
+
+#: classes/com/WCUF_Media.php:389
+msgid "DropBox account unlinked"
+msgstr "DropBox-Konto nicht verknüpft"
+
+#: classes/com/WCUF_Media.php:459
+msgid "Invalid image path"
+msgstr "Ungültiger Bildpfad"
+
+#: classes/com/WCUF_Media.php:763
+msgid "Cannot create thumb"
+msgstr "Thumbnail kann nicht erstellt werden"
+
+#: classes/com/WCUF_Product.php:233
+msgid "Variation"
+msgstr "Variation"
+
+#: classes/com/WCUF_Shortcode.php:45
+msgid ""
+"To use this you have to disable the standard upload field managment for "
+"Product page. Go to the Plugin options page and disable it."
+msgstr ""
+"Um dies zu verwenden, müssen Sie die Standard-Upload-Feldverwaltung für die "
+"Produktseite deaktivieren. Gehen Sie zur Seite mit den Plugin-Optionen und "
+"deaktivieren Sie sie."
+
+#: classes/com/WCUF_Shortcode.php:67
+msgid ""
+"To use this you have to disable the standard upload field managment for Cart "
+"page. Go to the Plugin options page and disable it."
+msgstr ""
+"Um dies zu verwenden, müssen Sie die Standard-Upload-Feldverwaltung für die "
+"Warenkorbseite deaktivieren. Gehen Sie zur Seite mit den Plugin-Optionen und "
+"deaktivieren Sie sie."
+
+#: classes/com/WCUF_Shortcode.php:85
+msgid ""
+"To use this you have to disable the standard upload field managment for "
+"Checkout page. Go to the Plugin options page and disable it."
+msgstr ""
+"Um dies zu verwenden, müssen Sie die Standard-Upload-Feldverwaltung für die "
+"Checkout-Seite deaktivieren. Gehen Sie zur Seite mit den Plugin-Optionen und "
+"deaktivieren Sie sie."
+
+#: classes/com/WCUF_Shortcode.php:230
+msgid "You have no orders or you are not logged"
+msgstr "Sie haben keine Bestellungen oder sind nicht eingeloggt"
+
+#: classes/com/WCUF_Shortcode.php:300 classes/com/WCUF_Shortcode.php:320
+#: classes/com/WCUF_Shortcode.php:326 classes/com/WCUF_Shortcode.php:397
+#: classes/com/WCUF_Shortcode.php:403
+msgid "Free!"
+msgstr "Kostenlos!"
+
+#: classes/com/WCUF_Shortcode.php:305
+msgid " (seconds cost)"
+msgstr " (Sekundenkosten)"
+
+#: classes/com/WCUF_Shortcode.php:313
+msgid " (cost per upload)"
+msgstr " (Kosten pro Upload)"
+
+#: classes/com/WCUF_Shortcode.php:341 classes/com/WCUF_Shortcode.php:413
+msgid "Cost: "
+msgstr "Kosten: "
+
+#: classes/com/WCUF_Shortcode.php:348 classes/com/WCUF_Shortcode.php:496
+msgid "Length: "
+msgstr "Länge: "
+
+#: classes/com/WCUF_Shortcode.php:386 classes/com/WCUF_Shortcode.php:474
+#: classes/com/WCUF_Shortcode.php:526
+msgid "Download / View file"
+msgstr "Datei runterladen / anschauen"
+
+#: classes/com/WCUF_Text.php:11 classes/com/WCUF_Text.php:108
+msgid "#"
+msgstr "#"
+
+#: classes/com/WCUF_Text.php:29
+msgid "Browse"
+msgstr "Durchsuchen"
+
+#: classes/com/WCUF_Text.php:35
+msgid "Add files"
+msgstr "Datei(en) hinzufügen"
+
+#: classes/com/WCUF_Text.php:38
+msgid "Click to choose the file or drag it here"
+msgstr "Klicken Sie um die Datei auszuwählen oder ziehen Sie sie hierher"
+
+#: classes/com/WCUF_Text.php:41
+msgid "Click to choose the files or drag them here"
+msgstr "Klicken Sie um die Dateien auszuwählen oder ziehen Sie sie hierher"
+
+#: classes/com/WCUF_Text.php:44
+msgid "Upload selected files"
+msgstr "Ausgewählte Dateien hochladen"
+
+#: classes/com/WCUF_Text.php:47
+msgid "Delete uploaded file(s)"
+msgstr "Hochgeladene Datei(en) löschen"
+
+#: classes/com/WCUF_Text.php:50
+msgid "Crop & Upload"
+msgstr "Zuschneiden & Hochladen"
+
+#: classes/com/WCUF_Text.php:53
+msgid "Crop & Save"
+msgstr "Zuschneiden & Speichern"
+
+#: classes/com/WCUF_Text.php:62
+msgid "Rotate left"
+msgstr "Nach links drehen"
+
+#: classes/com/WCUF_Text.php:65
+msgid "Rotate right"
+msgstr "Nach rechts drehen"
+
+#: classes/com/WCUF_Text.php:69
+msgid "Deleting file, please wait..."
+msgstr "Lösche Datei, bitte warten..."
+
+#: classes/com/WCUF_Text.php:72
+msgid "Loading, please wait..."
+msgstr "Lade, bitte warten..."
+
+#: classes/com/WCUF_Text.php:75
+msgid "Save in progress, please wait..."
+msgstr "Speichere, bitte warten..."
+
+#: classes/com/WCUF_Text.php:78 template/uploads_details_sheet_page.php:242
+msgid "Totals"
+msgstr "Gesamt"
+
+#: classes/com/WCUF_Text.php:81
+msgid "Number of uploaded files:"
+msgstr "Anzahl der hochgeladenen Dateien:"
+
+#: classes/com/WCUF_Text.php:84
+msgid "Extra costs:"
+msgstr "Extrakosten:"
+
+#: classes/com/WCUF_Text.php:89
+msgid "Save upload(s)"
+msgstr "Uploads speichern"
+
+#: classes/com/WCUF_Text.php:92
+msgid "Select quantity:"
+msgstr "Anzahl auswählen:"
+
+#: classes/com/WCUF_Text.php:95
+msgid ""
+"Your file upload is incomplete – click on the 'Upload selected files' button "
+"or remove the file(s)"
+msgstr ""
+"Ihr Datei-Upload ist unvollständig – klicken Sie auf die Schaltfläche "
+"„Ausgewählte Dateien hochladen“ oder entfernen Sie die Datei(en)"
+
+#: classes/com/WCUF_Text.php:98
+msgid ""
+"Please upload all the required file(s). Once done you will be able to add "
+"the product to cart."
+msgstr ""
+"Bitte laden Sie alle erforderlichen Dateien hoch. Sobald Sie fertig sind, "
+"können Sie das Produkt in den Warenkorb legen."
+
+#: classes/com/WCUF_Text.php:101
+msgid "Please upload all the required files before leaving the page"
+msgstr ""
+"Bitte laden Sie alle erforderlichen Dateien hoch, bevor Sie die Seite "
+"verlassen"
+
+#: classes/com/WCUF_Text.php:105
+msgid "When ready to save the uploaded file(s), click on the following button:"
+msgstr ""
+"Wenn Sie bereit sind, die hochgeladene(n) Datei(en) zu speichern, klicken "
+"Sie auf die folgende Schaltfläche:"
+
+#: classes/com/WCUF_UploadField.php:112
+msgid "Waiting for approval"
+msgstr ""
+
+#: classes/com/WCUF_UploadField.php:113
+msgid "Approved"
+msgstr ""
+
+#: classes/com/WCUF_UploadField.php:114
+msgid "Rejected"
+msgstr ""
+
+#: classes/com/WCUF_WCPriceCalculatorMeasurementHelper.php:63
+#, php-format
+msgid "Total %1$s (%2$s)"
+msgstr "Gesamt  %1$s (%2$s)"
+
+#: classes/com/WCUF_WCPriceCalculatorMeasurementHelper.php:64
+#, php-format
+msgid "Total %s"
+msgstr "Gesamt %s"
+
+#: classes/com/vendor/acf-divider-field-master/acf-divider-v4.php:23
+#: classes/com/vendor/acf-divider-field-master/acf-divider-v5.php:33
+msgid "Divider"
+msgstr "Trenner"
+
+#: classes/com/vendor/acf-divider-field-master/acf-divider-v4.php:24
+msgid "Basic"
+msgstr "Basic"
+
+#: classes/com/vendor/acf-divider-field-master/acf-divider-v4.php:74
+msgid "Preview Size"
+msgstr "Größe der Vorschau"
+
+#: classes/com/vendor/acf-divider-field-master/acf-divider-v4.php:75
+msgid "Thumbnail is advised"
+msgstr "Thumbnail wird empfohlen"
+
+#: classes/com/vendor/acf-divider-field-master/acf-divider-v4.php:86
+msgid "Thumbnail"
+msgstr "Thumbnail"
+
+#: classes/com/vendor/acf-divider-field-master/acf-divider-v4.php:87
+msgid "Something Else"
+msgstr "Etwas anderes"
+
+#: classes/com/vendor/acf-divider-field-master/acf-divider-v5.php:58
+msgid "Error! Please enter a higher value"
+msgstr "Fehler! Bitte einen höheren Wert eingeben"
+
+#: classes/com/vendor/acf-divider-field-master/acf-divider-v5.php:93
+msgid "Custom CSS"
+msgstr "Custom CSS"
+
+#: classes/com/vendor/acf-divider-field-master/acf-divider-v5.php:99
+msgid "Instructions"
+msgstr "Anweisungen"
+
+#: classes/com/vendor/acf-divider-field-master/acf-divider-v5.php:100
+msgid "Divide field groups"
+msgstr "Feldgruppen aufteilen"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:10
+msgid "Order Status Selector"
+msgstr "Bestellstatusauswahl"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:11
+msgid "Choice"
+msgstr "Auswahl"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:27
+msgid "Return Format"
+msgstr "Rückgabeformat"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:28
+msgid "Specify the returned value type"
+msgstr "Typ des Rückgabeformats angeben"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:33
+msgid "Status Name"
+msgstr "Name des Status"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:40
+msgid "Allowed Statuses"
+msgstr "Erlaubte Status"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:44
+msgid "To allow all statuses, select none or all of the options to the right"
+msgstr ""
+"Um alle Status zu erlauben, keine oder alle Optionen auf der rechten Seite "
+"auswählen"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:49
+msgid "Field Type"
+msgstr "Feldtyp"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:53
+msgid "Multiple Values"
+msgstr "Mehrere Werte"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:54
+msgid "Checkbox"
+msgstr "Kontrollkästchen"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:55
+msgid "Multi Select"
+msgstr "Mehrfachauswahl"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:57
+msgid "Single Value"
+msgstr "Einzelwert"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:58
+msgid "Radio Buttons"
+msgstr "Radio-Knöpfe"
+
+#: classes/com/vendor/acf-order-status-field/acf-order-status-v5.php:59
+msgid "Select"
+msgstr "Auswählen"
+
+#: classes/frontend/WCUF_CheckoutPage.php:269
+#: classes/frontend/WCUF_CheckoutPage.php:275
+#, php-format
+msgid " for product <strong>%s</strong>"
+msgstr "  für Produkt <strong>%s</strong>"
+
+#: classes/frontend/WCUF_CheckoutPage.php:270
+#, php-format
+msgid ""
+"Upload <strong>%s</strong>%s requires <strong>%s file(s)</strong>. You have "
+"uploaded: <strong>%s file(s)</strong>. Please upload the requested number of "
+"files."
+msgstr ""
+"Das Hochladen von <strong>%s</strong>%s erfordert <strong>%s Datei(en)</"
+"strong>. Sie haben hochgeladen: <strong>%s Datei(en)</strong>. Bitte laden "
+"Sie die gewünschte Anzahl von Dateien hoch."
+
+#: classes/frontend/WCUF_CheckoutPage.php:276
+#, php-format
+msgid "Upload <strong>%s</strong>%s requires"
+msgstr "Hochladen von <strong>%s</strong>%s erforderlich"
+
+#: classes/frontend/WCUF_CheckoutPage.php:285
+#, php-format
+msgid ""
+"Upload <strong>%s</strong> for product <strong>%s</strong> has not been "
+"performed."
+msgstr ""
+"Upload von <strong>%s</strong> für Produkt <strong>%s</strong> wurde nicht "
+"durchgeführt."
+
+#: classes/frontend/WCUF_DCMultivendorOrderDetailsPage.php:127
+#: classes/frontend/WCUF_DokanOrderDetailsPage.php:102
+msgid "Download all as zip"
+msgstr "Alle als .zip runterladen"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:30
+#: js/wcuf-frontend-order-details-page.js.php:28
+msgid "You have to upload at least: "
+msgstr "Mindestanzahl an Uploads:"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:31
+msgid "Please upload all the required files before proceding to checkout"
+msgstr "Bitte laden Sie alle benötigten Dateien hoch bevor Sie zur Kasse gehen"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:32
+#: js/wcuf-frontend-order-details-page.js.php:29
+msgid "Please fill all required text fields before uploading file(s)."
+msgstr ""
+"Bitte füllen Sie alle erforderlichen Textfelder aus, bevor Sie die Datei(en) "
+"hochladen."
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:35
+#: js/wcuf-frontend-order-details-page.js.php:32
+msgid "You must accept the disclaimer"
+msgstr "Sie müssen den Haftungsausschluss akzeptieren"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:39
+#: js/wcuf-frontend-order-details-page.js.php:48
+msgid " size is incorrect or its type is not allowed.  "
+msgstr " Dateigröße oder -typ ist nicht erlaubt. "
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:40
+#: js/wcuf-frontend-order-details-page.js.php:37
+msgid "Before uploading, you need to crop all the images."
+msgstr "Vor dem Hochladen müssen sie alle Bilder zuschneiden."
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:41
+#: js/wcuf-frontend-order-details-page.js.php:49
+msgid " Max allowed size: "
+msgstr " Max. erlaubte Dateigröße: "
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:42
+#: js/wcuf-frontend-order-details-page.js.php:50
+msgid " Min file size: "
+msgstr " Min. Dateigröße: "
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:43
+msgid ""
+"One (or more) file is not an image or it has wrong sizes/DPI. Sizes/DPI "
+"allowed:"
+msgstr ""
+"Eine (oder mehrere) Datei(en) sind kein Bild oder hat eine falsche Größe/"
+"DPI. Zulässige Größe/DPI:"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:44
+#: js/wcuf-frontend-order-details-page.js.php:34
+msgid "One (or more) media file length is not valid. "
+msgstr "Die Länge einer oder mehrerer Mediendateien ist ungültig. "
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:45
+#: js/wcuf-frontend-order-details-page.js.php:36
+msgid " file is not an image or size to big. Size must be: "
+msgstr " die Datei ist kein Bild oder zu groß. Erlaubte Größe: "
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:46
+#: js/wcuf-frontend-order-details-page.js.php:35
+msgid "One (or more) is not a valid media. "
+msgstr "Eine oder mehrere Dateien sind kein gültiges Medium. "
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:47
+#: js/wcuf-frontend-order-details-page.js.php:38
+msgid "max height"
+msgstr "Max. Höhe"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:48
+#: js/wcuf-frontend-order-details-page.js.php:39
+msgid "max width"
+msgstr "Max. Breite"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:49
+#: js/wcuf-frontend-order-details-page.js.php:40
+msgid "min height"
+msgstr "Min. Höhe"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:50
+#: js/wcuf-frontend-order-details-page.js.php:41
+msgid "min width"
+msgstr "Min. Breite"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:51
+#: js/wcuf-frontend-order-details-page.js.php:42
+msgid "min DPI"
+msgstr "Min. DPI"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:52
+#: js/wcuf-frontend-order-details-page.js.php:43
+msgid "max DPI"
+msgstr "Max. DPI"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:53
+#: js/wcuf-frontend-order-details-page.js.php:44
+msgid "Aspect ratio"
+msgstr "Seitenverhältnis"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:54
+#: js/wcuf-frontend-order-details-page.js.php:45
+msgid "Min allowed length: "
+msgstr "Min. erlaubte Länge:"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:55
+#: js/wcuf-frontend-order-details-page.js.php:46
+msgid "Max allowed length: "
+msgstr "Max. erlaubte Länge:"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:56
+#: js/wcuf-frontend-order-details-page.js.php:53
+msgid "Allowed file types: "
+msgstr "Erlaubte Dateitypen:"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:57
+#: js/wcuf-frontend-order-details-page.js.php:52
+msgid "Input file must be an image"
+msgstr "Datei muss ein Bild sein"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:58
+#: js/wcuf-frontend-order-details-page.js.php:51
+msgid "Maximum of file upload error. You can upload max : "
+msgstr ""
+"Fehler bei der max. Anzahl der hochgeladenen Dateien. Max. Anzahl an "
+"Uploads: "
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:59
+#: js/wcuf-frontend-order-details-page.js.php:54
+msgid "Following files have been removed: "
+msgstr "Die folgenden Dateien wurden entfernt:"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:60
+#: js/wcuf-frontend-order-details-page.js.php:55
+msgid ""
+"Bad econdoding deteceted. The following files have been removed because are "
+"not valid images: "
+msgstr ""
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:62
+#: js/wcuf-frontend-order-details-page.js.php:60
+msgid "Done! "
+msgstr "Fertig!"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:64
+#: js/wcuf-frontend-order-details-page.js.php:62
+msgid "Deleting, pelase wait... "
+msgstr "Lösche, bitte warten..."
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:65
+#: js/wcuf-frontend-order-details-page.js.php:63
+msgid "An error has occurred."
+msgstr "Es ist ein Fehler aufgetreten."
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:67
+#: js/wcuf-frontend-order-details-page.js.php:65
+msgid ""
+"The HTML5 standards are not fully supported in this browser, please upgrade "
+"it or use a more moder browser like Google Chrome or FireFox."
+msgstr ""
+"Die HTML5-Standards werden in diesem Browser nicht vollständig unterstützt. "
+"Bitte aktualisieren Sie ihn oder verwenden Sie einen moderneren Browser wie "
+"Google Chrome oder FireFox."
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:68
+#: js/wcuf-frontend-order-details-page.js.php:66
+#, php-format
+msgid "The sum of file sizes cannot be greater than %s MB!"
+msgstr "Die Summe aller Dateigrößen darf %s MB nicht überschreiten!"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:69
+#: js/wcuf-frontend-order-details-page.js.php:67
+#, php-format
+msgid "The sum of file sizes cannot be minor than %s MB!"
+msgstr "Die Summe aller Dateigrößen darf %s MB nicht unterschreiten!"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:70
+#: js/wcuf-frontend-order-details-page.js.php:56
+#, fuzzy
+#| msgid "Rotating the image, please wait..."
+msgid "Aborting the upload, please wait..."
+msgstr "Drehe das Bild, bitte warten..."
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:71
+#: js/wcuf-frontend-order-details-page.js.php:57
+msgid "Upload failed, please try again"
+msgstr ""
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:72
+#: js/wcuf-frontend-order-details-page.js.php:58
+#, php-format
+msgid "Uploading… (Attempt %s of %s)"
+msgstr ""
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:78
+#: js/wcuf-frontend-order-details-page.js.php:70
+msgid "Are sure you want to delete the file?"
+msgstr "Sind Sie sicher, dass Sie die Datei löschen wollen?"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:79
+#: js/wcuf-frontend-order-details-page.js.php:71
+msgid "To upload:"
+msgstr "Hochzuladen:"
+
+#: js/wcuf-frontend-cart-checkout-product-page.js.php:81
+#: js/wcuf-frontend-order-details-page.js.php:72
+msgid ""
+"Something went bad while uploading. The upload field has been reset; please "
+"retry.."
+msgstr ""
+
+#: js/wcuf-frontend-order-details-page.js.php:26
+msgid "Please upload all the required files before saving"
+msgstr "Bitte laden Sie alle benötigten Dateien hoch bevor Sie speichern"
+
+#: js/wcuf-frontend-order-details-page.js.php:30
+msgid "Please upload all required files."
+msgstr "Bitte laden Sie alle benötigten Dateien hoch."
+
+#: js/wcuf-frontend-order-details-page.js.php:33
+msgid ""
+"One (or more) file is not an image or it has wrong sizes/DPI. Sizes/DPI "
+"allowed: "
+msgstr ""
+"Eine (oder mehrere) Datei(en) sind kein Bild oder hat eine falsche Größe/"
+"DPI. Zulässige Größe/DPI:"
+
+#: template/admin_order_details_product_uploads_preview.php:4
+#: template/email_product_uploads_preview.php:4
+msgid "Uploaded images:"
+msgstr "Hochgeladene Bilder:"
+
+#: template/admin_order_details_product_uploads_preview.php:31
+#: template/admin_order_details_product_uploads_preview.php:54
+#: template/email_product_uploads_preview.php:32
+#: template/email_product_uploads_preview.php:57
+#: template/uploads_details_sheet_page.php:192
+#: template/uploads_details_sheet_page.php:215
+#: template/uploads_details_sheet_page.php:281
+#: template/uploads_details_sheet_page.php:308
+msgid "Feedback: "
+msgstr "Kundennachricht: "
+
+#: template/admin_order_details_product_uploads_preview.php:45
+#: template/email_product_uploads_preview.php:46
+msgid "Uploaded files list:"
+msgstr "Liste der hochgeladenen Dateien:"
+
+#: template/alert_popup.php:3
+msgid "Warning"
+msgstr "Warnung"
+
+#: template/alert_popup.php:6 template/alert_popup.php:8
+msgid "OK"
+msgstr "OK"
+
+#: template/checkout_cart_product_page_template.php:382
+#: template/checkout_cart_product_page_template.php:696
+#: template/uploads_details_sheet_page.php:246
+#: template/view_order_template.php:324 template/view_order_template.php:636
+msgid "Total: "
+msgstr "Gesamt: "
+
+#: template/checkout_cart_product_page_template.php:385
+#: template/checkout_cart_product_page_template.php:699
+#: template/view_order_template.php:327 template/view_order_template.php:639
+msgid "Current: "
+msgstr "Derzeitig: "
+
+#: template/checkout_cart_product_page_template.php:390
+#: template/checkout_cart_product_page_template.php:704 template/cropper.php:27
+#: template/view_order_template.php:332 template/view_order_template.php:644
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: template/checkout_cart_product_page_template.php:474
+#: template/checkout_cart_product_page_template.php:790
+#: template/view_order_template.php:418 template/view_order_template.php:733
+#, php-format
+msgid "Min size: %s MB"
+msgstr "Min. Größe: %s MB"
+
+#: template/checkout_cart_product_page_template.php:475
+#: template/checkout_cart_product_page_template.php:791
+#: template/view_order_template.php:419 template/view_order_template.php:734
+#, php-format
+msgid "Max size: %s MB"
+msgstr "Max. Größe: %s MB"
+
+#: template/checkout_cart_product_page_template.php:476
+#: template/checkout_cart_product_page_template.php:792
+#: template/view_order_template.php:420 template/view_order_template.php:735
+msgid "Min files: "
+msgstr "Mindestanzahl an Dateien: "
+
+#: template/checkout_cart_product_page_template.php:477
+#: template/checkout_cart_product_page_template.php:793
+#: template/view_order_template.php:421 template/view_order_template.php:736
+msgid "Max files: "
+msgstr "Maximale Anzahl an Dateien: "
+
+#: template/checkout_cart_product_page_template.php:478
+#: template/checkout_cart_product_page_template.php:794
+#: template/view_order_template.php:422 template/view_order_template.php:737
+msgid "Min width: "
+msgstr "Mindestbreite: "
+
+#: template/checkout_cart_product_page_template.php:479
+#: template/checkout_cart_product_page_template.php:795
+#: template/view_order_template.php:423 template/view_order_template.php:738
+msgid "Max width: "
+msgstr "Maximale Breite: "
+
+#: template/checkout_cart_product_page_template.php:480
+#: template/checkout_cart_product_page_template.php:796
+#: template/view_order_template.php:424 template/view_order_template.php:739
+msgid "Min height: "
+msgstr "Mindesthöhe: "
+
+#: template/checkout_cart_product_page_template.php:481
+#: template/checkout_cart_product_page_template.php:797
+#: template/view_order_template.php:425 template/view_order_template.php:740
+msgid "Max height: "
+msgstr "Maximale Höhe: "
+
+#: template/checkout_cart_product_page_template.php:482
+#: template/checkout_cart_product_page_template.php:798
+#: template/view_order_template.php:426 template/view_order_template.php:741
+msgid "Min DPI: "
+msgstr "Minimale DPI: "
+
+#: template/checkout_cart_product_page_template.php:483
+#: template/checkout_cart_product_page_template.php:799
+#: template/view_order_template.php:427 template/view_order_template.php:742
+msgid "Max DPI: "
+msgstr "Maximale DPI: "
+
+#: template/checkout_cart_product_page_template.php:484
+#: template/checkout_cart_product_page_template.php:800
+#: template/view_order_template.php:428 template/view_order_template.php:743
+msgid "Ratio: "
+msgstr "Verhältnis: "
+
+#: template/checkout_cart_product_page_template.php:485
+#: template/checkout_cart_product_page_template.php:801
+#: template/view_order_template.php:429 template/view_order_template.php:744
+msgid "Min length: "
+msgstr "Minimale Länge: "
+
+#: template/checkout_cart_product_page_template.php:486
+#: template/checkout_cart_product_page_template.php:802
+#: template/view_order_template.php:430 template/view_order_template.php:745
+msgid "Max length: "
+msgstr "Maximale Länge: "
+
+#: template/checkout_cart_product_page_template.php:912
+#: template/view_order_template.php:880
+msgid "Uploads Summary"
+msgstr "Zusammenfassung der Uploads"
+
+#: template/cropper.php:2
+#, fuzzy
+#| msgid "Crop"
+msgid "Cropper"
+msgstr "Zuschneiden"
+
+#: template/cropper.php:24
+msgid "Landscape"
+msgstr ""
+
+#: template/cropper.php:25
+msgid "Portrait"
+msgstr ""
+
+#: template/cropper.php:33
+msgid "Please wait while the image is processed..."
+msgstr ""
+
+#: template/uploads_details_sheet_page.php:100
+msgid "Ships to"
+msgstr "Versand nach"
+
+#: template/uploads_details_sheet_page.php:106
+msgid "Order"
+msgstr "Bestellung"
+
+#: template/uploads_details_sheet_page.php:110
+msgid "ID: "
+msgstr "ID:"
+
+#: template/uploads_details_sheet_page.php:111
+msgid "Placed on: "
+msgstr "Platziert am: "
+
+#: template/uploads_details_sheet_page.php:112
+msgid "Delivery option: "
+msgstr "Lieferoption: "
+
+#: template/uploads_details_sheet_page.php:113
+msgid "Notes: "
+msgstr "Hinweise: "
+
+#: template/uploads_details_sheet_page.php:116
+msgid "Bills to"
+msgstr "Rechnung nach"
+
+#: template/uploads_details_sheet_page.php:128
+msgid "SKU"
+msgstr "SKU"
+
+#: template/uploads_details_sheet_page.php:130
+msgid "Details"
+msgstr "Details"
+
+#: template/uploads_details_sheet_page.php:131
+msgid "Unit Price"
+msgstr "Stückpreis"
+
+#: template/uploads_details_sheet_page.php:132
+msgid "Net subtotal"
+msgstr "Netto-Zwischensumme"
+
+#: template/uploads_details_sheet_page.php:133
+msgid "Tax"
+msgstr "Steuer"
+
+#: template/uploads_details_sheet_page.php:229
+msgid "Delivery"
+msgstr "Lieferung"
+
+#: template/uploads_details_sheet_page.php:244
+msgid "Subtotal : "
+msgstr "Zwischensumme: "
+
+#: template/uploads_details_sheet_page.php:245
+msgid "Tax: "
+msgstr "Steuer: "
+
+#: template/uploads_details_sheet_page.php:256
+msgid "Order uploads"
+msgstr "Uploads der Bestellung"
+
+#: template/uploads_details_sheet_page.php:316
+msgid "Notes for the customer"
+msgstr "Hinweise für den Kunden"
+
+#: template/view_order_template.php:491 template/view_order_template.php:806
+msgid "Download / View file(s)"
+msgstr "Dateien runterladen/anzeigen"
+
+#: upload-files.php:92
+#, php-format
+msgid ""
+"To complete the <span style=\"color:#96588a; font-weight:bold;\">%s</span> "
+"plugin activation, you must verify your purchase license. Click <a "
+"href=\"%s\">here</a> to verify it."
+msgstr ""
+"Um die <span style=\"color:#96588a; font-weight:bold;\">%s</span>-Plugin-"
+"Aktivierung abzuschließen, müssen Sie Ihre Kauflizenz überprüfen. Klicken "
+"Sie <a href=\"%s\">hier</a>, um dies zu tun."
+
+#: upload-files.php:388
+msgid "Woocommerce Upload Files"
+msgstr "Woocommerce Upload Files"
+
+#: upload-files.php:389
+msgid "Upload field configurator"
+msgstr "Upload Feld-Konfigurator"
+
+#: upload-files.php:403
+#, fuzzy
+#| msgid "Activation"
+msgid "Reset activation"
+msgstr "Aktivierung"
+
+#. Plugin Name of the plugin/theme
+msgid "WooCommerce Upload Files"
+msgstr "WooCommerce Upload Files"
+
+#. Description of the plugin/theme
+msgid ""
+"WCUF plugin allows your customers to attach files to their orders according "
+"to the purchased products."
+msgstr ""
+"Mit dem WCUF-Plugin können Ihre Kunden Dateien entsprechend den gekauften "
+"Produkten an ihre Bestellungen anhängen."
+
+#. Author of the plugin/theme
+msgid "Lagudi Domenico"
+msgstr "Lagudi Domenico"
+
+#~ msgid "Deleting, please wait..."
+#~ msgstr "Lösche, bitte warten..."
+
+#, fuzzy
+#~| msgid "Notify admin via email when customer completed the upload?"
+#~ msgid "Notify the admin via email when the customer completes the upload"
+#~ msgstr ""
+#~ "Administrator per E-Mail benachrichtigen, wenn der Kunde den Upload "
+#~ "abgeschlossen hat?"
+
+#, fuzzy
+#~| msgid ""
+#~| "If you enabled the \"Product cart quantity as the number of uploaded "
+#~| "files\" option from the main Options menu, this option will prevent the "
+#~| "upload performed via this field to alter the cart quantities."
+#~ msgid ""
+#~ "If the \"Product cart quantity as the number of uploaded files\" option "
+#~ "is enabled in the main Options menu, this option will prevent the upload "
+#~ "performed via this field to alter the cart quantities."
+#~ msgstr ""
+#~ "Wenn Sie die Option \"Warenkorbmenge als Anzahl der hochgeladenen "
+#~ "Dateien\" im Hauptmenü Optionen aktiviert haben, verhindert diese Option, "
+#~ "dass der Upload über dieses Feld durchgeführt wird, um die "
+#~ "Warenkorbmengen zu ändern."
+
+#, fuzzy
+#~| msgid ""
+#~| "Exclude field from the \"Product cart quantity as number of uploaded "
+#~| "files\" option"
+#~ msgid ""
+#~ "Disable \"Product cart quantity as the number of uploaded files\" option"
+#~ msgstr ""
+#~ "Feld aus der Option \"Warenkorbmenge als Anzahl hochgeladener Dateien\" "
+#~ "ausschließen"
+
+#~ msgid " Activator"
+#~ msgstr " Aktivator"
+
+#~ msgid "Purchase code is invalid!"
+#~ msgstr "Der Bestellcode ist ungültig!"
+
+#~ msgid "Buyer name is invalid!"
+#~ msgstr "Der Name des Käufers ist ungültig!"
+
+#~ msgid "Item id is invalid!"
+#~ msgstr "Die Artikel-ID ist ungültig!"
+
+#~ msgid ""
+#~ "Max number of domains reached! You have to purchase a new license. The "
+#~ "current license has been activated in the following domains: "
+#~ msgstr ""
+#~ "Maximale Anzahl der erreichten Domains! Sie müssen eine neue Lizenz "
+#~ "erwerben. Die aktuelle Lizenz wurde in den folgenden Bereichen aktiviert: "
+
+#~ msgid "Verifing, please wait..."
+#~ msgstr "Verifizierung, bitte warten....."
+
+#~ msgid ""
+#~ "There was an error while verifing the code. Please retry in few minutes!"
+#~ msgstr ""
+#~ "Beim Verifizieren des Codes ist ein Fehler aufgetreten. Bitte versuchen "
+#~ "Sie es in wenigen Minuten erneut!"
+
+#~ msgid "Activation successfully completed!"
+#~ msgstr "Aktivierung erfolgreich abgeschlossen!"
+
+#~ msgid "Buyer and Purchase code fields must be filled!"
+#~ msgstr "Die Felder Käufer und Bestellcode müssen ausgefüllt werden!"
+
+#~ msgid "Activation"
+#~ msgstr "Aktivierung"
+
+#~ msgid ""
+#~ "The plugin can be activate in only <strong>two</strong> domains and they "
+#~ "cannot be unregistered. For each activated domain, you can reactivate "
+#~ "<strong>unlimited</strong> times (including <strong>subdomains</strong> "
+#~ "and <strong>subfolders</strong>). The \"localhost\" domain will not "
+#~ "consume activations. Please enter the following data and hit the "
+#~ "activation button"
+#~ msgstr ""
+#~ "Das Plugin kann nur in <strong>zwei</strong> Domains aktiviert und die "
+#~ "Registrierung kann nicht aufgehoben werden. Für jede aktivierte Domain "
+#~ "können Sie <strong>unbegrenzt</strong> mal reaktivieren (einschließlich "
+#~ "<strong>Subdomains</strong> und <strong>Unterordner</strong>). Die Domäne "
+#~ "\"localhost\" verbraucht keine Aktivierungen. Bitte geben Sie die "
+#~ "folgenden Daten ein und klicken Sie auf den Aktivierungsbutton"
+
+#~ msgid "Buyer"
+#~ msgstr "Käufer"
+
+#~ msgid "Insert the Envato username used to purchase the plugin."
+#~ msgstr ""
+#~ "Gib den Envato-Nutzername an der benutzt wurde dieses Plugin zu kaufen"
+
+#~ msgid "Example: vanquish"
+#~ msgstr "Beispiel: vanquish"
+
+#~ msgid "Purchase code"
+#~ msgstr "Lizenzschlüssel"
+
+#~ msgid ""
+#~ "Insert the purchase code. It can be downloaded from your CodeCanyon "
+#~ "\"Downloads\" profile page."
+#~ msgstr ""
+#~ "Geben Sie den Kaufcode ein. Er kann von Ihrer CodeCanyon-Profilseite "
+#~ "\"Downloads\" heruntergeladen werden."
+
+#~ msgid "Example: 7d7c3rt8-f512-227c-8c98-fc53c3b212fe"
+#~ msgstr "Beispiel: 7d7c3rt8-f512-227c-8c98-fc53c3b212fe"
+
+#~ msgid "Activate"
+#~ msgstr "Aktivieren"
+
+#~ msgid "The plugin has been successfully activated!"
+#~ msgstr "Das Plugin wurde erfolgreich aktiviert!"
+
+#, fuzzy
+#~| msgid ""
+#~| "In case the field is visible before adding the product to the cart, the "
+#~| "plugin will try to hide <strong>Add to cart button</strong> (with some "
+#~| "themes not 100% WooCommerce compliant this feature could not work). In "
+#~| "case the product has been added to the cart, the plugin will <strong>try "
+#~| "to deny the page leaving</strong> until all the required files have not "
+#~| "been uploaded <strong>propting a warning dialog</strong> (some browsers, "
+#~| "for security reasons, may not permit this denial)."
+#~ msgid ""
+#~ "In case the field is visible before adding the product to the cart, the "
+#~ "plugin will try to hide the <strong>Add to cart button</strong> (with "
+#~ "some themes not 100% WooCommerce compliant this feature could not work). "
+#~ "In case the product has been added to the cart, the plugin will "
+#~ "<strong>try to deny the page leaving</strong> until all the required "
+#~ "files have not been uploaded <strong>prompting a warning dialog</strong> "
+#~ "(some browsers, for security reasons, may not permit this denial)."
+#~ msgstr ""
+#~ "Falls das Feld sichtbar ist, bevor das Produkt in den Warenkorb gelegt "
+#~ "wird, versucht das Plugin, die <strong>In den Warenkorb hinzufügen-"
+#~ "Schaltfläche</strong> auszublenden (bei einigen Themes, die nicht 100% "
+#~ "WooCommerce-kompatibel sind, funktioniert das eventuell nicht). Falls das "
+#~ "Produkt dem Warenkorb hinzugefügt wurde, versucht das Plugin <strong>das "
+#~ "Verlassen der Seite zu verweigern</strong>, bis alle erforderlichen "
+#~ "Dateien hochgeladen wurden <strong>ein Warndialogfeld wird eingeblendet</"
+#~ "strong> (einige Browser , aus Sicherheitsgründen diese Verweigerung "
+#~ "möglicherweise nicht zulassen)."
+
+#, fuzzy
+#~| msgid ""
+#~| "if enabling this option your are experiencing multiple \"Add to cart\" "
+#~| "buttons issues on your shop page, go to the Option menu and set False "
+#~| "for the Disable View Button option"
+#~ msgid ""
+#~ "if enabling this option you are experiencing multiple \"Add to cart\" "
+#~ "button issues on your shop page, go to the Options menu and set False for "
+#~ "the Disable View Button option"
+#~ msgstr ""
+#~ "Wenn Sie diese Option aktivieren und Probleme mehreren Schaltflächen \"In "
+#~ "den Warenkorb\" haben, gehen Sie zum Optionsmenü und setzen Sie \"False\" "
+#~ "für die Option Ansichtsschaltfläche deaktivieren"
+
+#, fuzzy
+#~| msgid "Pages & form"
+#~ msgid "Pages & shortcode"
+#~ msgstr "Seiten & Formular"
+
+#~ msgid "Uploaded file(s)"
+#~ msgstr "Hochgeladene Datei(en)"
+
+#~ msgid "Valid only for Order details page"
+#~ msgstr "Gültig nur für die Bestellungsdetailseite"
+
+#~ msgid "File(s) uploaded"
+#~ msgstr "Hochgeladene Datei(en)"
+
+#~ msgid "Show/Hide field options"
+#~ msgstr "Feldoptionen anzeigen/ausblenden"
+
+#~ msgid "PRODUCT VISIBILITY INFO. THIS UPLOAD FIELD WILL BE:"
+#~ msgstr "PRODUKTSICHTBARKEIT INFO. DIESES UPLOAD-FELD WIRD:"
+
+#~ msgid "Delete selected files"
+#~ msgstr "Ausgewählte Dateien löschen"
+
+#~ msgid "<h2>The following error has been generated by your site:</h2>"
+#~ msgstr "<h2>Der folgende Fehler wurde von Ihrer Website generiert:</h2>"
+
+#~ msgid ""
+#~ "<p>Be sure that the <strong>max_execution_time</strong> PHP setting is "
+#~ "properly setted. For large files execution time may excede the configured "
+#~ "time. So in case you are handling big file, try increase that setting.</p>"
+#~ msgstr ""
+#~ "<p>Stellen Sie sicher, dass die PHP-Einstellung "
+#~ "<strong>max_execution_time</strong> richtig eingestellt ist. Bei großen "
+#~ "Dateien kann die Ausführungszeit die konfigurierte Zeit überschreiten. "
+#~ "Falls Sie also mit großen Dateien arbeiten, versuchen Sie, diese "
+#~ "Einstellung zu erhöhen.</p>"

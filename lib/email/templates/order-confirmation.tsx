@@ -58,12 +58,11 @@ export const OrderConfirmationEmail = ({
         <Container style={container}>
           <Heading style={h1}>Order Confirmation</Heading>
 
-          <Text style={text}>
-            Hi {customerName},
-          </Text>
+          <Text style={text}>Hi {customerName},</Text>
 
           <Text style={text}>
-            Thank you for your order! We've received your order and will begin processing it shortly.
+            Thank you for your order! We've received your order and will begin processing it
+            shortly.
           </Text>
 
           <Section style={orderInfo}>
@@ -81,21 +80,19 @@ export const OrderConfirmationEmail = ({
               <Row>
                 <Column>
                   <Text style={itemName}>{item.productName}</Text>
-                  <Text style={itemDetails}>
-                    Quantity: {item.quantity.toLocaleString()}
-                  </Text>
+                  <Text style={itemDetails}>Quantity: {item.quantity.toLocaleString()}</Text>
                   {item.configuration && (
                     <Text style={itemDetails}>
                       {Object.entries(item.configuration).map(([key, value]) => (
-                        <span key={key}>{key}: {String(value)} | </span>
+                        <span key={key}>
+                          {key}: {String(value)} |{' '}
+                        </span>
                       ))}
                     </Text>
                   )}
                 </Column>
                 <Column align="right">
-                  <Text style={itemPrice}>
-                    ${(item.totalPrice / 100).toFixed(2)}
-                  </Text>
+                  <Text style={itemPrice}>${(item.totalPrice / 100).toFixed(2)}</Text>
                 </Column>
               </Row>
             </Section>
@@ -142,7 +139,8 @@ export const OrderConfirmationEmail = ({
 
           <Heading style={h2}>Shipping Address</Heading>
           <Text style={address}>
-            {shippingAddress.address}<br />
+            {shippingAddress.address}
+            <br />
             {shippingAddress.city}, {shippingAddress.state} {shippingAddress.zipCode}
           </Text>
 
@@ -155,7 +153,8 @@ export const OrderConfirmationEmail = ({
           </Section>
 
           <Text style={footer}>
-            If you have any questions about your order, please contact us at support@uvcoatedflyers.com
+            If you have any questions about your order, please contact us at
+            support@uvcoatedflyers.com
           </Text>
 
           <Text style={footer}>
@@ -172,7 +171,8 @@ export default OrderConfirmationEmail;
 // Styles
 const main = {
   backgroundColor: '#f6f9fc',
-  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+  fontFamily:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
 };
 
 const container = {

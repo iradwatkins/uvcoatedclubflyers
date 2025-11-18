@@ -26,7 +26,14 @@ export const ADDON_CATEGORIES = {
   FINISHING: {
     title: 'Finishing Options',
     description: 'Professional finishing services for your prints',
-    slugs: ['perforation', 'score-only', 'folding', 'corner-rounding', 'hole-drilling', 'wafer-seal'],
+    slugs: [
+      'perforation',
+      'score-only',
+      'folding',
+      'corner-rounding',
+      'hole-drilling',
+      'wafer-seal',
+    ],
   },
   PACKAGING: {
     title: 'Packaging & Bundling',
@@ -94,9 +101,7 @@ export function AddOnCategorySection({
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <CardTitle className="text-lg">{title}</CardTitle>
-            {description && (
-              <CardDescription className="mt-1">{description}</CardDescription>
-            )}
+            {description && <CardDescription className="mt-1">{description}</CardDescription>}
           </div>
           <button
             type="button"
@@ -106,11 +111,7 @@ export function AddOnCategorySection({
               setIsExpanded(!isExpanded);
             }}
           >
-            {isExpanded ? (
-              <ChevronUp className="h-5 w-5" />
-            ) : (
-              <ChevronDown className="h-5 w-5" />
-            )}
+            {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
           </button>
         </div>
       </CardHeader>

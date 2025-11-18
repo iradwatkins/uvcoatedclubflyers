@@ -11,8 +11,8 @@
  * - Multi-rate-type support (LIST/ACCOUNT/PREFERRED)
  */
 
-import axios, { type AxiosInstance } from 'axios'
-import { Carrier } from '../types'
+import axios, { type AxiosInstance } from 'axios';
+import { Carrier } from '../types';
 import {
   type ShippingAddress,
   type ShippingPackage,
@@ -21,8 +21,8 @@ import {
   type ShippingProvider,
   type TrackingInfo,
   type TrackingEvent,
-} from '../interfaces'
-import { roundWeight } from '../weight-calculator'
+} from '../interfaces';
+import { roundWeight } from '../weight-calculator';
 
 // Enhanced modules
 import {
@@ -32,13 +32,10 @@ import {
   getInternationalServices,
   getServicesForWeight,
   type FedExService,
-} from '../fedex/services'
-import { packItems, convertToShippingPackages, type PackItem } from '../fedex/box-packer'
-import { FedExErrorHandler, FedExError, withRetry } from '../fedex/error-handler'
-import {
-  findNearestHub,
-  isStateServedBySmartPost,
-} from '../fedex/smartpost-hubs'
+} from '../fedex/services';
+import { packItems, convertToShippingPackages, type PackItem } from '../fedex/box-packer';
+import { FedExErrorHandler, FedExError, withRetry } from '../fedex/error-handler';
+import { findNearestHub, isStateServedBySmartPost } from '../fedex/smartpost-hubs';
 import {
   requiresFreight,
   buildFreightShipmentDetail,
@@ -47,7 +44,7 @@ import {
   estimateFreightCost,
   isResidentialFreightAvailable,
   calculateResidentialFreightSurcharge,
-} from '../fedex/freight'
+} from '../fedex/freight';
 import type {
   FedExAuthToken,
   FedExRateRequest,
@@ -55,26 +52,26 @@ import type {
   RateCalculationOptions,
   ShippingPackage as FedExShippingPackage,
   SmartPostHub,
-} from '../fedex/types'
+} from '../fedex/types';
 
 interface FedExProviderConfig {
-  clientId: string
-  clientSecret: string
-  accountNumber: string
-  testMode: boolean
-  markupPercentage: number
-  useIntelligentPacking: boolean
-  enabledServices?: string[] // Specific services to enable
-  rateTypes?: Array<'LIST' | 'ACCOUNT' | 'PREFERRED'>
+  clientId: string;
+  clientSecret: string;
+  accountNumber: string;
+  testMode: boolean;
+  markupPercentage: number;
+  useIntelligentPacking: boolean;
+  enabledServices?: string[]; // Specific services to enable
+  rateTypes?: Array<'LIST' | 'ACCOUNT' | 'PREFERRED'>;
 }
 
 export class FedExProviderEnhanced implements ShippingProvider {
-  carrier = Carrier.FEDEX
-  private client: AxiosInstance
-  private authToken: FedExAuthToken | null = null
-  private tokenExpiry: Date | null = null
-  private errorHandler: FedExErrorHandler
-  private config: FedExProviderConfig
+  carrier = Carrier.FEDEX;
+  private client: AxiosInstance;
+  private authToken: FedExAuthToken | null = null;
+  private tokenExpiry: Date | null = null;
+  private errorHandler: FedExErrorHandler;
+  private config: FedExProviderConfig;
 
   constructor(config?: Partial<FedExProviderConfig>) {
     // Load configuration from environment or provided config
@@ -88,11 +85,11 @@ export class FedExProviderEnhanced implements ShippingProvider {
       useIntelligentPacking: config?.useIntelligentPacking ?? true,
       enabledServices: config?.enabledServices,
       rateTypes: config?.rateTypes || ['LIST', 'ACCOUNT'],
-    }
+    };
 
     const baseURL = this.config.testMode
       ? 'https://apis-sandbox.fedex.com'
-      : 'https://apis.fedex.com'
+      : 'https://apis.fedex.com';
 
     this.client = axios.create({
       baseURL,
@@ -100,7 +97,7 @@ export class FedExProviderEnhanced implements ShippingProvider {
       headers: {
         'Content-Type': 'application/json',
       },
-    })
+    });
 
     this.errorHandler = new FedExErrorHandler({
       maxRetries: 3,
@@ -108,7 +105,7 @@ export class FedExProviderEnhanced implements ShippingProvider {
       maxDelay: 10000,
       useExponentialBackoff: true,
       useJitter: true,
-    })
+    });
   }
 
   /**
@@ -116,7 +113,7 @@ export class FedExProviderEnhanced implements ShippingProvider {
    */
   private async authenticate(): Promise<void> {
     if (this.authToken && this.tokenExpiry && this.tokenExpiry > new Date()) {
-      return // Token still valid
+      return; // Token still valid
     }
 
     await withRetry(
@@ -133,19 +130,19 @@ export class FedExProviderEnhanced implements ShippingProvider {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
           }
-        )
+        );
 
-        this.authToken = response.data
+        this.authToken = response.data;
         // Set token expiry with 5-minute buffer
-        this.tokenExpiry = new Date(Date.now() + (this.authToken!.expires_in - 300) * 1000)
+        this.tokenExpiry = new Date(Date.now() + (this.authToken!.expires_in - 300) * 1000);
 
         // Update authorization header
         this.client.defaults.headers.common['Authorization'] =
-          `Bearer ${this.authToken!.access_token}`
+          `Bearer ${this.authToken!.access_token}`;
       },
       undefined, // No token refresh callback for authentication itself
       'FedEx OAuth2 Authentication'
-    )
+    );
   }
 
   /**
@@ -164,80 +161,80 @@ export class FedExProviderEnhanced implements ShippingProvider {
         fromAddress.zipCode,
         toAddress.zipCode,
         toAddress.isResidential
-      )
-      const filteredRates = this.filterByEnabledServices(testRates)
-      return this.applyMarkup(filteredRates)
+      );
+      const filteredRates = this.filterByEnabledServices(testRates);
+      return this.applyMarkup(filteredRates);
     }
 
     // If no API credentials, return test rates
     if (!this.config.clientId || !this.config.accountNumber) {
-      console.warn('[FedEx] No API credentials, returning test rates')
+      console.warn('[FedEx] No API credentials, returning test rates');
       const testRates = this.getTestRates(
         packages,
         fromAddress.zipCode,
         toAddress.zipCode,
         toAddress.isResidential
-      )
-      const filteredRates = this.filterByEnabledServices(testRates)
-      return this.applyMarkup(filteredRates)
+      );
+      const filteredRates = this.filterByEnabledServices(testRates);
+      return this.applyMarkup(filteredRates);
     }
 
     try {
-      await this.authenticate()
+      await this.authenticate();
 
       // Determine if freight is needed
-      const needsFreight = requiresFreight(packages as FedExShippingPackage[])
+      const needsFreight = requiresFreight(packages as FedExShippingPackage[]);
 
       // Use intelligent box packing for parcel shipments
-      let optimizedPackages = packages
+      let optimizedPackages = packages;
       if (this.config.useIntelligentPacking && !needsFreight) {
-        optimizedPackages = this.optimizePackaging(packages)
+        optimizedPackages = this.optimizePackaging(packages);
       }
 
       // Determine which service types to request
-      const isInternational = toAddress.country && toAddress.country !== 'US'
+      const isInternational = toAddress.country && toAddress.country !== 'US';
       const serviceCategories = this.determineServiceCategories(
         needsFreight,
         isInternational as boolean,
         toAddress.state!
-      )
+      );
 
       // Fetch rates for each category in parallel
       const ratePromises = serviceCategories.map((category) =>
         this.getRatesForCategory(category, fromAddress, toAddress, optimizedPackages, options)
-      )
+      );
 
-      const results = await Promise.allSettled(ratePromises)
+      const results = await Promise.allSettled(ratePromises);
 
       // Combine successful results
-      const allRates: ShippingRate[] = []
+      const allRates: ShippingRate[] = [];
       results.forEach((result, index) => {
         if (result.status === 'fulfilled') {
-          allRates.push(...result.value)
+          allRates.push(...result.value);
         } else {
           console.warn(
             `[FedEx] Failed to get rates for ${serviceCategories[index]}:`,
             result.reason
-          )
+          );
         }
-      })
+      });
 
       // Filter by enabled services
-      const filteredRates = this.filterByEnabledServices(allRates)
+      const filteredRates = this.filterByEnabledServices(allRates);
 
       // Apply markup
-      return this.applyMarkup(filteredRates)
+      return this.applyMarkup(filteredRates);
     } catch (error) {
-      console.error('[FedEx] Rate fetch failed:', error)
+      console.error('[FedEx] Rate fetch failed:', error);
       // Fallback to test rates with filtering
       const testRates = this.getTestRates(
         packages,
         fromAddress.zipCode,
         toAddress.zipCode,
         toAddress.isResidential
-      )
-      const filteredRates = this.filterByEnabledServices(testRates)
-      return this.applyMarkup(filteredRates)
+      );
+      const filteredRates = this.filterByEnabledServices(testRates);
+      return this.applyMarkup(filteredRates);
     }
   }
 
@@ -265,22 +262,22 @@ export class FedExProviderEnhanced implements ShippingProvider {
             quantity: 1,
           },
         ]
-    )
+    );
 
     // Pack items intelligently
     const packingResult = packItems(items, {
       allowCustomBoxes: true,
       preferFewerBoxes: false, // Optimize for cost, not box count
       maxBoxes: 50,
-    })
+    });
 
     // Convert back to ShippingPackage format
-    const optimizedPackages = convertToShippingPackages(packingResult, packages[0]?.value)
+    const optimizedPackages = convertToShippingPackages(packingResult, packages[0]?.value);
 
     //   `[FedEx] Optimized ${packages.length} packages → ${optimizedPackages.length} boxes (estimated savings: ${((1 - optimizedPackages.length / packages.length) * 100).toFixed(0)}%)`
     // )
 
-    return optimizedPackages
+    return optimizedPackages;
   }
 
   /**
@@ -291,26 +288,26 @@ export class FedExProviderEnhanced implements ShippingProvider {
     isInternational: boolean,
     destinationState: string
   ): Array<'express' | 'ground' | 'freight' | 'smartpost' | 'international'> {
-    const categories: Array<'express' | 'ground' | 'freight' | 'smartpost' | 'international'> = []
+    const categories: Array<'express' | 'ground' | 'freight' | 'smartpost' | 'international'> = [];
 
     if (isInternational) {
-      categories.push('international')
+      categories.push('international');
     } else {
       // Domestic shipment
-      categories.push('express', 'ground')
+      categories.push('express', 'ground');
 
       // Add freight if needed
       if (needsFreight) {
-        categories.push('freight')
+        categories.push('freight');
       }
 
       // Add SmartPost if destination is served
       if (isStateServedBySmartPost(destinationState)) {
-        categories.push('smartpost')
+        categories.push('smartpost');
       }
     }
 
-    return categories
+    return categories;
   }
 
   /**
@@ -323,27 +320,27 @@ export class FedExProviderEnhanced implements ShippingProvider {
     packages: ShippingPackage[],
     options?: RateCalculationOptions
   ): Promise<ShippingRate[]> {
-    const requestBody = this.buildRateRequest(category, fromAddress, toAddress, packages, options)
+    const requestBody = this.buildRateRequest(category, fromAddress, toAddress, packages, options);
 
     return withRetry(
       async () => {
         const endpoint =
-          category === 'freight' ? '/rate/v1/freight/rates/quotes' : '/rate/v1/rates/quotes'
+          category === 'freight' ? '/rate/v1/freight/rates/quotes' : '/rate/v1/rates/quotes';
 
-        const response = await this.client.post<FedExRateResponse>(endpoint, requestBody)
+        const response = await this.client.post<FedExRateResponse>(endpoint, requestBody);
 
         if (
           !response.data.output?.rateReplyDetails ||
           response.data.output.rateReplyDetails.length === 0
         ) {
-          return []
+          return [];
         }
 
-        return this.parseRateResponse(response.data, toAddress.isResidential)
+        return this.parseRateResponse(response.data, toAddress.isResidential);
       },
       () => this.authenticate(), // Token refresh callback
       `FedEx ${category} rates`
-    )
+    );
   }
 
   /**
@@ -391,30 +388,30 @@ export class FedExProviderEnhanced implements ShippingProvider {
             : undefined,
         })),
       },
-    }
+    };
 
     // Add carrier codes based on category
     if (category === 'express') {
-      baseRequest.carrierCodes = ['FDXE']
+      baseRequest.carrierCodes = ['FDXE'];
     } else if (category === 'ground') {
-      baseRequest.carrierCodes = ['FDXG']
+      baseRequest.carrierCodes = ['FDXG'];
     } else if (category === 'smartpost') {
-      baseRequest.carrierCodes = ['FXSP']
+      baseRequest.carrierCodes = ['FXSP'];
       // Add SmartPost-specific details
-      const hubId = findNearestHub(toAddress.state!)
+      const hubId = findNearestHub(toAddress.state!);
       baseRequest.requestedShipment.smartPostInfoDetail = {
         indicia: 'PARCEL_SELECT',
         hubId: hubId || undefined,
-      }
+      };
     } else if (category === 'freight') {
       // Add freight-specific details
       baseRequest.requestedShipment.freightShipmentDetail = buildFreightShipmentDetail(
         packages as FedExShippingPackage[],
         options?.customsValue || 1000
-      )
+      );
     }
 
-    return baseRequest
+    return baseRequest;
   }
 
   /**
@@ -422,43 +419,43 @@ export class FedExProviderEnhanced implements ShippingProvider {
    */
   private parseRateResponse(response: FedExRateResponse, isResidential?: boolean): ShippingRate[] {
     if (!response.output?.rateReplyDetails) {
-      return []
+      return [];
     }
 
     const allRates = response.output.rateReplyDetails
       .map((detail) => {
-        const serviceCode = detail.serviceType
-        const serviceInfo = getServiceByCode(serviceCode)
+        const serviceCode = detail.serviceType;
+        const serviceInfo = getServiceByCode(serviceCode);
 
         if (!serviceInfo) {
-          console.warn(`[FedEx] Unknown service type: ${serviceCode}`)
-          return null
+          console.warn(`[FedEx] Unknown service type: ${serviceCode}`);
+          return null;
         }
 
         // Get rate amounts
-        const ratedShipmentDetail = detail.ratedShipmentDetails?.[0]
-        if (!ratedShipmentDetail) return null
+        const ratedShipmentDetail = detail.ratedShipmentDetails?.[0];
+        if (!ratedShipmentDetail) return null;
 
-        const accountRate = ratedShipmentDetail.totalNetCharge
+        const accountRate = ratedShipmentDetail.totalNetCharge;
         const listRate = detail.ratedShipmentDetails?.find(
           (d) => d.rateType === 'LIST'
-        )?.totalNetCharge
+        )?.totalNetCharge;
 
         // Parse delivery date
-        let estimatedDays = serviceInfo.estimatedDaysMin
-        let deliveryDate: Date | undefined
+        let estimatedDays = serviceInfo.estimatedDaysMin;
+        let deliveryDate: Date | undefined;
         if (detail.deliveryTimestamp) {
-          deliveryDate = new Date(detail.deliveryTimestamp)
-          const today = new Date()
+          deliveryDate = new Date(detail.deliveryTimestamp);
+          const today = new Date();
           estimatedDays = Math.ceil(
             (deliveryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-          )
+          );
         }
 
         // Adjust service name for residential ground
-        let serviceName = serviceInfo.displayName
+        let serviceName = serviceInfo.displayName;
         if (serviceCode === 'FEDEX_GROUND' && isResidential) {
-          serviceName = 'FedEx Ground Home Delivery'
+          serviceName = 'FedEx Ground Home Delivery';
         }
 
         return {
@@ -470,26 +467,26 @@ export class FedExProviderEnhanced implements ShippingProvider {
           estimatedDays: Math.max(estimatedDays, 1),
           deliveryDate,
           isGuaranteed: serviceInfo.isGuaranteed,
-        } as ShippingRate
+        } as ShippingRate;
       })
-      .filter((rate): rate is ShippingRate => rate !== null)
+      .filter((rate): rate is ShippingRate => rate !== null);
 
     // Deduplicate by serviceCode, keeping the lowest price for each service
     // This fixes React key duplicate warnings and ensures clean UI display
     const deduplicatedRates = allRates.reduce((unique, rate) => {
-      const existing = unique.find((r) => r.serviceCode === rate.serviceCode)
+      const existing = unique.find((r) => r.serviceCode === rate.serviceCode);
       if (!existing) {
         // New service code, add it
-        return [...unique, rate]
+        return [...unique, rate];
       } else if (rate.rateAmount < existing.rateAmount) {
         // Found cheaper rate for same service, replace existing
-        return [...unique.filter((r) => r.serviceCode !== rate.serviceCode), rate]
+        return [...unique.filter((r) => r.serviceCode !== rate.serviceCode), rate];
       }
       // Keep existing (cheaper or same price)
-      return unique
-    }, [] as ShippingRate[])
+      return unique;
+    }, [] as ShippingRate[]);
 
-    return deduplicatedRates
+    return deduplicatedRates;
   }
 
   /**
@@ -497,10 +494,10 @@ export class FedExProviderEnhanced implements ShippingProvider {
    */
   private filterByEnabledServices(rates: ShippingRate[]): ShippingRate[] {
     if (!this.config.enabledServices || this.config.enabledServices.length === 0) {
-      return rates // All services enabled
+      return rates; // All services enabled
     }
 
-    return rates.filter((rate) => this.config.enabledServices!.includes(rate.serviceCode))
+    return rates.filter((rate) => this.config.enabledServices!.includes(rate.serviceCode));
   }
 
   /**
@@ -508,15 +505,15 @@ export class FedExProviderEnhanced implements ShippingProvider {
    */
   private applyMarkup(rates: ShippingRate[]): ShippingRate[] {
     if (this.config.markupPercentage === 0) {
-      return rates
+      return rates;
     }
 
-    const markup = 1 + this.config.markupPercentage / 100
+    const markup = 1 + this.config.markupPercentage / 100;
 
     return rates.map((rate) => ({
       ...rate,
       rateAmount: roundWeight(rate.rateAmount * markup, 2),
-    }))
+    }));
   }
 
   /**
@@ -528,7 +525,7 @@ export class FedExProviderEnhanced implements ShippingProvider {
     packages: ShippingPackage[],
     serviceCode: string
   ): Promise<ShippingLabel> {
-    await this.authenticate()
+    await this.authenticate();
 
     return withRetry(
       async () => {
@@ -578,31 +575,31 @@ export class FedExProviderEnhanced implements ShippingProvider {
                 : undefined,
             })),
           },
-        }
+        };
 
-        const response = await this.client.post('/ship/v1/shipments', requestBody)
+        const response = await this.client.post('/ship/v1/shipments', requestBody);
 
-        const output = response.data.output
+        const output = response.data.output;
         const completedPackage =
-          output.transactionShipments[0].completedShipmentDetail.completedPackageDetails[0]
+          output.transactionShipments[0].completedShipmentDetail.completedPackageDetails[0];
 
         return {
           trackingNumber: completedPackage.trackingIds[0].trackingNumber,
           labelUrl: completedPackage.label.url || '',
           labelFormat: 'PDF',
           carrier: this.carrier,
-        }
+        };
       },
       () => this.authenticate(),
       'FedEx label creation'
-    )
+    );
   }
 
   /**
    * Track shipment (existing implementation)
    */
   async track(trackingNumber: string): Promise<TrackingInfo> {
-    await this.authenticate()
+    await this.authenticate();
 
     return withRetry(
       async () => {
@@ -615,20 +612,20 @@ export class FedExProviderEnhanced implements ShippingProvider {
             },
           ],
           includeDetailedScans: true,
-        }
+        };
 
-        const response = await this.client.post('/track/v1/trackingnumbers', requestBody)
+        const response = await this.client.post('/track/v1/trackingnumbers', requestBody);
 
-        const trackResult = response.data.output.completeTrackResults[0].trackResults[0]
+        const trackResult = response.data.output.completeTrackResults[0].trackResults[0];
 
         interface FedExScanEvent {
-          date: string
+          date: string;
           scanLocation: {
-            city: string
-            stateOrProvinceCode: string
-          }
-          eventDescription: string
-          derivedStatusCode: string
+            city: string;
+            stateOrProvinceCode: string;
+          };
+          eventDescription: string;
+          derivedStatusCode: string;
         }
 
         const events: TrackingEvent[] = (trackResult.scanEvents || []).map(
@@ -638,9 +635,9 @@ export class FedExProviderEnhanced implements ShippingProvider {
             status: event.derivedStatusCode || (event as any).eventType || 'unknown',
             description: event.eventDescription,
           })
-        )
+        );
 
-        const status = this.mapTrackingStatus(trackResult.latestStatusDetail?.code)
+        const status = this.mapTrackingStatus(trackResult.latestStatusDetail?.code);
 
         return {
           trackingNumber,
@@ -654,18 +651,18 @@ export class FedExProviderEnhanced implements ShippingProvider {
             ? new Date(trackResult.actualDeliveryTimestamp)
             : undefined,
           events,
-        }
+        };
       },
       () => this.authenticate(),
       'FedEx tracking'
-    )
+    );
   }
 
   /**
    * Validate address
    */
   async validateAddress(address: ShippingAddress): Promise<boolean> {
-    await this.authenticate()
+    await this.authenticate();
 
     try {
       const requestBody = {
@@ -674,14 +671,14 @@ export class FedExProviderEnhanced implements ShippingProvider {
             address: this.formatAddress(address),
           },
         ],
-      }
+      };
 
-      const response = await this.client.post('/address/v1/addresses/resolve', requestBody)
+      const response = await this.client.post('/address/v1/addresses/resolve', requestBody);
 
-      const result = response.data.output.resolvedAddresses[0]
-      return result.classification === 'BUSINESS' || result.classification === 'RESIDENTIAL'
+      const result = response.data.output.resolvedAddresses[0];
+      return result.classification === 'BUSINESS' || result.classification === 'RESIDENTIAL';
     } catch (error) {
-      return false
+      return false;
     }
   }
 
@@ -689,7 +686,7 @@ export class FedExProviderEnhanced implements ShippingProvider {
    * Cancel shipment
    */
   async cancelShipment(trackingNumber: string): Promise<boolean> {
-    await this.authenticate()
+    await this.authenticate();
 
     try {
       const requestBody = {
@@ -697,12 +694,12 @@ export class FedExProviderEnhanced implements ShippingProvider {
           value: this.config.accountNumber,
         },
         trackingNumber,
-      }
+      };
 
-      await this.client.put('/ship/v1/shipments/cancel', requestBody)
-      return true
+      await this.client.put('/ship/v1/shipments/cancel', requestBody);
+      return true;
     } catch (error) {
-      return false
+      return false;
     }
   }
 
@@ -710,12 +707,12 @@ export class FedExProviderEnhanced implements ShippingProvider {
    * Format address for FedEx API
    */
   private formatAddress(address: ShippingAddress): {
-    streetLines: string[]
-    city: string
-    stateOrProvinceCode: string
-    postalCode: string
-    countryCode: string
-    residential: boolean
+    streetLines: string[];
+    city: string;
+    stateOrProvinceCode: string;
+    postalCode: string;
+    countryCode: string;
+    residential: boolean;
   } {
     return {
       streetLines: [address.street, address.street2].filter(Boolean) as string[],
@@ -724,7 +721,7 @@ export class FedExProviderEnhanced implements ShippingProvider {
       postalCode: address.zipCode,
       countryCode: address.country || 'US',
       residential: address.isResidential || false,
-    }
+    };
   }
 
   /**
@@ -738,8 +735,8 @@ export class FedExProviderEnhanced implements ShippingProvider {
       DL: 'delivered',
       RS: 'exception',
       CA: 'exception',
-    }
-    return statusMap[fedexStatus] || 'pending'
+    };
+    return statusMap[fedexStatus] || 'pending';
   }
 
   /**
@@ -752,10 +749,10 @@ export class FedExProviderEnhanced implements ShippingProvider {
     toZip?: string,
     isResidential?: boolean
   ): ShippingRate[] {
-    const totalWeight = packages.reduce((sum, pkg) => sum + pkg.weight, 0)
-    const needsFreight = requiresFreight(packages as FedExShippingPackage[])
+    const totalWeight = packages.reduce((sum, pkg) => sum + pkg.weight, 0);
+    const needsFreight = requiresFreight(packages as FedExShippingPackage[]);
 
-    const rates: ShippingRate[] = []
+    const rates: ShippingRate[] = [];
 
     if (!needsFreight) {
       // Standard parcel services - MUST be exactly 4
@@ -776,7 +773,7 @@ export class FedExProviderEnhanced implements ShippingProvider {
           perLb: 0.85,
           days: 3,
         },
-      ]
+      ];
 
       services.forEach((svc) => {
         rates.push({
@@ -788,13 +785,18 @@ export class FedExProviderEnhanced implements ShippingProvider {
           estimatedDays: svc.days,
           // STANDARD_OVERNIGHT is not guaranteed (user request October 21, 2025)
           isGuaranteed: svc.days === 1 && svc.code !== 'STANDARD_OVERNIGHT',
-        })
-      })
+        });
+      });
     } else {
       // Freight services
-      const freightCost = estimateFreightCost(packages as FedExShippingPackage[], fromZip || '60173', toZip || '90001', {
-        liftgateRequired: isResidential,
-      })
+      const freightCost = estimateFreightCost(
+        packages as FedExShippingPackage[],
+        fromZip || '60173',
+        toZip || '90001',
+        {
+          liftgateRequired: isResidential,
+        }
+      );
 
       rates.push({
         carrier: this.carrier,
@@ -804,9 +806,9 @@ export class FedExProviderEnhanced implements ShippingProvider {
         currency: 'USD',
         estimatedDays: 5,
         isGuaranteed: false,
-      })
+      });
     }
 
-    return rates
+    return rates;
   }
 }

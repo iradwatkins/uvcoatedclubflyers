@@ -113,9 +113,7 @@ export function FileUploader({ userId }: FileUploaderProps) {
 
       setFiles((prev) =>
         prev.map((f, i) =>
-          i === index
-            ? { ...f, status: 'success' as const, progress: 100, id: data.id }
-            : f
+          i === index ? { ...f, status: 'success' as const, progress: 100, id: data.id } : f
         )
       );
     } catch (error) {
@@ -169,9 +167,7 @@ export function FileUploader({ userId }: FileUploaderProps) {
       <Card>
         <CardHeader>
           <CardTitle>Select Files</CardTitle>
-          <CardDescription>
-            Drag and drop files here, or click to browse
-          </CardDescription>
+          <CardDescription>Drag and drop files here, or click to browse</CardDescription>
         </CardHeader>
         <CardContent>
           <div
@@ -186,9 +182,7 @@ export function FileUploader({ userId }: FileUploaderProps) {
             )}
           >
             <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-lg font-medium mb-2">
-              Drop files here or click to upload
-            </p>
+            <p className="text-lg font-medium mb-2">Drop files here or click to upload</p>
             <p className="text-sm text-muted-foreground mb-4">
               PDF, PNG, JPG, AI, PSD (Max 50MB per file)
             </p>
@@ -217,29 +211,20 @@ export function FileUploader({ userId }: FileUploaderProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             {files.map((fileState, index) => (
-              <div
-                key={index}
-                className="flex items-start gap-4 p-4 border rounded-lg"
-              >
+              <div key={index} className="flex items-start gap-4 p-4 border rounded-lg">
                 {getFileIcon(fileState.file)}
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">
-                        {fileState.file.name}
-                      </p>
+                      <p className="font-medium truncate">{fileState.file.name}</p>
                       <p className="text-sm text-muted-foreground">
                         {formatFileSize(fileState.file.size)}
                       </p>
                     </div>
 
                     {fileState.status === 'pending' && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => removeFile(index)}
-                      >
+                      <Button size="sm" variant="ghost" onClick={() => removeFile(index)}>
                         <X className="h-4 w-4" />
                       </Button>
                     )}
@@ -253,9 +238,7 @@ export function FileUploader({ userId }: FileUploaderProps) {
                     )}
                   </div>
 
-                  {fileState.status === 'uploading' && (
-                    <Progress value={50} className="h-2" />
-                  )}
+                  {fileState.status === 'uploading' && <Progress value={50} className="h-2" />}
 
                   {fileState.status === 'success' && (
                     <p className="text-sm text-green-600">Upload complete</p>
@@ -283,10 +266,7 @@ export function FileUploader({ userId }: FileUploaderProps) {
               >
                 Upload All Files
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => setFiles([])}
-              >
+              <Button variant="outline" onClick={() => setFiles([])}>
                 Clear All
               </Button>
             </>

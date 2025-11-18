@@ -7,10 +7,7 @@ export async function GET(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const addresses = await prisma.$queryRaw<any[]>`
@@ -22,10 +19,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ addresses });
   } catch (error) {
     console.error('Fetch addresses error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch addresses' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch addresses' }, { status: 500 });
   }
 }
 
@@ -34,10 +28,7 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const data = await request.json();
@@ -91,9 +82,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Add address error:', error);
-    return NextResponse.json(
-      { error: 'Failed to add address' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to add address' }, { status: 500 });
   }
 }

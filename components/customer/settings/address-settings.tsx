@@ -83,9 +83,7 @@ export function AddressSettings({ userId }: AddressSettingsProps) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Saved Addresses</CardTitle>
-              <CardDescription>
-                Manage your shipping and billing addresses
-              </CardDescription>
+              <CardDescription>Manage your shipping and billing addresses</CardDescription>
             </div>
             <Button onClick={() => setShowForm(true)}>
               <Plus className="mr-2 h-4 w-4" />
@@ -124,11 +122,7 @@ export function AddressSettings({ userId }: AddressSettingsProps) {
                           )}
                         </div>
                         <div className="flex gap-1">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleEdit(address)}
-                          >
+                          <Button size="sm" variant="ghost" onClick={() => handleEdit(address)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button

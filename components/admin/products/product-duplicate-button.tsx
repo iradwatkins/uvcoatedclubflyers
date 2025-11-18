@@ -64,11 +64,7 @@ export function ProductDuplicateButton({
       {trigger ? (
         <div onClick={() => setOpen(true)}>{trigger}</div>
       ) : (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setOpen(true)}
-        >
+        <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
           <Copy className="mr-2 h-4 w-4" />
           Duplicate
         </Button>

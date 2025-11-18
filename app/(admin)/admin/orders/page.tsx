@@ -36,7 +36,9 @@ interface GetOrdersParams {
   limit?: number;
 }
 
-async function getOrders(params: GetOrdersParams = {}): Promise<{ orders: Order[]; total: number }> {
+async function getOrders(
+  params: GetOrdersParams = {}
+): Promise<{ orders: Order[]; total: number }> {
   const page = params.page || 1;
   const limit = params.limit || ITEMS_PER_PAGE;
   const offset = (page - 1) * limit;
@@ -49,7 +51,8 @@ async function getOrders(params: GetOrdersParams = {}): Promise<{ orders: Order[
     const total = parseInt(countResult.rows[0].total);
 
     // Fetch orders with user information
-    const ordersResult = await query(`
+    const ordersResult = await query(
+      `
       SELECT
         o.id,
         o.order_number,
@@ -63,7 +66,9 @@ async function getOrders(params: GetOrdersParams = {}): Promise<{ orders: Order[
       LEFT JOIN users u ON o.user_id = u.id
       ORDER BY o.created_at DESC
       LIMIT $1 OFFSET $2
-    `, [limit, offset]);
+    `,
+      [limit, offset]
+    );
 
     // Fetch order items for all orders in a single query
     const orderIds = ordersResult.rows.map((o: any) => o.id);
@@ -71,7 +76,8 @@ async function getOrders(params: GetOrdersParams = {}): Promise<{ orders: Order[
     let itemsByOrderId: Record<number, OrderItem[]> = {};
 
     if (orderIds.length > 0) {
-      const itemsResult = await query(`
+      const itemsResult = await query(
+        `
         SELECT
           order_id,
           id,
@@ -83,7 +89,9 @@ async function getOrders(params: GetOrdersParams = {}): Promise<{ orders: Order[
         FROM order_items
         WHERE order_id = ANY($1::int[])
         ORDER BY id
-      `, [orderIds]);
+      `,
+        [orderIds]
+      );
 
       // Group items by order_id
       itemsResult.rows.forEach((item: any) => {
@@ -96,7 +104,7 @@ async function getOrders(params: GetOrdersParams = {}): Promise<{ orders: Order[
           quantity: item.quantity,
           unit_price: item.unit_price,
           total_price: item.total_price,
-          configuration: item.configuration
+          configuration: item.configuration,
         });
       });
     }
@@ -109,12 +117,15 @@ async function getOrders(params: GetOrdersParams = {}): Promise<{ orders: Order[
       total_amount: order.total_amount,
       payment_status: order.payment_status,
       created_at: order.created_at,
-      user: order.user_name || order.user_email ? {
-        name: order.user_name,
-        email: order.user_email,
-      } : null,
+      user:
+        order.user_name || order.user_email
+          ? {
+              name: order.user_name,
+              email: order.user_email,
+            }
+          : null,
       orderItems: itemsByOrderId[order.id] || [],
-      items_count: (itemsByOrderId[order.id] || []).length
+      items_count: (itemsByOrderId[order.id] || []).length,
     }));
 
     return { orders, total };
@@ -126,18 +137,58 @@ async function getOrders(params: GetOrdersParams = {}): Promise<{ orders: Order[
 
 function getStatusBadge(status: string) {
   const statusConfig: Record<string, { variant: any; label: string; className?: string }> = {
-    pending: { variant: 'secondary', label: 'Pending', className: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' },
-    processing: { variant: 'default', label: 'Processing', className: 'bg-blue-100 text-blue-800 hover:bg-blue-100' },
-    printing: { variant: 'default', label: 'Printing', className: 'bg-purple-100 text-purple-800 hover:bg-purple-100' },
-    quality_check: { variant: 'default', label: 'Quality Check', className: 'bg-indigo-100 text-indigo-800 hover:bg-indigo-100' },
-    ready_to_ship: { variant: 'default', label: 'Ready to Ship', className: 'bg-cyan-100 text-cyan-800 hover:bg-cyan-100' },
-    shipped: { variant: 'default', label: 'Shipped', className: 'bg-green-100 text-green-800 hover:bg-green-100' },
-    completed: { variant: 'default', label: 'Completed', className: 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100' },
-    cancelled: { variant: 'destructive', label: 'Cancelled', className: 'bg-red-100 text-red-800 hover:bg-red-100' },
+    pending: {
+      variant: 'secondary',
+      label: 'Pending',
+      className: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100',
+    },
+    processing: {
+      variant: 'default',
+      label: 'Processing',
+      className: 'bg-blue-100 text-blue-800 hover:bg-blue-100',
+    },
+    printing: {
+      variant: 'default',
+      label: 'Printing',
+      className: 'bg-purple-100 text-purple-800 hover:bg-purple-100',
+    },
+    quality_check: {
+      variant: 'default',
+      label: 'Quality Check',
+      className: 'bg-indigo-100 text-indigo-800 hover:bg-indigo-100',
+    },
+    ready_to_ship: {
+      variant: 'default',
+      label: 'Ready to Ship',
+      className: 'bg-cyan-100 text-cyan-800 hover:bg-cyan-100',
+    },
+    shipped: {
+      variant: 'default',
+      label: 'Shipped',
+      className: 'bg-green-100 text-green-800 hover:bg-green-100',
+    },
+    completed: {
+      variant: 'default',
+      label: 'Completed',
+      className: 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100',
+    },
+    cancelled: {
+      variant: 'destructive',
+      label: 'Cancelled',
+      className: 'bg-red-100 text-red-800 hover:bg-red-100',
+    },
   };
 
-  const config = statusConfig[status] || { variant: 'secondary', label: status.replace(/_/g, ' '), className: '' };
-  return <Badge variant={config.variant} className={`capitalize ${config.className}`}>{config.label}</Badge>;
+  const config = statusConfig[status] || {
+    variant: 'secondary',
+    label: status.replace(/_/g, ' '),
+    className: '',
+  };
+  return (
+    <Badge variant={config.variant} className={`capitalize ${config.className}`}>
+      {config.label}
+    </Badge>
+  );
 }
 
 interface PageProps {
@@ -164,9 +215,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
       {/* Header */}
       <div>
         <h1 className="mb-2">Order Management</h1>
-        <p className="text-muted-foreground">
-          View and manage all customer orders
-        </p>
+        <p className="text-muted-foreground">View and manage all customer orders</p>
       </div>
 
       {/* Stats */}
@@ -203,9 +252,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ${stats.revenue.toFixed(2)}
-            </div>
+            <div className="text-2xl font-bold">${stats.revenue.toFixed(2)}</div>
           </CardContent>
         </Card>
       </div>
@@ -214,9 +261,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
       <Card>
         <CardHeader>
           <CardTitle>Recent Orders</CardTitle>
-          <CardDescription>
-            All orders sorted by most recent
-          </CardDescription>
+          <CardDescription>All orders sorted by most recent</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -241,9 +286,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
                     <td className="py-4">
                       <div>
                         <p className="font-medium">{order.user?.name || 'Guest'}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {order.user?.email}
-                        </p>
+                        <p className="text-sm text-muted-foreground">{order.user?.email}</p>
                       </div>
                     </td>
                     <td className="py-4">
@@ -252,12 +295,8 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
                     <td className="py-4 text-right font-medium">
                       ${parseFloat(order.total_amount).toFixed(2)}
                     </td>
-                    <td className="py-4 text-center">
-                      {getStatusBadge(order.status)}
-                    </td>
-                    <td className="py-4">
-                      {new Date(order.created_at).toLocaleDateString()}
-                    </td>
+                    <td className="py-4 text-center">{getStatusBadge(order.status)}</td>
+                    <td className="py-4">{new Date(order.created_at).toLocaleDateString()}</td>
                     <td className="py-4 text-right">
                       <Link href={`/admin/orders/${order.id}`}>
                         <Button variant="outline" size="sm">
@@ -282,15 +321,12 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
           {totalPages > 1 && (
             <div className="mt-6 flex items-center justify-between border-t pt-4">
               <div className="text-sm text-muted-foreground">
-                Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, total)} of {total} orders
+                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
+                {Math.min(currentPage * ITEMS_PER_PAGE, total)} of {total} orders
               </div>
               <div className="flex items-center gap-2">
                 <Link href={`/admin/orders?page=${currentPage - 1}`}>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={currentPage === 1}
-                  >
+                  <Button variant="outline" size="sm" disabled={currentPage === 1}>
                     <ChevronLeft className="h-4 w-4 mr-1" />
                     Previous
                   </Button>
@@ -321,11 +357,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
                   })}
                 </div>
                 <Link href={`/admin/orders?page=${currentPage + 1}`}>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={currentPage === totalPages}
-                  >
+                  <Button variant="outline" size="sm" disabled={currentPage === totalPages}>
                     Next
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>

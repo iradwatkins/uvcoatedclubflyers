@@ -110,9 +110,10 @@ export class PricingEngine {
     const squareInches = input.width * input.height;
 
     // 5. Get sides multiplier
-    const sidesMultiplier = input.sides === 'double'
-      ? parseFloat(paperStock.sides_multiplier_double)
-      : parseFloat(paperStock.sides_multiplier_single);
+    const sidesMultiplier =
+      input.sides === 'double'
+        ? parseFloat(paperStock.sides_multiplier_double)
+        : parseFloat(paperStock.sides_multiplier_single);
 
     // 6. Determine base price per square inch
     // If paper has pricing_group_id, use that paper's price, otherwise use its own
@@ -125,7 +126,8 @@ export class PricingEngine {
     }
 
     // 7. Calculate base cost
-    const baseCost = pricePerSqIn * sidesMultiplier * turnaroundMultiplier * squareInches * input.quantity;
+    const baseCost =
+      pricePerSqIn * sidesMultiplier * turnaroundMultiplier * squareInches * input.quantity;
 
     // 8. Get markup multiplier
     const markupRule = await this.getMarkupRule(turnaround.category);
@@ -150,9 +152,7 @@ export class PricingEngine {
     );
 
     // 13. Calculate discount (only applies to markup, not base cost)
-    const discountAmount = discountPercentage > 0
-      ? (markupAmount * discountPercentage / 100)
-      : 0;
+    const discountAmount = discountPercentage > 0 ? (markupAmount * discountPercentage) / 100 : 0;
 
     // 14. Calculate totals
     const totalBeforeDiscount = subtotal + addOnsCost;
@@ -182,7 +182,7 @@ export class PricingEngine {
       coating: coating.name,
       turnaround: turnaround.name,
       quantity: input.quantity,
-      size: `${input.width}×${input.height}"`
+      size: `${input.width}×${input.height}"`,
     };
   }
 
@@ -203,10 +203,9 @@ export class PricingEngine {
     let discountPercentage = 0;
 
     for (const selection of selections) {
-      const result = await query(
-        'SELECT * FROM add_ons WHERE id = $1 AND is_active = true',
-        [selection.addOnId]
-      );
+      const result = await query('SELECT * FROM add_ons WHERE id = $1 AND is_active = true', [
+        selection.addOnId,
+      ]);
 
       const addOn = result.rows[0];
       if (!addOn) continue;
@@ -225,7 +224,7 @@ export class PricingEngine {
           // Base fee + per-piece charge
           const basePrice = parseFloat(addOn.base_price) || 0;
           const perUnitPrice = parseFloat(addOn.per_unit_price) || 0;
-          cost = basePrice + (perUnitPrice * quantity);
+          cost = basePrice + perUnitPrice * quantity;
           description = `$${basePrice.toFixed(2)} + $${perUnitPrice.toFixed(4)}/piece`;
           break;
 
@@ -256,14 +255,14 @@ export class PricingEngine {
         name: addOn.name,
         cost: parseFloat(cost.toFixed(2)),
         pricingModel: addOn.pricing_model,
-        description
+        description,
       });
     }
 
     return {
       addOnsCost,
       addOnsDetails,
-      discountPercentage
+      discountPercentage,
     };
   }
 
@@ -282,23 +281,23 @@ export class PricingEngine {
       case 'standard-custom-design':
         // Design services with sides option
         // One side: $90, Two sides: $135
-        cost = (subOptions.sides === 'two' || subOptions.sides === '2') ? 135 : 90;
+        cost = subOptions.sides === 'two' || subOptions.sides === '2' ? 135 : 90;
         break;
 
       case 'rush-custom-design':
         // Rush design services with sides option
         // One side: $160, Two sides: $240
-        cost = (subOptions.sides === 'two' || subOptions.sides === '2') ? 240 : 160;
+        cost = subOptions.sides === 'two' || subOptions.sides === '2' ? 240 : 160;
         break;
 
       case 'design-changes-minor':
         // Minor design changes: $22.50 flat fee
-        cost = 22.50;
+        cost = 22.5;
         break;
 
       case 'design-changes-major':
         // Major design changes: $45.00 flat fee
-        cost = 45.00;
+        cost = 45.0;
         break;
 
       case 'perforation':
@@ -308,7 +307,7 @@ export class PricingEngine {
         const horizontalCount = parseInt(subOptions.horizontal_count) || 0;
         const hasVertical = verticalCount > 0;
         const hasHorizontal = horizontalCount > 0;
-        const perforationMultiplier = (hasVertical && hasHorizontal) ? 2 : 1;
+        const perforationMultiplier = hasVertical && hasHorizontal ? 2 : 1;
         cost += (parseFloat(addOn.per_unit_price) || 0.01) * quantity * perforationMultiplier;
         break;
 
@@ -324,17 +323,18 @@ export class PricingEngine {
         // Cardstock: $0.34 setup + $0.02/piece (includes scoring)
         // Paper type should be passed in subOptions or detected from product
         const paperType = subOptions.paper_type || 'text';
-        const isCardstock = paperType.includes('card') ||
-                          paperType.includes('16pt') ||
-                          paperType.includes('18pt') ||
-                          paperType.includes('12pt') ||
-                          paperType.includes('14pt') ||
-                          paperType.includes('9pt');
+        const isCardstock =
+          paperType.includes('card') ||
+          paperType.includes('16pt') ||
+          paperType.includes('18pt') ||
+          paperType.includes('12pt') ||
+          paperType.includes('14pt') ||
+          paperType.includes('9pt');
 
         if (isCardstock) {
-          cost = 0.34 + (0.02 * quantity);
+          cost = 0.34 + 0.02 * quantity;
         } else {
-          cost = 0.17 + (0.01 * quantity);
+          cost = 0.17 + 0.01 * quantity;
         }
         break;
 
@@ -367,12 +367,12 @@ export class PricingEngine {
         // Shrink Wrapping: $0.30/bundle
         const itemsPerBundleShrink = parseInt(subOptions.bundle_size) || 25;
         const bundles = Math.ceil(quantity / itemsPerBundleShrink);
-        cost = bundles * 0.30;
+        cost = bundles * 0.3;
         break;
 
       case 'variable-data-printing':
         // Variable Data Printing: $60 setup + $0.02/piece
-        cost = 60.00 + (0.02 * quantity);
+        cost = 60.0 + 0.02 * quantity;
         break;
 
       case 'postal-delivery-ddu':
@@ -380,12 +380,12 @@ export class PricingEngine {
         // Box calculation would need product dimensions
         // For now, estimate 1 box per 1000 pieces
         const boxCount = Math.ceil(quantity / 1000);
-        cost = boxCount * 30.00;
+        cost = boxCount * 30.0;
         break;
 
       case 'eddm-process-postage':
         // EDDM Process & Postage: $50 setup + $0.239/piece (includes postage)
-        cost = 50.00 + (0.239 * quantity);
+        cost = 50.0 + 0.239 * quantity;
         // Note: This should also auto-enable banding addon
         break;
 
@@ -494,10 +494,9 @@ export class PricingEngine {
   }
 
   private static async getMarkupRule(category: string) {
-    const result = await query(
-      'SELECT * FROM markup_rules WHERE turnaround_category = $1',
-      [category]
-    );
+    const result = await query('SELECT * FROM markup_rules WHERE turnaround_category = $1', [
+      category,
+    ]);
     return result.rows[0];
   }
 
@@ -533,7 +532,6 @@ import { PAPER_STOCK_COATING_MAP } from '@/lib/pricing/paper-stock-coatings';
  * NOW USES PRODUCT CONFIGURATION from admin settings
  */
 export async function getProductPricingOptions(productId: number) {
-
   // Get product with configuration fields
   const productResult = await query('SELECT * FROM products WHERE id = $1', [productId]);
   const product = productResult.rows[0];
@@ -638,14 +636,15 @@ export async function getProductPricingOptions(productId: number) {
 
   // Get all sub-options for these add-ons
   const addOnIds = addOnsResult.rows.map((ao: any) => ao.id);
-  const subOptionsResult = addOnIds.length > 0
-    ? await query(
-        `SELECT * FROM add_on_sub_options
+  const subOptionsResult =
+    addOnIds.length > 0
+      ? await query(
+          `SELECT * FROM add_on_sub_options
          WHERE add_on_id = ANY($1)
          ORDER BY display_order`,
-        [addOnIds]
-      )
-    : { rows: [] };
+          [addOnIds]
+        )
+      : { rows: [] };
 
   // Map sub-options to their parent add-ons
   const subOptionsByAddOn = subOptionsResult.rows.reduce((acc: any, subOption: any) => {
@@ -674,6 +673,6 @@ export async function getProductPricingOptions(productId: number) {
     turnarounds: turnaroundsResult.rows,
     quantities,
     sizes,
-    addOns
+    addOns,
   };
 }

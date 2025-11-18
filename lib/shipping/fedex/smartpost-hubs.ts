@@ -6,7 +6,7 @@
  * Benefits: 20-40% cheaper than FedEx Ground for residential lightweight shipments
  */
 
-import type { SmartPostHub } from '../types'
+import type { SmartPostHub } from '../types';
 
 /**
  * All 27 FedEx SmartPost hub locations across the US
@@ -255,13 +255,13 @@ export const SMARTPOST_HUBS: Record<string, SmartPostHub> = {
     zip: '63144',
     servesStates: ['MO', 'IL', 'KS', 'AR', 'KY'],
   },
-}
+};
 
 /**
  * Get all SmartPost hubs
  */
 export function getAllSmartPostHubs(): SmartPostHub[] {
-  return Object.values(SMARTPOST_HUBS)
+  return Object.values(SMARTPOST_HUBS);
 }
 
 /**
@@ -272,35 +272,35 @@ export function findNearestHub(destinationState: string): string | null {
   // Find hub that serves this state
   for (const [hubId, hub] of Object.entries(SMARTPOST_HUBS)) {
     if (hub.servesStates.includes(destinationState)) {
-      return hubId
+      return hubId;
     }
   }
 
   // Fallback: use METN (Memphis - central hub)
-  return 'METN'
+  return 'METN';
 }
 
 /**
  * Get hub details by ID
  */
 export function getHubById(hubId: string): SmartPostHub | null {
-  return SMARTPOST_HUBS[hubId] || null
+  return SMARTPOST_HUBS[hubId] || null;
 }
 
 /**
  * Check if state is served by SmartPost
  */
 export function isStateServedBySmartPost(state: string): boolean {
-  return getAllSmartPostHubs().some((hub) => hub.servesStates.includes(state))
+  return getAllSmartPostHubs().some((hub) => hub.servesStates.includes(state));
 }
 
 /**
  * Get all states served by SmartPost (all 50 states are covered)
  */
 export function getAllServedStates(): string[] {
-  const states = new Set<string>()
+  const states = new Set<string>();
   getAllSmartPostHubs().forEach((hub) => {
-    hub.servesStates.forEach((state) => states.add(state))
-  })
-  return Array.from(states).sort()
+    hub.servesStates.forEach((state) => states.add(state));
+  });
+  return Array.from(states).sort();
 }

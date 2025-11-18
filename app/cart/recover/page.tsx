@@ -110,12 +110,8 @@ export default function CartRecoveryPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
               <ShoppingCart className="w-8 h-8 text-purple-600" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Cart Recovery
-            </h1>
-            <p className="text-gray-600">
-              We're restoring your saved items
-            </p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Cart Recovery</h1>
+            <p className="text-gray-600">We're restoring your saved items</p>
           </div>
 
           {/* Status */}
@@ -159,9 +155,7 @@ export default function CartRecoveryPage() {
                   </div>
                 )}
 
-                <p className="text-center text-sm text-gray-500">
-                  Redirecting to your cart...
-                </p>
+                <p className="text-center text-sm text-gray-500">Redirecting to your cart...</p>
               </div>
             )}
 

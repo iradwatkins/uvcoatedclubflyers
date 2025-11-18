@@ -51,7 +51,8 @@ export const AdminOrderNotification = ({
 
           <Heading style={h2}>Customer Information</Heading>
           <Text style={text}>
-            <strong>Name:</strong> {customerName}<br />
+            <strong>Name:</strong> {customerName}
+            <br />
             <strong>Email:</strong> {customerEmail}
           </Text>
 
@@ -59,8 +60,10 @@ export const AdminOrderNotification = ({
 
           <Heading style={h2}>Order Summary</Heading>
           <Text style={text}>
-            <strong>Items:</strong> {itemCount}<br />
-            <strong>Total:</strong> ${(total / 100).toFixed(2)}<br />
+            <strong>Items:</strong> {itemCount}
+            <br />
+            <strong>Total:</strong> ${(total / 100).toFixed(2)}
+            <br />
             <strong>Payment Method:</strong> {paymentMethod}
           </Text>
 
@@ -86,7 +89,8 @@ export default AdminOrderNotification;
 // Styles
 const main = {
   backgroundColor: '#f6f9fc',
-  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+  fontFamily:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
 };
 
 const container = {

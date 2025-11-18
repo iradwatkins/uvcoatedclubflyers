@@ -98,9 +98,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold">Order Details</h1>
-            <p className="text-muted-foreground mt-2">
-              Order #{order.orderNumber}
-            </p>
+            <p className="text-muted-foreground mt-2">Order #{order.orderNumber}</p>
           </div>
           <Badge className={`${getStatusColor(order.status)} text-white text-sm px-4 py-2`}>
             {order.status.replace('_', ' ')}
@@ -143,9 +141,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                 {order.orderItems.map((item) => (
                   <div key={item.id} className="flex items-start gap-4 p-4 border rounded-lg">
                     <div className="flex-1">
-                      <h3 className="font-semibold">
-                        {item.product?.name || 'Product'}
-                      </h3>
+                      <h3 className="font-semibold">{item.product?.name || 'Product'}</h3>
                       <p className="text-sm text-muted-foreground mt-1">
                         Quantity: {item.quantity.toLocaleString()}
                       </p>
@@ -153,11 +149,13 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                         <div className="mt-2 text-sm">
                           <p className="font-medium">Configuration:</p>
                           <ul className="list-disc list-inside text-muted-foreground">
-                            {Object.entries(item.options as Record<string, any>).map(([key, value]) => (
-                              <li key={key}>
-                                {key}: {String(value)}
-                              </li>
-                            ))}
+                            {Object.entries(item.options as Record<string, any>).map(
+                              ([key, value]) => (
+                                <li key={key}>
+                                  {key}: {String(value)}
+                                </li>
+                              )
+                            )}
                           </ul>
                         </div>
                       )}
@@ -166,9 +164,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                       <p className="text-sm text-muted-foreground">
                         ${(item.unitPrice / 100).toFixed(2)} each
                       </p>
-                      <p className="font-semibold mt-1">
-                        ${(item.totalPrice / 100).toFixed(2)}
-                      </p>
+                      <p className="font-semibold mt-1">${(item.totalPrice / 100).toFixed(2)}</p>
                     </div>
                   </div>
                 ))}
@@ -187,8 +183,13 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               </CardHeader>
               <CardContent>
                 <div className="text-sm">
-                  <p>{(order.shippingAddress as any).fullName || (order.shippingAddress as any).name}</p>
-                  <p>{(order.shippingAddress as any).address || (order.shippingAddress as any).street}</p>
+                  <p>
+                    {(order.shippingAddress as any).fullName || (order.shippingAddress as any).name}
+                  </p>
+                  <p>
+                    {(order.shippingAddress as any).address ||
+                      (order.shippingAddress as any).street}
+                  </p>
                   <p>
                     {(order.shippingAddress as any).city}, {(order.shippingAddress as any).state}{' '}
                     {(order.shippingAddress as any).zipCode || (order.shippingAddress as any).zip}
@@ -212,30 +213,22 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Order Date:</span>
-                <span className="font-medium">
-                  {formatDate(order.createdAt, 'MMM d, yyyy')}
-                </span>
+                <span className="font-medium">{formatDate(order.createdAt, 'MMM d, yyyy')}</span>
               </div>
               {order.paidAt && (
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Paid Date:</span>
-                  <span className="font-medium">
-                    {formatDate(order.paidAt, 'MMM d, yyyy')}
-                  </span>
+                  <span className="font-medium">{formatDate(order.paidAt, 'MMM d, yyyy')}</span>
                 </div>
               )}
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Payment Method:</span>
-                <span className="font-medium capitalize">
-                  {order.paymentMethod}
-                </span>
+                <span className="font-medium capitalize">{order.paymentMethod}</span>
               </div>
               {order.paymentStatus && (
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Payment Status:</span>
-                  <span className="font-medium capitalize">
-                    {order.paymentStatus}
-                  </span>
+                  <span className="font-medium capitalize">{order.paymentStatus}</span>
                 </div>
               )}
             </CardContent>
@@ -266,9 +259,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               <div className="pt-2 border-t">
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total:</span>
-                  <span className="text-primary">
-                    ${(order.totalAmount / 100).toFixed(2)}
-                  </span>
+                  <span className="text-primary">${(order.totalAmount / 100).toFixed(2)}</span>
                 </div>
               </div>
             </CardContent>
@@ -287,9 +278,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                 </a>
               </Button>
               <Button variant="outline" className="w-full" asChild>
-                <Link href="/products">
-                  Reorder
-                </Link>
+                <Link href="/products">Reorder</Link>
               </Button>
             </CardContent>
           </Card>
@@ -304,9 +293,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                 Contact our support team for any questions about your order.
               </p>
               <Button variant="outline" className="w-full" asChild>
-                <a href="mailto:support@uvcoatedflyers.com">
-                  Email Support
-                </a>
+                <a href="mailto:support@uvcoatedflyers.com">Email Support</a>
               </Button>
             </CardContent>
           </Card>

@@ -11,7 +11,9 @@ import { PayPalPayment } from '@/components/checkout/paypal-payment';
 export default function TestPaymentsPage() {
   const [activeTest, setActiveTest] = useState<'square' | 'cashapp' | 'paypal' | null>(null);
   const [testCount, setTestCount] = useState({ square: 0, cashapp: 0, paypal: 0 });
-  const [results, setResults] = useState<Array<{ method: string; status: string; message: string }>>([]);
+  const [results, setResults] = useState<
+    Array<{ method: string; status: string; message: string }>
+  >([]);
   const [orderNumber, setOrderNumber] = useState('');
   const [mounted, setMounted] = useState(false);
 
@@ -27,7 +29,9 @@ export default function TestPaymentsPage() {
 
   const applicationId = process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID!;
   const locationId = process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID!;
-  const environment = (process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT || 'sandbox') as 'sandbox' | 'production';
+  const environment = (process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT || 'sandbox') as
+    | 'sandbox'
+    | 'production';
 
   const handlePaymentSuccess = (result: Record<string, unknown>) => {
     const method = activeTest || 'unknown';
@@ -40,7 +44,9 @@ export default function TestPaymentsPage() {
       },
     ]);
     setTestCount((prev) => ({ ...prev, [method]: prev[method as keyof typeof prev] + 1 }));
-    alert(`✅ Payment successful! Test #${testCount[method as keyof typeof testCount] + 1} completed.`);
+    alert(
+      `✅ Payment successful! Test #${testCount[method as keyof typeof testCount] + 1} completed.`
+    );
     setActiveTest(null);
   };
 
@@ -81,8 +87,10 @@ export default function TestPaymentsPage() {
           <h1 className="text-4xl font-bold mb-4">🧪 Payment Methods Test Suite</h1>
           <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
             <p className="text-sm">
-              <strong>Test Amount:</strong> ${TEST_AMOUNT_DOLLARS.toFixed(2)} (${(TEST_AMOUNT_CENTS / 100).toFixed(2)})<br />
-              <strong>Environment:</strong> {environment.toUpperCase()}<br />
+              <strong>Test Amount:</strong> ${TEST_AMOUNT_DOLLARS.toFixed(2)} ($
+              {(TEST_AMOUNT_CENTS / 100).toFixed(2)})<br />
+              <strong>Environment:</strong> {environment.toUpperCase()}
+              <br />
               <strong>Order Number:</strong> {orderNumber}
             </p>
           </div>
@@ -241,7 +249,9 @@ export default function TestPaymentsPage() {
                         <span className="font-semibold">{result.method}</span>
                         <span
                           className={`ml-2 text-sm ${
-                            result.status === 'SUCCESS' ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'
+                            result.status === 'SUCCESS'
+                              ? 'text-green-700 dark:text-green-400'
+                              : 'text-red-700 dark:text-red-400'
                           }`}
                         >
                           {result.status}

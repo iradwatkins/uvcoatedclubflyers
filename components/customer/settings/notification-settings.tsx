@@ -66,16 +66,20 @@ export function NotificationSettings({ userId }: NotificationSettingsProps) {
   };
 
   if (isLoading) {
-    return <Card><CardContent className="py-8"><p className="text-center text-muted-foreground">Loading...</p></CardContent></Card>;
+    return (
+      <Card>
+        <CardContent className="py-8">
+          <p className="text-center text-muted-foreground">Loading...</p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Email Notifications</CardTitle>
-        <CardDescription>
-          Manage how you receive updates from us
-        </CardDescription>
+        <CardDescription>Manage how you receive updates from us</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">

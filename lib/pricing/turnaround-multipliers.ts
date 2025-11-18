@@ -26,9 +26,9 @@ export interface PaperStockMultipliers {
 export const TURNAROUND_MULTIPLIERS: PaperStockMultipliers = {
   '9pt-c2s-cardstock': {
     '25': {
-      economy: 14.10,
-      fast: 16.70,
-      faster: 21.80,
+      economy: 14.1,
+      fast: 16.7,
+      faster: 21.8,
       crazyFast: 152.93,
     },
     '50': {
@@ -45,7 +45,7 @@ export const TURNAROUND_MULTIPLIERS: PaperStockMultipliers = {
     },
     '250': {
       economy: 3.49,
-      fast: 3.80,
+      fast: 3.8,
       faster: 5.32,
       crazyFast: 24.05,
     },
@@ -77,9 +77,9 @@ export const TURNAROUND_MULTIPLIERS: PaperStockMultipliers = {
   // 12pt uses 9pt pricing (same multipliers)
   '12pt-c2s-cardstock': {
     '25': {
-      economy: 14.10,
-      fast: 16.70,
-      faster: 21.80,
+      economy: 14.1,
+      fast: 16.7,
+      faster: 21.8,
       crazyFast: 152.93,
     },
     '50': {
@@ -96,7 +96,7 @@ export const TURNAROUND_MULTIPLIERS: PaperStockMultipliers = {
     },
     '250': {
       economy: 3.49,
-      fast: 3.80,
+      fast: 3.8,
       faster: 5.32,
       crazyFast: 24.05,
     },
@@ -127,50 +127,50 @@ export const TURNAROUND_MULTIPLIERS: PaperStockMultipliers = {
   },
   // Placeholder multipliers for other stocks (would need actual data)
   '16pt-c2s-cardstock': {
-    '25': { economy: 14.10, fast: 16.70, faster: 21.80, crazyFast: 152.93 },
+    '25': { economy: 14.1, fast: 16.7, faster: 21.8, crazyFast: 152.93 },
     '50': { economy: 8.35, fast: 9.39, faster: 12.62, crazyFast: 93.67 },
     '100': { economy: 5.22, fast: 5.87, faster: 8.17, crazyFast: 50.45 },
-    '250': { economy: 3.49, fast: 3.80, faster: 5.32, crazyFast: 24.05 },
+    '250': { economy: 3.49, fast: 3.8, faster: 5.32, crazyFast: 24.05 },
     '500': { economy: 2.37, fast: 3.64, faster: 5.44, crazyFast: 15.42 },
     '1000': { economy: 1.34, fast: 1.92, faster: 2.84, crazyFast: 11.09 },
     '2500': { economy: 0.89, fast: 1.11, faster: 1.65, crazyFast: 8.45 },
     '5000': { economy: 0.72, fast: 0.84, faster: 1.25, crazyFast: 7.74 },
   },
   '14pt-c2s-cardstock': {
-    '25': { economy: 14.10, fast: 16.70, faster: 21.80, crazyFast: 152.93 },
+    '25': { economy: 14.1, fast: 16.7, faster: 21.8, crazyFast: 152.93 },
     '50': { economy: 8.35, fast: 9.39, faster: 12.62, crazyFast: 93.67 },
     '100': { economy: 5.22, fast: 5.87, faster: 8.17, crazyFast: 50.45 },
-    '250': { economy: 3.49, fast: 3.80, faster: 5.32, crazyFast: 24.05 },
+    '250': { economy: 3.49, fast: 3.8, faster: 5.32, crazyFast: 24.05 },
     '500': { economy: 2.37, fast: 3.64, faster: 5.44, crazyFast: 15.42 },
     '1000': { economy: 1.34, fast: 1.92, faster: 2.84, crazyFast: 11.09 },
     '2500': { economy: 0.89, fast: 1.11, faster: 1.65, crazyFast: 8.45 },
     '5000': { economy: 0.72, fast: 0.84, faster: 1.25, crazyFast: 7.74 },
   },
   '60lb-offset': {
-    '25': { economy: 14.10, fast: 16.70, faster: 21.80, crazyFast: 152.93 },
+    '25': { economy: 14.1, fast: 16.7, faster: 21.8, crazyFast: 152.93 },
     '50': { economy: 8.35, fast: 9.39, faster: 12.62, crazyFast: 93.67 },
     '100': { economy: 5.22, fast: 5.87, faster: 8.17, crazyFast: 50.45 },
-    '250': { economy: 3.49, fast: 3.80, faster: 5.32, crazyFast: 24.05 },
+    '250': { economy: 3.49, fast: 3.8, faster: 5.32, crazyFast: 24.05 },
     '500': { economy: 2.37, fast: 3.64, faster: 5.44, crazyFast: 15.42 },
     '1000': { economy: 1.34, fast: 1.92, faster: 2.84, crazyFast: 11.09 },
     '2500': { economy: 0.89, fast: 1.11, faster: 1.65, crazyFast: 8.45 },
     '5000': { economy: 0.72, fast: 0.84, faster: 1.25, crazyFast: 7.74 },
   },
   '100lb-gloss-text': {
-    '25': { economy: 14.10, fast: 16.70, faster: 21.80, crazyFast: 152.93 },
+    '25': { economy: 14.1, fast: 16.7, faster: 21.8, crazyFast: 152.93 },
     '50': { economy: 8.35, fast: 9.39, faster: 12.62, crazyFast: 93.67 },
     '100': { economy: 5.22, fast: 5.87, faster: 8.17, crazyFast: 50.45 },
-    '250': { economy: 3.49, fast: 3.80, faster: 5.32, crazyFast: 24.05 },
+    '250': { economy: 3.49, fast: 3.8, faster: 5.32, crazyFast: 24.05 },
     '500': { economy: 2.37, fast: 3.64, faster: 5.44, crazyFast: 15.42 },
     '1000': { economy: 1.34, fast: 1.92, faster: 2.84, crazyFast: 11.09 },
     '2500': { economy: 0.89, fast: 1.11, faster: 1.65, crazyFast: 8.45 },
     '5000': { economy: 0.72, fast: 0.84, faster: 1.25, crazyFast: 7.74 },
   },
   '100lb-uncoated-cover': {
-    '25': { economy: 14.10, fast: 16.70, faster: 21.80, crazyFast: 152.93 },
+    '25': { economy: 14.1, fast: 16.7, faster: 21.8, crazyFast: 152.93 },
     '50': { economy: 8.35, fast: 9.39, faster: 12.62, crazyFast: 93.67 },
     '100': { economy: 5.22, fast: 5.87, faster: 8.17, crazyFast: 50.45 },
-    '250': { economy: 3.49, fast: 3.80, faster: 5.32, crazyFast: 24.05 },
+    '250': { economy: 3.49, fast: 3.8, faster: 5.32, crazyFast: 24.05 },
     '500': { economy: 2.37, fast: 3.64, faster: 5.44, crazyFast: 15.42 },
     '1000': { economy: 1.34, fast: 1.92, faster: 2.84, crazyFast: 11.09 },
     '2500': { economy: 0.89, fast: 1.11, faster: 1.65, crazyFast: 8.45 },

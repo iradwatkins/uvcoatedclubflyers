@@ -5,14 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Clock,
-  FileText,
-  Printer,
-  CheckCircle,
-  Package,
-  AlertCircle,
-} from 'lucide-react';
+import { Clock, FileText, Printer, CheckCircle, Package, AlertCircle } from 'lucide-react';
 
 type OrderStatus = 'pending' | 'processing' | 'printing' | 'quality_check' | 'ready_to_ship';
 
@@ -94,11 +87,23 @@ export function KanbanBoard({ orders: initialOrders }: KanbanBoardProps) {
   const getPriorityBadge = (createdAt: Date) => {
     const priority = getPriorityLevel(createdAt);
     if (priority === 'urgent') {
-      return <Badge variant="destructive" className="text-xs">Urgent</Badge>;
+      return (
+        <Badge variant="destructive" className="text-xs">
+          Urgent
+        </Badge>
+      );
     } else if (priority === 'high') {
-      return <Badge variant="default" className="text-xs">High</Badge>;
+      return (
+        <Badge variant="default" className="text-xs">
+          High
+        </Badge>
+      );
     }
-    return <Badge variant="secondary" className="text-xs">Normal</Badge>;
+    return (
+      <Badge variant="secondary" className="text-xs">
+        Normal
+      </Badge>
+    );
   };
 
   const handleDragStart = (orderId: number) => {
@@ -114,17 +119,15 @@ export function KanbanBoard({ orders: initialOrders }: KanbanBoardProps) {
 
     if (!draggedOrder) return;
 
-    const order = orders.find(o => o.id === draggedOrder);
+    const order = orders.find((o) => o.id === draggedOrder);
     if (!order || order.status === newStatus) {
       setDraggedOrder(null);
       return;
     }
 
     // Optimistically update UI
-    setOrders(prevOrders =>
-      prevOrders.map(o =>
-        o.id === draggedOrder ? { ...o, status: newStatus } : o
-      )
+    setOrders((prevOrders) =>
+      prevOrders.map((o) => (o.id === draggedOrder ? { ...o, status: newStatus } : o))
     );
 
     try {
@@ -150,7 +153,7 @@ export function KanbanBoard({ orders: initialOrders }: KanbanBoardProps) {
   };
 
   const getOrdersForStage = (stageId: OrderStatus) => {
-    return orders.filter(order => order.status === stageId);
+    return orders.filter((order) => order.status === stageId);
   };
 
   return (
@@ -159,7 +162,7 @@ export function KanbanBoard({ orders: initialOrders }: KanbanBoardProps) {
         const Icon = stage.icon;
         const stageOrders = getOrdersForStage(stage.id);
         const urgentCount = stageOrders.filter(
-          o => getPriorityLevel(o.createdAt) === 'urgent'
+          (o) => getPriorityLevel(o.createdAt) === 'urgent'
         ).length;
 
         return (
@@ -174,17 +177,13 @@ export function KanbanBoard({ orders: initialOrders }: KanbanBoardProps) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Icon className="h-5 w-5" />
-                    <CardTitle className="text-sm font-semibold">
-                      {stage.title}
-                    </CardTitle>
+                    <CardTitle className="text-sm font-semibold">{stage.title}</CardTitle>
                   </div>
                   <div className="flex items-center gap-1">
                     <Badge variant="outline" className="text-xs">
                       {stageOrders.length}
                     </Badge>
-                    {urgentCount > 0 && (
-                      <AlertCircle className="h-4 w-4 text-red-500" />
-                    )}
+                    {urgentCount > 0 && <AlertCircle className="h-4 w-4 text-red-500" />}
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground">{stage.description}</p>
@@ -201,19 +200,13 @@ export function KanbanBoard({ orders: initialOrders }: KanbanBoardProps) {
                 >
                   <CardContent className="p-3 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-semibold">
-                        {order.orderNumber}
-                      </span>
+                      <span className="font-mono text-xs font-semibold">{order.orderNumber}</span>
                       {getPriorityBadge(order.createdAt)}
                     </div>
 
                     <div className="text-xs">
-                      <p className="font-medium truncate">
-                        {order.user?.name || 'Guest'}
-                      </p>
-                      <p className="text-muted-foreground truncate">
-                        {order.user?.email}
-                      </p>
+                      <p className="font-medium truncate">{order.user?.name || 'Guest'}</p>
+                      <p className="text-muted-foreground truncate">{order.user?.email}</p>
                     </div>
 
                     <div className="space-y-1 pt-1 border-t">

@@ -202,9 +202,7 @@ export function SlidingCartDrawer({
                             >
                               <Minus className="h-3 w-3" />
                             </Button>
-                            <span className="w-12 text-center font-medium">
-                              {item.quantity}
-                            </span>
+                            <span className="w-12 text-center font-medium">{item.quantity}</span>
                             <Button
                               variant="outline"
                               size="icon"

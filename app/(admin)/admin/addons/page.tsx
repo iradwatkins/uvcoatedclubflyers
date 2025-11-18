@@ -56,9 +56,7 @@ export default async function AddOnsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Add-Ons Management</h1>
-          <p className="text-muted-foreground">
-            Manage add-on options for your products
-          </p>
+          <p className="text-muted-foreground">Manage add-on options for your products</p>
         </div>
         <Link href="/admin/addons/new">
           <Button>
@@ -81,7 +79,7 @@ export default async function AddOnsPage() {
           <CardHeader className="pb-2">
             <CardDescription>Active</CardDescription>
             <CardTitle className="text-3xl text-green-600">
-              {addOns.filter(a => a.is_active).length}
+              {addOns.filter((a) => a.is_active).length}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -90,7 +88,7 @@ export default async function AddOnsPage() {
           <CardHeader className="pb-2">
             <CardDescription>Inactive</CardDescription>
             <CardTitle className="text-3xl text-gray-600">
-              {addOns.filter(a => !a.is_active).length}
+              {addOns.filter((a) => !a.is_active).length}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -99,7 +97,7 @@ export default async function AddOnsPage() {
           <CardHeader className="pb-2">
             <CardDescription>Mandatory</CardDescription>
             <CardTitle className="text-3xl text-blue-600">
-              {addOns.filter(a => a.is_mandatory).length}
+              {addOns.filter((a) => a.is_mandatory).length}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -109,9 +107,7 @@ export default async function AddOnsPage() {
       <Card>
         <CardHeader>
           <CardTitle>All Add-Ons</CardTitle>
-          <CardDescription>
-            Manage pricing, availability, and product assignments
-          </CardDescription>
+          <CardDescription>Manage pricing, availability, and product assignments</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -131,9 +127,7 @@ export default async function AddOnsPage() {
               <tbody>
                 {addOns.map((addOn) => (
                   <tr key={addOn.id} className="border-b last:border-0">
-                    <td className="py-4 text-sm text-muted-foreground">
-                      {addOn.id}
-                    </td>
+                    <td className="py-4 text-sm text-muted-foreground">{addOn.id}</td>
                     <td className="py-4">
                       <div>
                         <p className="font-medium">{addOn.name}</p>
@@ -144,16 +138,10 @@ export default async function AddOnsPage() {
                         )}
                       </div>
                     </td>
-                    <td className="py-4 text-sm text-muted-foreground">
-                      {addOn.slug}
-                    </td>
-                    <td className="py-4 text-sm">
-                      {getPricingDisplay(addOn)}
-                    </td>
+                    <td className="py-4 text-sm text-muted-foreground">{addOn.slug}</td>
+                    <td className="py-4 text-sm">{getPricingDisplay(addOn)}</td>
                     <td className="py-4 text-center">
-                      <Badge variant="outline">
-                        {addOn.product_count} products
-                      </Badge>
+                      <Badge variant="outline">{addOn.product_count} products</Badge>
                     </td>
                     <td className="py-4 text-center text-sm text-muted-foreground">
                       {addOn.display_position}

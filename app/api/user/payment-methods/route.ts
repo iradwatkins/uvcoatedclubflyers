@@ -44,14 +44,16 @@ export async function POST(request: NextRequest) {
       customerId: squareCustomer.id,
       sourceId: sourceId,
       cardholderName: cardholderName,
-      billingAddress: billingAddress ? {
-        addressLine1: billingAddress.addressLine1,
-        addressLine2: billingAddress.addressLine2,
-        locality: billingAddress.city,
-        administrativeDistrictLevel1: billingAddress.state,
-        postalCode: billingAddress.postalCode,
-        country: billingAddress.country || 'US',
-      } : undefined,
+      billingAddress: billingAddress
+        ? {
+            addressLine1: billingAddress.addressLine1,
+            addressLine2: billingAddress.addressLine2,
+            locality: billingAddress.city,
+            administrativeDistrictLevel1: billingAddress.state,
+            postalCode: billingAddress.postalCode,
+            country: billingAddress.country || 'US',
+          }
+        : undefined,
     });
 
     // Step 3: Save to our database
@@ -148,7 +150,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: error.message || 'Failed to save payment method',
-        details: error.toString()
+        details: error.toString(),
       },
       { status: 500 }
     );

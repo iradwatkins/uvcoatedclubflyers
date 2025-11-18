@@ -10,7 +10,10 @@ import { CreditCard, Smartphone, ArrowLeft, Check } from 'lucide-react';
 import { SquareCardPayment } from '@/components/checkout/square-card-payment';
 import { CashAppQRPayment } from '@/components/checkout/cashapp-qr-payment';
 import { PayPalPayment } from '@/components/checkout/paypal-payment';
-import { ShippingAddressForm, type ShippingAddress } from '@/components/checkout/shipping-address-form';
+import {
+  ShippingAddressForm,
+  type ShippingAddress,
+} from '@/components/checkout/shipping-address-form';
 import { AirportSelector } from '@/components/checkout/airport-selector';
 import { ShippingMethodSelector } from '@/components/checkout/shipping-method-selector';
 import { SavedPaymentSelector } from '@/components/checkout/saved-payment-selector';
@@ -161,7 +164,9 @@ export default function CheckoutPage() {
 
   const applicationId = process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID!;
   const locationId = process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID!;
-  const environment = (process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT || 'sandbox') as 'sandbox' | 'production';
+  const environment = (process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT || 'sandbox') as
+    | 'sandbox'
+    | 'production';
 
   return (
     <div className="min-h-screen bg-background">
@@ -239,13 +244,23 @@ export default function CheckoutPage() {
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tax (8.75%)</span>
                     <span className="font-medium">
-                      {formatPrice(Math.round((cart.total + (selectedShipping ? selectedShipping.cost * 100 : 0)) * 0.0875))}
+                      {formatPrice(
+                        Math.round(
+                          (cart.total + (selectedShipping ? selectedShipping.cost * 100 : 0)) *
+                            0.0875
+                        )
+                      )}
                     </span>
                   </div>
                   <div className="flex justify-between border-t pt-2">
                     <span className="text-lg font-semibold">Total</span>
                     <span className="text-2xl font-bold text-primary">
-                      {formatPrice(Math.round((cart.total + (selectedShipping ? selectedShipping.cost * 100 : 0)) * 1.0875))}
+                      {formatPrice(
+                        Math.round(
+                          (cart.total + (selectedShipping ? selectedShipping.cost * 100 : 0)) *
+                            1.0875
+                        )
+                      )}
                     </span>
                   </div>
                 </div>
@@ -257,28 +272,40 @@ export default function CheckoutPage() {
           <div className="lg:col-span-2">
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'shipping-address' ? 'bg-primary text-primary-foreground' : shippingAddress ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}>
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'shipping-address' ? 'bg-primary text-primary-foreground' : shippingAddress ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}
+                >
                   {shippingAddress ? <Check className="h-5 w-5" /> : '1'}
                 </div>
                 <span className="text-sm font-medium">Address</span>
               </div>
               <div className="h-px flex-1 bg-border mx-2" />
               <div className="flex items-center gap-2">
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'airport-selection' ? 'bg-primary text-primary-foreground' : currentStep === 'shipping-method' || currentStep === 'payment' ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}>
-                  {currentStep === 'shipping-method' || currentStep === 'payment' ? <Check className="h-5 w-5" /> : '2'}
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'airport-selection' ? 'bg-primary text-primary-foreground' : currentStep === 'shipping-method' || currentStep === 'payment' ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}
+                >
+                  {currentStep === 'shipping-method' || currentStep === 'payment' ? (
+                    <Check className="h-5 w-5" />
+                  ) : (
+                    '2'
+                  )}
                 </div>
                 <span className="text-sm font-medium">Airport</span>
               </div>
               <div className="h-px flex-1 bg-border mx-2" />
               <div className="flex items-center gap-2">
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'shipping-method' ? 'bg-primary text-primary-foreground' : selectedShipping ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}>
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'shipping-method' ? 'bg-primary text-primary-foreground' : selectedShipping ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}
+                >
                   {selectedShipping ? <Check className="h-5 w-5" /> : '3'}
                 </div>
                 <span className="text-sm font-medium">Shipping</span>
               </div>
               <div className="h-px flex-1 bg-border mx-2" />
               <div className="flex items-center gap-2">
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'payment' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'payment' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
+                >
                   4
                 </div>
                 <span className="text-sm font-medium">Payment</span>
@@ -307,7 +334,7 @@ export default function CheckoutPage() {
             {currentStep === 'shipping-method' && shippingAddress && (
               <ShippingMethodSelector
                 toAddress={shippingAddress}
-                cartItems={cart.items.map(item => ({
+                cartItems={cart.items.map((item) => ({
                   quantity: item.quantity,
                   weightLbs: calculateItemWeight(item, item.productName),
                 }))}
@@ -324,9 +351,7 @@ export default function CheckoutPage() {
                   <Card>
                     <CardHeader>
                       <CardTitle>Select Payment Method</CardTitle>
-                      <CardDescription>
-                        Choose how you'd like to pay for your order
-                      </CardDescription>
+                      <CardDescription>Choose how you'd like to pay for your order</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <Button
@@ -364,8 +389,8 @@ export default function CheckoutPage() {
                         onClick={() => setPaymentMethod('paypal')}
                       >
                         <svg className="mr-4 h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 00-.794.68l-.04.22-.63 3.993-.028.15a.805.805 0 01-.794.68H7.72a.483.483 0 01-.477-.558L7.418 21h1.518l.95-6.02h1.385c4.678 0 7.75-2.203 8.796-6.502z"/>
-                          <path d="M2.379 0C1.818 0 1.334.426 1.258.983L.006 9.958c-.063.458.263.862.728.862h4.368l1.096-6.945L6.25 3.48c.062-.397.41-.69.813-.69h6.817c2.059 0 3.606.422 4.596 1.252.298.25.524.526.684.825.165.312.264.658.303 1.052.04.4.02.858-.06 1.37v.004c-.02.12-.043.244-.068.37-.736 4.046-3.369 6.11-7.831 6.14H9.441a.81.81 0 00-.799.68l-.04.22-1.139 7.22-.03.177a.806.806 0 01-.795.68H2.878a.483.483 0 01-.477-.558l2.255-14.29z"/>
+                          <path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 00-.794.68l-.04.22-.63 3.993-.028.15a.805.805 0 01-.794.68H7.72a.483.483 0 01-.477-.558L7.418 21h1.518l.95-6.02h1.385c4.678 0 7.75-2.203 8.796-6.502z" />
+                          <path d="M2.379 0C1.818 0 1.334.426 1.258.983L.006 9.958c-.063.458.263.862.728.862h4.368l1.096-6.945L6.25 3.48c.062-.397.41-.69.813-.69h6.817c2.059 0 3.606.422 4.596 1.252.298.25.524.526.684.825.165.312.264.658.303 1.052.04.4.02.858-.06 1.37v.004c-.02.12-.043.244-.068.37-.736 4.046-3.369 6.11-7.831 6.14H9.441a.81.81 0 00-.799.68l-.04.22-1.139 7.22-.03.177a.806.806 0 01-.795.68H2.878a.483.483 0 01-.477-.558l2.255-14.29z" />
                         </svg>
                         <div className="flex-1">
                           <p className="font-semibold">PayPal</p>
@@ -404,12 +429,16 @@ export default function CheckoutPage() {
                       locationId={locationId}
                       total={Math.round((cart.total + selectedShipping.cost * 100) * 1.0875)}
                       environment={environment}
-                      savedPaymentMethod={selectedSavedPayment ? {
-                        id: selectedSavedPayment.id.toString(),
-                        squareCardId: selectedSavedPayment.providerCustomerId || '',
-                        maskedNumber: `****${selectedSavedPayment.lastFour}`,
-                        cardBrand: selectedSavedPayment.cardBrand || 'card'
-                      } : null}
+                      savedPaymentMethod={
+                        selectedSavedPayment
+                          ? {
+                              id: selectedSavedPayment.id.toString(),
+                              squareCardId: selectedSavedPayment.providerCustomerId || '',
+                              maskedNumber: `****${selectedSavedPayment.lastFour}`,
+                              cardBrand: selectedSavedPayment.cardBrand || 'card',
+                            }
+                          : null
+                      }
                       onPaymentSuccess={handlePaymentSuccess}
                       onPaymentError={handlePaymentError}
                       onBack={() => {

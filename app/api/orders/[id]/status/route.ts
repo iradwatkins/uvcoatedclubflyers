@@ -23,19 +23,13 @@ const STATUS_MESSAGES: Record<string, string> = {
   CANCELLED: 'This order has been cancelled.',
 };
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
 
     // Only admins can update order status
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { status } = await request.json();
@@ -43,10 +37,7 @@ export async function POST(
 
     // Validate status
     if (!VALID_STATUSES.includes(status)) {
-      return NextResponse.json(
-        { error: 'Invalid status' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
     }
 
     // Fetch the current order with user info
@@ -63,10 +54,7 @@ export async function POST(
     });
 
     if (!order) {
-      return NextResponse.json(
-        { error: 'Order not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
     // Update order status
@@ -103,9 +91,6 @@ export async function POST(
     });
   } catch (error) {
     console.error('Order status update error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update order status' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update order status' }, { status: 500 });
   }
 }

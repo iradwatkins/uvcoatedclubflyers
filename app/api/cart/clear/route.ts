@@ -17,9 +17,6 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error('Clear cart error:', error);
-    return NextResponse.json(
-      { error: 'Failed to clear cart' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to clear cart' }, { status: 500 });
   }
 }

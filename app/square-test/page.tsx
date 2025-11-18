@@ -14,7 +14,7 @@ export default function SquareSDKTest() {
 
   const addLog = (message: string) => {
     console.log('[SDK Test]', message);
-    setLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
+    setLogs((prev) => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
   };
 
   useEffect(() => {
@@ -42,9 +42,10 @@ export default function SquareSDKTest() {
         }
 
         // Load Square SDK
-        const sdkUrl = environment === 'production'
-          ? 'https://web.squarecdn.com/v1/square.js'
-          : 'https://sandbox.web.squarecdn.com/v1/square.js';
+        const sdkUrl =
+          environment === 'production'
+            ? 'https://web.squarecdn.com/v1/square.js'
+            : 'https://sandbox.web.squarecdn.com/v1/square.js';
 
         addLog(`Loading SDK from: ${sdkUrl}`);
 
@@ -70,7 +71,7 @@ export default function SquareSDKTest() {
         const maxAttempts = 50;
 
         while (!window.Square && attempts < maxAttempts) {
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise((resolve) => setTimeout(resolve, 100));
           attempts++;
 
           if (attempts % 10 === 0) {
@@ -93,7 +94,6 @@ export default function SquareSDKTest() {
 
         setStatus('success');
         addLog('🎉 All tests passed!');
-
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : String(err);
         addLog(`❌ Error: ${errorMsg}`);
@@ -184,7 +184,9 @@ export default function SquareSDKTest() {
             <h3 className="font-semibold">Diagnostic Logs:</h3>
             <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-xs max-h-96 overflow-y-auto">
               {logs.map((log, i) => (
-                <div key={i} className="mb-1">{log}</div>
+                <div key={i} className="mb-1">
+                  {log}
+                </div>
               ))}
               {logs.length === 0 && <div className="text-gray-500">No logs yet...</div>}
             </div>

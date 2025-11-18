@@ -74,18 +74,21 @@ export function AddonDeleteDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
-            <AlertTriangle className={`h-5 w-5 ${canDelete ? 'text-yellow-500' : 'text-red-500'}`} />
+            <AlertTriangle
+              className={`h-5 w-5 ${canDelete ? 'text-yellow-500' : 'text-red-500'}`}
+            />
             {canDelete ? 'Delete Add-On?' : 'Cannot Delete Add-On'}
           </AlertDialogTitle>
           <AlertDialogDescription>
             {canDelete ? (
               <>
-                Are you sure you want to delete <strong>{addonName}</strong>? This action cannot be undone.
+                Are you sure you want to delete <strong>{addonName}</strong>? This action cannot be
+                undone.
               </>
             ) : (
               <>
-                The addon <strong>{addonName}</strong> cannot be deleted because it is currently assigned to{' '}
-                <strong>{usageCount} product(s)</strong>.
+                The addon <strong>{addonName}</strong> cannot be deleted because it is currently
+                assigned to <strong>{usageCount} product(s)</strong>.
               </>
             )}
           </AlertDialogDescription>
@@ -94,7 +97,8 @@ export function AddonDeleteDialog({
         {!canDelete && (
           <Alert variant="destructive">
             <AlertDescription>
-              To delete this addon, you must first remove it from all products in the Product Add-Ons management section.
+              To delete this addon, you must first remove it from all products in the Product
+              Add-Ons management section.
             </AlertDescription>
           </Alert>
         )}

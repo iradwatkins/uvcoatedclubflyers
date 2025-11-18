@@ -3,7 +3,7 @@
  * Pricing matches WooCommerce implementation exactly
  */
 
-import type { SouthwestCargoRates } from '../../types'
+import type { SouthwestCargoRates } from '../../types';
 
 /**
  * Southwest Cargo pricing structure (Official 2025 Rates)
@@ -75,7 +75,7 @@ export const SOUTHWEST_CARGO_RATES: SouthwestCargoRates = {
       },
     ],
   },
-}
+};
 
 /**
  * Module configuration
@@ -88,7 +88,7 @@ export const SOUTHWEST_CARGO_CONFIG = {
   defaultPackaging: {
     weight: 1.0, // Heavier packaging for freight
   },
-}
+};
 
 /**
  * Service names for display
@@ -96,4 +96,4 @@ export const SOUTHWEST_CARGO_CONFIG = {
 export const SERVICE_NAMES = {
   SOUTHWEST_CARGO_PICKUP: 'Southwest Cargo Pickup',
   SOUTHWEST_CARGO_DASH: 'Southwest Cargo Dash',
-} as const
+} as const;

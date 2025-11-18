@@ -24,10 +24,7 @@ export async function PATCH(
     const { quantity } = body;
 
     if (!quantity || quantity < 1) {
-      return NextResponse.json(
-        { error: 'Invalid quantity' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid quantity' }, { status: 400 });
     }
 
     // Get cart before update for comparison
@@ -58,10 +55,7 @@ export async function PATCH(
     });
   } catch (error: any) {
     console.error('[Update Cart Item] Error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Failed to update cart' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message || 'Failed to update cart' }, { status: 500 });
   }
 }
 

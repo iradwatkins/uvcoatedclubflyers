@@ -233,9 +233,7 @@ export function PayPalPayment({
         <div className="rounded-lg border bg-muted/50 p-4">
           <div className="flex justify-between">
             <span className="font-medium">Total Amount:</span>
-            <span className="text-2xl font-bold text-primary">
-              {formatPrice(total)}
-            </span>
+            <span className="text-2xl font-bold text-primary">{formatPrice(total)}</span>
           </div>
         </div>
 
@@ -260,7 +258,8 @@ export function PayPalPayment({
         {/* Info */}
         <div className="rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
           <p className="text-sm text-blue-900 dark:text-blue-100">
-            <strong>Secure Payment:</strong> You'll be redirected to PayPal to complete your payment securely.
+            <strong>Secure Payment:</strong> You'll be redirected to PayPal to complete your payment
+            securely.
           </p>
         </div>
       </CardContent>

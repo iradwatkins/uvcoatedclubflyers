@@ -30,10 +30,7 @@ export async function POST(request: NextRequest) {
 
     // Validation
     if (!productId || !productName || !quantity || !price || !unitPrice) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     // Add to Redis cart

@@ -7,28 +7,19 @@ type RouteContext = {
 };
 
 // PATCH /api/payment-methods/[id]/set-default - Set a payment method as the default
-export async function PATCH(
-  request: NextRequest,
-  context: RouteContext
-) {
+export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await context.params;
     const paymentMethodId = parseInt(id);
 
     if (isNaN(paymentMethodId)) {
-      return NextResponse.json(
-        { error: 'Invalid payment method ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid payment method ID' }, { status: 400 });
     }
 
     // Verify the payment method belongs to the current user
@@ -39,10 +30,7 @@ export async function PATCH(
     `;
 
     if (existing.length === 0) {
-      return NextResponse.json(
-        { error: 'Payment method not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Payment method not found' }, { status: 404 });
     }
 
     // Set this payment method as default
@@ -77,7 +65,7 @@ export async function PATCH(
 
     return NextResponse.json({
       success: true,
-      paymentMethods: paymentMethods.map(pm => ({
+      paymentMethods: paymentMethods.map((pm) => ({
         id: pm.id,
         userId: pm.user_id,
         provider: pm.provider,
@@ -90,14 +78,11 @@ export async function PATCH(
         isDefault: pm.is_default,
         isExpired: pm.is_expired,
         createdAt: pm.created_at,
-        updatedAt: pm.updated_at
-      }))
+        updatedAt: pm.updated_at,
+      })),
     });
   } catch (error) {
     console.error('Set default payment method error:', error);
-    return NextResponse.json(
-      { error: 'Failed to set default payment method' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to set default payment method' }, { status: 500 });
   }
 }

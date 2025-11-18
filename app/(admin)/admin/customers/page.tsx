@@ -36,11 +36,14 @@ export default async function AdminCustomersPage() {
 
   // Calculate statistics
   const totalCustomers = customers.length;
-  const customersWithOrders = customers.filter(c => c.orders.length > 0).length;
+  const customersWithOrders = customers.filter((c) => c.orders.length > 0).length;
   const totalRevenue = customers.reduce((sum, customer) => {
-    return sum + customer.orders
-      .filter(o => o.paymentStatus === 'PAID')
-      .reduce((orderSum, order) => orderSum + order.totalAmount, 0);
+    return (
+      sum +
+      customer.orders
+        .filter((o) => o.paymentStatus === 'PAID')
+        .reduce((orderSum, order) => orderSum + order.totalAmount, 0)
+    );
   }, 0);
 
   return (
@@ -48,18 +51,14 @@ export default async function AdminCustomersPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold">Customer Management</h1>
-        <p className="text-muted-foreground mt-2">
-          View and manage all customers
-        </p>
+        <p className="text-muted-foreground mt-2">View and manage all customers</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Customers
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -69,9 +68,7 @@ export default async function AdminCustomersPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Customers
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Active Customers</CardTitle>
             <ShoppingBag className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -84,28 +81,25 @@ export default async function AdminCustomersPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Revenue
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ${(totalRevenue / 100).toFixed(2)}
-            </div>
+            <div className="text-2xl font-bold">${(totalRevenue / 100).toFixed(2)}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Avg per Customer
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Avg per Customer</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${customersWithOrders > 0 ? ((totalRevenue / customersWithOrders) / 100).toFixed(2) : '0.00'}
+              $
+              {customersWithOrders > 0
+                ? (totalRevenue / customersWithOrders / 100).toFixed(2)
+                : '0.00'}
             </div>
           </CardContent>
         </Card>
@@ -124,12 +118,24 @@ export default async function AdminCustomersPage() {
             <table className="w-full text-sm text-left">
               <thead className="text-xs uppercase bg-muted">
                 <tr>
-                  <th scope="col" className="px-6 py-3">Customer</th>
-                  <th scope="col" className="px-6 py-3">Email</th>
-                  <th scope="col" className="px-6 py-3">Orders</th>
-                  <th scope="col" className="px-6 py-3">Total Spent</th>
-                  <th scope="col" className="px-6 py-3">Member Since</th>
-                  <th scope="col" className="px-6 py-3">Actions</th>
+                  <th scope="col" className="px-6 py-3">
+                    Customer
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Email
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Orders
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Total Spent
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Member Since
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -142,16 +148,17 @@ export default async function AdminCustomersPage() {
                 ) : (
                   customers.map((customer) => {
                     const totalSpent = customer.orders
-                      .filter(o => o.paymentStatus === 'PAID')
+                      .filter((o) => o.paymentStatus === 'PAID')
                       .reduce((sum, order) => sum + order.totalAmount, 0);
 
                     return (
                       <tr key={customer.id} className="border-b hover:bg-muted/50">
-                        <td className="px-6 py-4 font-medium">
-                          {customer.name || 'No name'}
-                        </td>
+                        <td className="px-6 py-4 font-medium">{customer.name || 'No name'}</td>
                         <td className="px-6 py-4">
-                          <a href={`mailto:${customer.email}`} className="text-primary hover:underline flex items-center gap-2">
+                          <a
+                            href={`mailto:${customer.email}`}
+                            className="text-primary hover:underline flex items-center gap-2"
+                          >
                             <Mail className="h-3 w-3" />
                             {customer.email}
                           </a>

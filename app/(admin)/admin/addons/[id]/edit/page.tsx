@@ -74,11 +74,7 @@ export default async function EditAddonPage({ params }: EditAddonPageProps) {
 
   return (
     <div className="container mx-auto py-10">
-      <AddonForm
-        mode="edit"
-        initialData={initialData}
-        initialSubOptions={data.subOptions}
-      />
+      <AddonForm mode="edit" initialData={initialData} initialSubOptions={data.subOptions} />
     </div>
   );
 }

@@ -2,18 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -40,17 +34,11 @@ export async function PUT(
 
     // Validation
     if (!name || basePrice === undefined) {
-      return NextResponse.json(
-        { error: 'Name and base price are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Name and base price are required' }, { status: 400 });
     }
 
     if (basePrice < 0) {
-      return NextResponse.json(
-        { error: 'Base price must be positive' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Base price must be positive' }, { status: 400 });
     }
 
     // Update product
@@ -85,10 +73,7 @@ export async function PUT(
     });
   } catch (error) {
     console.error('Update product error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update product' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
   }
 }
 
@@ -100,10 +85,7 @@ export async function DELETE(
     const session = await auth();
 
     if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
@@ -132,9 +114,6 @@ export async function DELETE(
     });
   } catch (error) {
     console.error('Delete product error:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete product' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
   }
 }

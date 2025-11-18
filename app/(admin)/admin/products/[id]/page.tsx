@@ -92,10 +92,7 @@ export default async function ProductViewPage({ params }: ProductViewPageProps) 
               Edit
             </Button>
           </Link>
-          <ProductDuplicateButton
-            productId={product.id}
-            productName={product.name}
-          />
+          <ProductDuplicateButton productId={product.id} productName={product.name} />
           <ProductDeleteDialog
             productId={product.id}
             productName={product.name}

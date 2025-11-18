@@ -25,28 +25,22 @@ export async function GET(request: NextRequest) {
     }
 
     // Return 1x1 transparent GIF pixel
-    const pixel = Buffer.from(
-      'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-      'base64'
-    );
+    const pixel = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
 
     return new NextResponse(pixel, {
       status: 200,
       headers: {
         'Content-Type': 'image/gif',
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
+        Pragma: 'no-cache',
+        Expires: '0',
       },
     });
   } catch (error: any) {
     console.error('[Email Tracking] Error:', error);
 
     // Still return pixel even on error
-    const pixel = Buffer.from(
-      'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-      'base64'
-    );
+    const pixel = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
 
     return new NextResponse(pixel, {
       status: 200,

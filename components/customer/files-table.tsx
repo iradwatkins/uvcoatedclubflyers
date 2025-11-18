@@ -68,13 +68,9 @@ export function FilesTable({ files }: FilesTableProps) {
                 <div className="flex items-center gap-3">
                   {getFileIcon(file.mime_type)}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">
-                      {file.original_filename}
-                    </p>
+                    <p className="font-medium truncate">{file.original_filename}</p>
                     {file.description && (
-                      <p className="text-sm text-muted-foreground truncate">
-                        {file.description}
-                      </p>
+                      <p className="text-sm text-muted-foreground truncate">{file.description}</p>
                     )}
                   </div>
                 </div>

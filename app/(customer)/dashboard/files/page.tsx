@@ -31,9 +31,7 @@ export default async function FilesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Design Files</h1>
-          <p className="text-muted-foreground">
-            Upload and manage your artwork files
-          </p>
+          <p className="text-muted-foreground">Upload and manage your artwork files</p>
         </div>
         <Button asChild>
           <Link href="/dashboard/files/upload">
@@ -47,9 +45,7 @@ export default async function FilesPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Files
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Files</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{files.length}</div>
@@ -62,12 +58,8 @@ export default async function FilesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {storageUsedMB} MB
-            </div>
-            <p className="text-xs text-muted-foreground">
-              of {storageLimit} MB
-            </p>
+            <div className="text-2xl font-bold">{storageUsedMB} MB</div>
+            <p className="text-xs text-muted-foreground">of {storageLimit} MB</p>
           </CardContent>
         </Card>
         <Card>

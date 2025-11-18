@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import {
   generateOrderConfirmation,
   generateProductionNotification,
-  generateShippingNotification
+  generateShippingNotification,
 } from '@/lib/email-templates/order-emails';
 import type { OrderData } from '@/lib/email-templates/order-emails';
 
@@ -45,7 +45,10 @@ export async function sendOrderConfirmation(orderData: OrderData): Promise<boole
     console.log(`[Order Email] Confirmation sent successfully to ${orderData.email}`);
     return true;
   } catch (error) {
-    console.error(`[Order Email] Error sending confirmation for order #${orderData.orderNumber}:`, error);
+    console.error(
+      `[Order Email] Error sending confirmation for order #${orderData.orderNumber}:`,
+      error
+    );
     return false;
   }
 }
@@ -56,7 +59,9 @@ export async function sendOrderConfirmation(orderData: OrderData): Promise<boole
  */
 export async function sendProductionNotification(orderData: OrderData): Promise<boolean> {
   try {
-    console.log(`[Order Email] Sending production notification for order #${orderData.orderNumber}`);
+    console.log(
+      `[Order Email] Sending production notification for order #${orderData.orderNumber}`
+    );
 
     if (!orderData.pricing) {
       throw new Error('Pricing information is required for production notification');
@@ -79,7 +84,10 @@ export async function sendProductionNotification(orderData: OrderData): Promise<
     console.log(`[Order Email] Production notification sent successfully to ${orderData.email}`);
     return true;
   } catch (error) {
-    console.error(`[Order Email] Error sending production notification for order #${orderData.orderNumber}:`, error);
+    console.error(
+      `[Order Email] Error sending production notification for order #${orderData.orderNumber}:`,
+      error
+    );
     return false;
   }
 }
@@ -113,7 +121,10 @@ export async function sendShippingNotification(orderData: OrderData): Promise<bo
     console.log(`[Order Email] Shipping notification sent successfully to ${orderData.email}`);
     return true;
   } catch (error) {
-    console.error(`[Order Email] Error sending shipping notification for order #${orderData.orderNumber}:`, error);
+    console.error(
+      `[Order Email] Error sending shipping notification for order #${orderData.orderNumber}:`,
+      error
+    );
     return false;
   }
 }
@@ -122,10 +133,7 @@ export async function sendShippingNotification(orderData: OrderData): Promise<bo
  * Generic function to send order status emails
  * Can be extended for additional status types
  */
-export async function sendOrderStatusEmail(
-  status: string,
-  orderData: OrderData
-): Promise<boolean> {
+export async function sendOrderStatusEmail(status: string, orderData: OrderData): Promise<boolean> {
   switch (status.toLowerCase()) {
     case 'confirmation':
     case 'confirmed':

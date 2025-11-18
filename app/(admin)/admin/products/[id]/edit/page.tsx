@@ -3,11 +3,7 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { ProductEditForm } from '@/components/admin/products/product-edit-form';
 
-export default async function ProductEditPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function ProductEditPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
 
   if (!session?.user || session.user.role !== 'admin') {
@@ -52,9 +48,7 @@ export default async function ProductEditPage({
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Edit Product</h1>
-        <p className="text-muted-foreground">
-          Update product details, pricing, and options
-        </p>
+        <p className="text-muted-foreground">Update product details, pricing, and options</p>
       </div>
 
       <ProductEditForm

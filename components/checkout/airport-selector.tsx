@@ -105,14 +105,13 @@ export function AirportSelector({ state, onSelect, onBack, onSkip }: AirportSele
             <Plane className="h-6 w-6" />
             <CardTitle>No Airports Available</CardTitle>
           </div>
-          <CardDescription>
-            Southwest Cargo is not available in {state}
-          </CardDescription>
+          <CardDescription>Southwest Cargo is not available in {state}</CardDescription>
         </CardHeader>
         <CardContent>
           <Alert>
             <AlertDescription>
-              There are no Southwest Cargo locations in your state. You can skip this step to see other shipping options.
+              There are no Southwest Cargo locations in your state. You can skip this step to see
+              other shipping options.
             </AlertDescription>
           </Alert>
 
@@ -206,8 +205,8 @@ export function AirportSelector({ state, onSelect, onBack, onSkip }: AirportSele
 
           <Alert>
             <AlertDescription>
-              You'll pick up your order at the selected Southwest Cargo location.
-              You'll receive tracking information once your order is ready for pickup.
+              You'll pick up your order at the selected Southwest Cargo location. You'll receive
+              tracking information once your order is ready for pickup.
             </AlertDescription>
           </Alert>
 

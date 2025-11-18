@@ -27,15 +27,14 @@ async function runMigrations() {
 
     // Get list of migration files
     const migrationsDir = __dirname;
-    const files = fs.readdirSync(migrationsDir)
-      .filter(f => f.endsWith('.sql'))
+    const files = fs
+      .readdirSync(migrationsDir)
+      .filter((f) => f.endsWith('.sql'))
       .sort();
 
     // Get already executed migrations
-    const { rows: executed } = await client.query(
-      'SELECT filename FROM migrations'
-    );
-    const executedFiles = new Set(executed.map(r => r.filename));
+    const { rows: executed } = await client.query('SELECT filename FROM migrations');
+    const executedFiles = new Set(executed.map((r) => r.filename));
 
     // Run pending migrations
     for (const file of files) {
@@ -50,10 +49,7 @@ async function runMigrations() {
       await client.query('BEGIN');
       try {
         await client.query(sql);
-        await client.query(
-          'INSERT INTO migrations (filename) VALUES ($1)',
-          [file]
-        );
+        await client.query('INSERT INTO migrations (filename) VALUES ($1)', [file]);
         await client.query('COMMIT');
         console.log(`✓ ${file} - Success\n`);
       } catch (error) {

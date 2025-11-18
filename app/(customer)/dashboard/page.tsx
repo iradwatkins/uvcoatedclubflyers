@@ -50,9 +50,7 @@ export default async function DashboardPage() {
     <div className="container mx-auto py-10">
       <div className="mb-8">
         <h1 className="text-4xl font-bold">Welcome, {session.user.name}!</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your flyer orders and designs
-        </p>
+        <p className="text-muted-foreground mt-2">Manage your flyer orders and designs</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -102,9 +100,7 @@ export default async function DashboardPage() {
                       <span className="text-muted-foreground">
                         {order.orderItems.length} item{order.orderItems.length !== 1 ? 's' : ''}
                       </span>
-                      <span className="font-semibold">
-                        ${(order.totalAmount / 100).toFixed(2)}
-                      </span>
+                      <span className="font-semibold">${(order.totalAmount / 100).toFixed(2)}</span>
                     </div>
                   </Link>
                 ))}
@@ -130,16 +126,10 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <a
-                href="/products"
-                className="block text-sm text-primary hover:underline"
-              >
+              <a href="/products" className="block text-sm text-primary hover:underline">
                 Browse Products
               </a>
-              <a
-                href="/dashboard/files"
-                className="block text-sm text-primary hover:underline"
-              >
+              <a href="/dashboard/files" className="block text-sm text-primary hover:underline">
                 Upload Design
               </a>
             </div>
