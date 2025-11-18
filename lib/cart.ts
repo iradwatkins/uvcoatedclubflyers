@@ -5,9 +5,11 @@ export interface CartItem {
   productId: string;
   productName: string;
   quantity: number;
-  options: Record<string, string>;
+  options: Record<string, any>;
   price: number;
   unitPrice: number;
+  uploadedFiles?: number[]; // File IDs from the files table
+  addOns?: number[]; // Add-on IDs
 }
 
 export interface Cart {

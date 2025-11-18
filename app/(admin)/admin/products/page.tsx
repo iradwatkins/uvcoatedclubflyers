@@ -3,8 +3,10 @@ import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Plus, Edit, ToggleLeft, ToggleRight, Eye } from 'lucide-react';
 import { ProductImage } from '@/components/product-image';
+import { ProductDeleteDialog } from '@/components/admin/products/product-delete-dialog';
+import { ProductDuplicateButton } from '@/components/admin/products/product-duplicate-button';
 
 async function getProducts() {
   const products = await prisma.product.findMany({
@@ -148,12 +150,27 @@ export default async function AdminProductsPage() {
                     </td>
                     <td className="py-4 text-right">
                       <div className="flex justify-end gap-2">
+                        <Link href={`/admin/products/${product.id}`}>
+                          <Button variant="ghost" size="sm">
+                            <Eye className="mr-2 h-4 w-4" />
+                            View
+                          </Button>
+                        </Link>
                         <Link href={`/admin/products/${product.id}/edit`}>
                           <Button variant="outline" size="sm">
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </Button>
                         </Link>
+                        <ProductDuplicateButton
+                          productId={product.id}
+                          productName={product.name}
+                        />
+                        <ProductDeleteDialog
+                          productId={product.id}
+                          productName={product.name}
+                          orderCount={product._count.orderItems}
+                        />
                       </div>
                     </td>
                   </tr>

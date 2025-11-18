@@ -1,5 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import { CartProvider } from '@/components/cart/cart-provider';
 
 export const metadata: Metadata = {
   title: 'UV Coated Club Flyers',
@@ -15,7 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <head></head>
       <body className="min-h-screen bg-background font-sans antialiased">
-        {children}
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );

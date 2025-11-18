@@ -279,3 +279,154 @@ export function verifyWebhookSignature(
   const hash = hmac.digest('base64')
   return hash === signature
 }
+
+// ============================================================================
+// CARD ON FILE / CUSTOMER VAULT API
+// ============================================================================
+
+/**
+ * Save a card to a customer's account using Square's Card on File API
+ * This creates a card record associated with a customer for future payments
+ */
+export async function saveCardOnFile(params: {
+  customerId: string
+  sourceId: string // Token from Square Web SDK
+  cardholderName?: string
+  billingAddress?: {
+    addressLine1?: string
+    addressLine2?: string
+    locality?: string // City
+    administrativeDistrictLevel1?: string // State
+    postalCode?: string
+    country?: string // Two-letter country code (e.g., 'US')
+  }
+  verificationToken?: string // Optional 3DS verification token
+}) {
+  try {
+    const { result } = await client.cardsApi.createCard({
+      sourceId: params.sourceId,
+      card: {
+        customerId: params.customerId,
+        ...(params.cardholderName && { cardholderName: params.cardholderName }),
+        ...(params.billingAddress && { billingAddress: params.billingAddress }),
+        ...(params.verificationToken && { verificationToken: params.verificationToken }),
+      },
+      idempotencyKey: crypto.randomUUID(),
+    })
+
+    return {
+      id: result.card?.id || '',
+      customerId: result.card?.customerId || '',
+      cardBrand: result.card?.cardBrand || 'UNKNOWN',
+      last4: result.card?.last4 || '',
+      expMonth: result.card?.expMonth ? parseInt(result.card.expMonth.toString()) : 0,
+      expYear: result.card?.expYear ? parseInt(result.card.expYear.toString()) : 0,
+      cardholderName: result.card?.cardholderName,
+      billingAddress: result.card?.billingAddress,
+      enabled: result.card?.enabled || false,
+      referenceId: result.card?.referenceId,
+    }
+  } catch (error) {
+    if (error instanceof SquareError) {
+      throw new Error(`Failed to save card: ${error.message || 'Unknown error'}`)
+    }
+    throw error
+  }
+}
+
+/**
+ * List all cards on file for a customer
+ */
+export async function listCustomerCards(customerId: string) {
+  try {
+    const { result } = await client.cardsApi.listCards(
+      undefined, // cursor
+      customerId, // customerId
+      undefined, // includeDisabled
+      undefined, // referenceId
+      undefined // sortOrder
+    )
+
+    return (
+      result.cards?.map((card) => ({
+        id: card.id || '',
+        customerId: card.customerId || '',
+        cardBrand: card.cardBrand || 'UNKNOWN',
+        last4: card.last4 || '',
+        expMonth: card.expMonth ? parseInt(card.expMonth.toString()) : 0,
+        expYear: card.expYear ? parseInt(card.expYear.toString()) : 0,
+        cardholderName: card.cardholderName,
+        enabled: card.enabled || false,
+      })) || []
+    )
+  } catch (error) {
+    if (error instanceof SquareError) {
+      throw new Error(`Failed to list cards: ${error.message || 'Unknown error'}`)
+    }
+    throw error
+  }
+}
+
+/**
+ * Disable a card on file (Square doesn't support deleting cards, only disabling)
+ */
+export async function disableCard(cardId: string) {
+  try {
+    const { result } = await client.cardsApi.disableCard(cardId)
+
+    return {
+      success: true,
+      card: result.card,
+    }
+  } catch (error) {
+    if (error instanceof SquareError) {
+      throw new Error(`Failed to disable card: ${error.message || 'Unknown error'}`)
+    }
+    throw error
+  }
+}
+
+/**
+ * Charge a saved card (Card on File payment)
+ */
+export async function chargeCardOnFile(params: {
+  cardId: string
+  customerId: string
+  amount: number // Amount in cents
+  currency?: string
+  referenceId?: string // Order number or reference
+  note?: string
+  verificationToken?: string // Optional 3DS verification token
+}) {
+  try {
+    const { result } = await client.paymentsApi.createPayment({
+      sourceId: params.cardId,
+      customerId: params.customerId,
+      amountMoney: {
+        amount: BigInt(params.amount),
+        currency: params.currency || 'USD',
+      },
+      idempotencyKey: crypto.randomUUID(),
+      locationId: SQUARE_LOCATION_ID,
+      ...(params.referenceId && { referenceId: params.referenceId }),
+      ...(params.note && { note: params.note }),
+      ...(params.verificationToken && { verificationToken: params.verificationToken }),
+    })
+
+    return {
+      success: true,
+      paymentId: result.payment?.id || '',
+      status: result.payment?.status || 'UNKNOWN',
+      receiptUrl: result.payment?.receiptUrl,
+      orderId: result.payment?.orderId,
+      customerId: result.payment?.customerId,
+      createdAt: result.payment?.createdAt,
+    }
+  } catch (error) {
+    if (error instanceof SquareError) {
+      const errorMessage = error.result?.errors?.[0]?.detail || error.message || 'Unknown error'
+      throw new Error(`Failed to charge card: ${errorMessage}`)
+    }
+    throw error
+  }
+}

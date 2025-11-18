@@ -234,12 +234,6 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
                     {groupedOptions.size.map((option: any) => (
                       <SelectItem key={option.id} value={option.id.toString()}>
                         {option.optionValue}
-                        {option.priceModifier && parseFloat(option.priceModifier) !== 0 && (
-                          <span className="ml-2 text-muted-foreground">
-                            ({parseFloat(option.priceModifier) > 0 ? '+' : ''}
-                            {formatPrice(Math.round(parseFloat(option.priceModifier) * 100))})
-                          </span>
-                        )}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -264,12 +258,6 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
                     {groupedOptions.material.map((option: any) => (
                       <SelectItem key={option.id} value={option.id.toString()}>
                         {option.optionValue}
-                        {option.priceModifier && parseFloat(option.priceModifier) !== 0 && (
-                          <span className="ml-2 text-muted-foreground">
-                            ({parseFloat(option.priceModifier) > 0 ? '+' : ''}
-                            {formatPrice(Math.round(parseFloat(option.priceModifier) * 100))})
-                          </span>
-                        )}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -294,12 +282,6 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
                     {groupedOptions.sides.map((option: any) => (
                       <SelectItem key={option.id} value={option.id.toString()}>
                         {option.optionValue}
-                        {option.priceModifier && parseFloat(option.priceModifier) !== 0 && (
-                          <span className="ml-2 text-muted-foreground">
-                            ({parseFloat(option.priceModifier) > 0 ? '+' : ''}
-                            {formatPrice(Math.round(parseFloat(option.priceModifier) * 100))})
-                          </span>
-                        )}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -324,12 +306,6 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
                     {groupedOptions.coating.map((option: any) => (
                       <SelectItem key={option.id} value={option.id.toString()}>
                         {option.optionValue}
-                        {option.priceModifier && parseFloat(option.priceModifier) !== 0 && (
-                          <span className="ml-2 text-muted-foreground">
-                            ({parseFloat(option.priceModifier) > 0 ? '+' : ''}
-                            {formatPrice(Math.round(parseFloat(option.priceModifier) * 100))})
-                          </span>
-                        )}
                       </SelectItem>
                     ))}
                   </SelectContent>

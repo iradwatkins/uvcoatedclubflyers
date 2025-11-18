@@ -6,7 +6,7 @@ import { randomUUID } from 'crypto';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { productId, productName, quantity, options, price, unitPrice } = body;
+    const { productId, productName, quantity, options, price, unitPrice, uploadedFiles, addOns } = body;
 
     if (!productId || !quantity || !price) {
       return NextResponse.json(
@@ -30,6 +30,8 @@ export async function POST(request: NextRequest) {
       options: options || {},
       price,
       unitPrice,
+      uploadedFiles: uploadedFiles || [],
+      addOns: addOns || [],
     });
 
     const response = NextResponse.json({ success: true, cart });

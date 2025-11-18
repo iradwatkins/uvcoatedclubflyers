@@ -49,6 +49,15 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        "slide-in-left": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+      },
+      animation: {
+        "slide-in-left": "slide-in-left 0.3s ease-out",
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],

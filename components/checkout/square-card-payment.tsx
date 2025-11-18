@@ -245,24 +245,6 @@ export function SquareCardPayment({
         if (result.status === 'OK') {
           sourceId = result.token
 
-          // Save payment method if requested
-          if (user && shouldSavePaymentMethod) {
-            try {
-              await fetch('/api/user/payment-methods', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  sourceId,
-                  nickname: 'Card from checkout',
-                  isDefault: false,
-                }),
-              })
-            } catch (saveError) {
-              console.warn('Failed to save payment method:', saveError)
-              // Don't fail the payment if saving fails
-            }
-          }
-
           const response = await fetch('/api/checkout/process-square-payment', {
             method: 'POST',
             headers: {
@@ -272,6 +254,8 @@ export function SquareCardPayment({
               sourceId,
               amount: Math.round(total * 100),
               currency: 'USD',
+              savePaymentMethod: shouldSavePaymentMethod && !!user,
+              billingContact: billingContact,
             }),
           })
 

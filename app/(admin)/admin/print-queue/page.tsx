@@ -1,15 +1,16 @@
 import { prisma } from '@/lib/prisma';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Printer, Clock, CheckCircle2 } from 'lucide-react';
+import { Printer, Clock, CheckCircle2, Kanban } from 'lucide-react';
 
 async function getPrintJobs() {
   const orders = await prisma.order.findMany({
     where: {
       status: {
-        in: ['PENDING', 'PROCESSING', 'PRINTING'],
+        in: ['pending', 'processing', 'printing'],
       },
     },
     include: {
@@ -49,19 +50,27 @@ export default async function PrintQueuePage() {
   const jobs = await getPrintJobs();
 
   const stats = {
-    pending: jobs.filter((j) => j.status === 'PENDING').length,
-    processing: jobs.filter((j) => j.status === 'PROCESSING').length,
-    printing: jobs.filter((j) => j.status === 'PRINTING').length,
+    pending: jobs.filter((j) => j.status === 'pending').length,
+    processing: jobs.filter((j) => j.status === 'processing').length,
+    printing: jobs.filter((j) => j.status === 'printing').length,
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="mb-2">Print Queue</h1>
-        <p className="text-muted-foreground">
-          Manage and track printing jobs
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="mb-2">Print Queue</h1>
+          <p className="text-muted-foreground">
+            Manage and track printing jobs
+          </p>
+        </div>
+        <Link href="/admin/print-queue/kanban">
+          <Button>
+            <Kanban className="mr-2 h-4 w-4" />
+            Kanban View
+          </Button>
+        </Link>
       </div>
 
       {/* Stats */}
@@ -152,11 +161,13 @@ export default async function PrintQueuePage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="PENDING">Pending</SelectItem>
-                      <SelectItem value="PROCESSING">Processing</SelectItem>
-                      <SelectItem value="PRINTING">Printing</SelectItem>
-                      <SelectItem value="SHIPPED">Shipped</SelectItem>
-                      <SelectItem value="DELIVERED">Delivered</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="processing">Processing</SelectItem>
+                      <SelectItem value="printing">Printing</SelectItem>
+                      <SelectItem value="quality_check">Quality Check</SelectItem>
+                      <SelectItem value="ready_to_ship">Ready to Ship</SelectItem>
+                      <SelectItem value="shipped">Shipped</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
