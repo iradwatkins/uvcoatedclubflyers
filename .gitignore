@@ -50,6 +50,7 @@ tsconfig.tsbuildinfo
 !README.md
 !CHANGELOG.md
 !CODE-CLEANING-REPORT.md
+!CODE-JANITOR-REPORT.md
 
 # Misc
 .cache/
