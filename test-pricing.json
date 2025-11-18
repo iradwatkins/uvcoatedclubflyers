@@ -1,0 +1,11 @@
+{
+  "productId": 1,
+  "paperStockId": 5,
+  "coatingId": 3,
+  "turnaroundId": 6,
+  "quantity": 500,
+  "width": 4.0,
+  "height": 6.0,
+  "sides": "double",
+  "addOns": []
+}

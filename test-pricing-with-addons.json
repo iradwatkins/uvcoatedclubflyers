@@ -1,0 +1,21 @@
+{
+  "productId": 1,
+  "paperStockId": 5,
+  "coatingId": 3,
+  "turnaroundId": 6,
+  "quantity": 1000,
+  "width": 4.0,
+  "height": 6.0,
+  "sides": "double",
+  "addOns": [
+    {
+      "addOnId": 7,
+      "subOptions": {
+        "vertical_count": 1,
+        "vertical_position": "3.5\"",
+        "horizontal_count": 0,
+        "horizontal_position": ""
+      }
+    }
+  ]
+}
