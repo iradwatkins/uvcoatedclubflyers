@@ -1,0 +1,376 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "UV Coated Flyers - Order API Tests",
+  "collectionId": "uv-coated-flyers-tests",
+  "dateExported": "2025-11-17",
+  "version": "1.0",
+  "folders": [
+    {
+      "id": "shipping",
+      "name": "Shipping APIs",
+      "requests": []
+    },
+    {
+      "id": "orders",
+      "name": "Order APIs",
+      "requests": []
+    },
+    {
+      "id": "payment",
+      "name": "Payment APIs",
+      "requests": []
+    },
+    {
+      "id": "upload",
+      "name": "Upload APIs",
+      "requests": []
+    }
+  ],
+  "requests": [
+    {
+      "id": "1",
+      "colId": "uv-coated-flyers-tests",
+      "folderId": "shipping",
+      "name": "Calculate FedEx Shipping Rates (Atlanta)",
+      "method": "POST",
+      "url": "{{baseUrl}}/api/shipping/calculate",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"toAddress\": {\n    \"street\": \"976 Carr Street\",\n    \"city\": \"Atlanta\",\n    \"state\": \"GA\",\n    \"zipCode\": \"30318\",\n    \"country\": \"US\",\n    \"isResidential\": false\n  },\n  \"items\": [\n    {\n      \"quantity\": 5000,\n      \"weightLbs\": 40.0\n    }\n  ]\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "value": "$.success",
+          "expected": "true"
+        },
+        {
+          "type": "json-query",
+          "value": "$.rates[?(@.carrier=='FEDEX' && @.service=='FEDEX_GROUND')]",
+          "expected": "exists"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "colId": "uv-coated-flyers-tests",
+      "folderId": "shipping",
+      "name": "Calculate Southwest Cargo Rates (Atlanta Airport)",
+      "method": "POST",
+      "url": "{{baseUrl}}/api/shipping/calculate",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"toAddress\": {\n    \"street\": \"6000 North Terminal Parkway\",\n    \"city\": \"Atlanta\",\n    \"state\": \"GA\",\n    \"zipCode\": \"30320\",\n    \"country\": \"US\",\n    \"isResidential\": false\n  },\n  \"items\": [\n    {\n      \"quantity\": 5000,\n      \"weightLbs\": 40.0\n    }\n  ],\n  \"selectedAirportId\": \"ATL\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "value": "$.success",
+          "expected": "true"
+        },
+        {
+          "type": "json-query",
+          "value": "$.totalWeight",
+          "expected": "40.0"
+        },
+        {
+          "type": "json-query",
+          "value": "$.numBoxes",
+          "expected": "2"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "colId": "uv-coated-flyers-tests",
+      "folderId": "shipping",
+      "name": "Get Southwest Cargo Airports in Georgia",
+      "method": "GET",
+      "url": "{{baseUrl}}/api/shipping/airports?state=GA",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "value": "$[?(@.code=='ATL')]",
+          "expected": "exists"
+        },
+        {
+          "type": "json-query",
+          "value": "$[?(@.code=='ATL')].name",
+          "expected": "contains:Hartsfield"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "colId": "uv-coated-flyers-tests",
+      "folderId": "orders",
+      "name": "Create Order - FedEx Ground",
+      "method": "POST",
+      "url": "{{baseUrl}}/api/orders/create",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"orderNumber\": \"TEST-{{$timestamp}}\",\n  \"userId\": 1,\n  \"status\": \"pending_payment\",\n  \"subtotal\": 87500,\n  \"taxAmount\": 7656,\n  \"totalAmount\": 95656,\n  \"paymentMethod\": \"card\",\n  \"paymentStatus\": \"unpaid\",\n  \"shippingAddress\": {\n    \"fullName\": \"John Doe\",\n    \"street\": \"976 Carr Street\",\n    \"city\": \"Atlanta\",\n    \"state\": \"GA\",\n    \"zipCode\": \"30318\",\n    \"country\": \"US\"\n  },\n  \"shippingCarrier\": \"FEDEX\",\n  \"shippingService\": \"FEDEX_GROUND\",\n  \"shippingRateAmount\": 45.50,\n  \"orderItems\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 5000,\n      \"unitPrice\": 17.50,\n      \"totalPrice\": 87500,\n      \"options\": {\n        \"size\": \"4x6\",\n        \"material\": \"9pt C2S Cardstock\",\n        \"coating\": \"UV Both Sides\",\n        \"sides\": \"Double-Sided\"\n      }\n    }\n  ]\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "201"
+        },
+        {
+          "type": "json-query",
+          "value": "$.id",
+          "expected": "exists"
+        },
+        {
+          "type": "json-query",
+          "value": "$.orderNumber",
+          "expected": "startsWith:TEST-"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "colId": "uv-coated-flyers-tests",
+      "folderId": "orders",
+      "name": "Create Order - Southwest Cargo",
+      "method": "POST",
+      "url": "{{baseUrl}}/api/orders/create",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"orderNumber\": \"TEST-SW-{{$timestamp}}\",\n  \"userId\": 1,\n  \"status\": \"pending_payment\",\n  \"subtotal\": 87500,\n  \"taxAmount\": 7339,\n  \"totalAmount\": 94839,\n  \"paymentMethod\": \"paypal\",\n  \"paymentStatus\": \"unpaid\",\n  \"shippingAddress\": {\n    \"fullName\": \"Jane Smith\",\n    \"street\": \"6000 North Terminal Parkway\",\n    \"city\": \"Atlanta\",\n    \"state\": \"GA\",\n    \"zipCode\": \"30320\",\n    \"country\": \"US\"\n  },\n  \"shippingCarrier\": \"SOUTHWEST_CARGO\",\n  \"shippingService\": \"SOUTHWEST_CARGO_PICKUP\",\n  \"shippingRateAmount\": 38.75,\n  \"pickupAirportId\": \"ATL\",\n  \"orderItems\": [\n    {\n      \"productId\": 1,\n      \"quantity\": 5000,\n      \"unitPrice\": 17.50,\n      \"totalPrice\": 87500,\n      \"options\": {\n        \"size\": \"4x6\",\n        \"material\": \"9pt C2S Cardstock\",\n        \"coating\": \"UV Both Sides\",\n        \"sides\": \"Double-Sided\"\n      }\n    }\n  ]\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "201"
+        },
+        {
+          "type": "json-query",
+          "value": "$.pickupAirportId",
+          "expected": "ATL"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "colId": "uv-coated-flyers-tests",
+      "folderId": "orders",
+      "name": "Get Order Details",
+      "method": "GET",
+      "url": "{{baseUrl}}/api/orders/{{orderId}}",
+      "headers": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "value": "$.id",
+          "expected": "{{orderId}}"
+        },
+        {
+          "type": "json-query",
+          "value": "$.totalAmount",
+          "expected": "greaterThan:0"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "colId": "uv-coated-flyers-tests",
+      "folderId": "payment",
+      "name": "Process Square Card Payment",
+      "method": "POST",
+      "url": "{{baseUrl}}/api/checkout/process-square-payment",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"sourceId\": \"cnon:card-nonce-ok\",\n  \"amount\": 95656,\n  \"currency\": \"USD\",\n  \"orderId\": \"{{orderId}}\",\n  \"billingInfo\": {\n    \"fullName\": \"John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"addressLine1\": \"976 Carr Street\",\n    \"locality\": \"Atlanta\",\n    \"administrativeDistrictLevel1\": \"GA\",\n    \"postalCode\": \"30318\",\n    \"country\": \"US\"\n  }\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "value": "$.success",
+          "expected": "true"
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "colId": "uv-coated-flyers-tests",
+      "folderId": "payment",
+      "name": "Create PayPal Order",
+      "method": "POST",
+      "url": "{{baseUrl}}/api/checkout/create-paypal-order",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"amount\": \"948.39\",\n  \"items\": [\n    {\n      \"name\": \"UV Coated Club Flyers (5000 qty)\",\n      \"description\": \"4x6, 9pt cardstock, UV both sides, double-sided\",\n      \"quantity\": 1,\n      \"unitAmount\": \"875.00\"\n    }\n  ],\n  \"shipping\": \"38.75\",\n  \"tax\": \"73.39\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "value": "$.orderId",
+          "expected": "exists"
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "colId": "uv-coated-flyers-tests",
+      "folderId": "payment",
+      "name": "Capture PayPal Payment",
+      "method": "POST",
+      "url": "{{baseUrl}}/api/checkout/capture-paypal-order",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"orderID\": \"{{paypalOrderId}}\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "value": "$.status",
+          "expected": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "colId": "uv-coated-flyers-tests",
+      "folderId": "upload",
+      "name": "Upload Flyer Image (Front)",
+      "method": "POST",
+      "url": "{{baseUrl}}/api/upload",
+      "headers": [],
+      "body": {
+        "type": "formdata",
+        "raw": "",
+        "form": [
+          {
+            "name": "file",
+            "value": "{{frontImagePath}}",
+            "type": "file"
+          },
+          {
+            "name": "folder",
+            "value": "flyers"
+          }
+        ]
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "value": "$.url",
+          "expected": "exists"
+        },
+        {
+          "type": "json-query",
+          "value": "$.fileId",
+          "expected": "exists"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "baseUrl": "http://localhost:3000",
+    "timeout": 30000,
+    "follow_redirects": true
+  },
+  "envs": [
+    {
+      "name": "Local Development",
+      "variables": {
+        "baseUrl": "http://localhost:3000",
+        "orderId": "",
+        "paypalOrderId": "",
+        "frontImagePath": "/Users/irawatkins/Desktop/images for testing/SEMITIRESERVICE1-copy-(1).jpg",
+        "backImagePath": "/Users/irawatkins/Desktop/images for testing/SEMITIRESERVICE1-copy.jpg"
+      }
+    },
+    {
+      "name": "Production",
+      "variables": {
+        "baseUrl": "https://uvcoatedclubflyers.com",
+        "orderId": "",
+        "paypalOrderId": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,766 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "UV Coated Flyers - Complete Order API Tests",
+  "dateExported": "2025-11-18",
+  "version": "1.2",
+  "folders": [
+    {
+      "id": "folder-1",
+      "name": "📦 Product Configuration",
+      "description": "API endpoints for product configuration and pricing"
+    },
+    {
+      "id": "folder-2",
+      "name": "🛒 Cart Management",
+      "description": "Shopping cart CRUD operations"
+    },
+    {
+      "id": "folder-3",
+      "name": "📤 File Upload",
+      "description": "File upload and management"
+    },
+    {
+      "id": "folder-4",
+      "name": "🚚 Shipping & Rates",
+      "description": "Shipping rate calculation and airport selection"
+    },
+    {
+      "id": "folder-5",
+      "name": "💳 Payment & Orders",
+      "description": "Payment processing and order creation"
+    },
+    {
+      "id": "folder-6",
+      "name": "👤 Admin - Order Management",
+      "description": "Admin endpoints for order verification"
+    }
+  ],
+  "requests": [
+    {
+      "id": "req-001",
+      "folderId": "folder-1",
+      "name": "Get Product Details",
+      "method": "GET",
+      "url": "http://localhost:3000/api/products/1",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "set-env-var",
+          "property": "product_id",
+          "value": "{{$.id}}"
+        },
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.name",
+          "value": "UV Coated Club Flyers"
+        }
+      ]
+    },
+    {
+      "id": "req-002",
+      "folderId": "folder-1",
+      "name": "Calculate Pricing - 5000 Flyers",
+      "method": "POST",
+      "url": "http://localhost:3000/api/pricing/calculate",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"productId\": 1,\n  \"quantity\": 5000,\n  \"size\": \"4x6\",\n  \"paperStock\": \"9pt C2S Cardstock\",\n  \"coating\": \"UV Both Sides\",\n  \"turnaround\": \"2-4 Days Standard\"\n}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.total",
+          "operator": ">=",
+          "value": "3000"
+        },
+        {
+          "type": "json-query",
+          "path": "$.total",
+          "operator": "<=",
+          "value": "6000"
+        },
+        {
+          "type": "set-env-var",
+          "property": "product_price",
+          "value": "{{$.total}}"
+        }
+      ]
+    },
+    {
+      "id": "req-003",
+      "folderId": "folder-1",
+      "name": "Calculate Weight - 5000 Flyers 4x6",
+      "method": "POST",
+      "url": "http://localhost:3000/api/cart/calculate-weight",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"quantity\": 5000,\n  \"size\": \"4x6\",\n  \"paperStock\": \"9pt C2S Cardstock\"\n}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.weight",
+          "operator": ">=",
+          "value": "39"
+        },
+        {
+          "type": "json-query",
+          "path": "$.weight",
+          "operator": "<=",
+          "value": "41"
+        },
+        {
+          "type": "json-query",
+          "path": "$.boxes",
+          "value": "2"
+        },
+        {
+          "type": "set-env-var",
+          "property": "total_weight",
+          "value": "{{$.weight}}"
+        }
+      ]
+    },
+    {
+      "id": "req-004",
+      "folderId": "folder-2",
+      "name": "Add Product to Cart",
+      "method": "POST",
+      "url": "http://localhost:3000/api/cart/add",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"productId\": 1,\n  \"quantity\": 5000,\n  \"configuration\": {\n    \"size\": \"4x6\",\n    \"paperStock\": \"9pt C2S Cardstock\",\n    \"coating\": \"UV Both Sides\",\n    \"turnaround\": \"2-4 Days Standard\",\n    \"files\": [\"front.png\", \"back.png\"]\n  },\n  \"price\": 3500.00\n}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.cart.items",
+          "operator": "contains",
+          "value": "1"
+        },
+        {
+          "type": "set-env-var",
+          "property": "cart_id",
+          "value": "{{$.cart.id}}"
+        },
+        {
+          "type": "set-env-var",
+          "property": "cart_item_id",
+          "value": "{{$.cart.items[0].id}}"
+        }
+      ]
+    },
+    {
+      "id": "req-005",
+      "folderId": "folder-2",
+      "name": "Get Cart Session",
+      "method": "GET",
+      "url": "http://localhost:3000/api/cart/session",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.items.length",
+          "operator": ">=",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "req-006",
+      "folderId": "folder-2",
+      "name": "Update Cart Item Quantity",
+      "method": "PATCH",
+      "url": "http://localhost:3000/api/cart/update/{{cart_item_id}}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"quantity\": 10000\n}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "id": "req-007",
+      "folderId": "folder-3",
+      "name": "Upload Front Image",
+      "method": "POST",
+      "url": "http://localhost:3000/api/files/upload",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "multipart/form-data"
+        }
+      ],
+      "body": {
+        "type": "formdata",
+        "form": [
+          {
+            "name": "file",
+            "value": "@tests/fixtures/flyer-front.png"
+          },
+          {
+            "name": "type",
+            "value": "front"
+          }
+        ]
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.fileId",
+          "operator": "istype",
+          "value": "string"
+        },
+        {
+          "type": "set-env-var",
+          "property": "front_file_id",
+          "value": "{{$.fileId}}"
+        }
+      ]
+    },
+    {
+      "id": "req-008",
+      "folderId": "folder-3",
+      "name": "Upload Back Image",
+      "method": "POST",
+      "url": "http://localhost:3000/api/files/upload",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "multipart/form-data"
+        }
+      ],
+      "body": {
+        "type": "formdata",
+        "form": [
+          {
+            "name": "file",
+            "value": "@tests/fixtures/flyer-back.png"
+          },
+          {
+            "name": "type",
+            "value": "back"
+          }
+        ]
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "set-env-var",
+          "property": "back_file_id",
+          "value": "{{$.fileId}}"
+        }
+      ]
+    },
+    {
+      "id": "req-009",
+      "folderId": "folder-4",
+      "name": "Get Shipping Rates - FedEx Ground",
+      "method": "POST",
+      "url": "http://localhost:3000/api/shipping/rates",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"destination\": {\n    \"address1\": \"976 Carr Street\",\n    \"city\": \"Atlanta\",\n    \"state\": \"GA\",\n    \"zip\": \"30318\",\n    \"country\": \"US\"\n  },\n  \"weight\": 40,\n  \"boxes\": 2\n}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.rates",
+          "operator": "istype",
+          "value": "array"
+        },
+        {
+          "type": "json-query",
+          "path": "$.rates[?(@.carrier == 'FEDEX')].service",
+          "operator": "contains",
+          "value": "GROUND"
+        },
+        {
+          "type": "set-env-var",
+          "property": "fedex_rate",
+          "value": "{{$.rates[0].amount}}"
+        }
+      ]
+    },
+    {
+      "id": "req-010",
+      "folderId": "folder-4",
+      "name": "Get Southwest Cargo Airports - Georgia",
+      "method": "GET",
+      "url": "http://localhost:3000/api/shipping/airports?state=GA",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.airports",
+          "operator": "istype",
+          "value": "array"
+        },
+        {
+          "type": "json-query",
+          "path": "$.airports[?(@.code == 'ATL')].name",
+          "operator": "contains",
+          "value": "Hartsfield"
+        },
+        {
+          "type": "set-env-var",
+          "property": "atlanta_airport_id",
+          "value": "{{$.airports[0].id}}"
+        }
+      ]
+    },
+    {
+      "id": "req-011",
+      "folderId": "folder-4",
+      "name": "Get Southwest Cargo Rate - ATL Airport",
+      "method": "POST",
+      "url": "http://localhost:3000/api/shipping/rates/southwest-cargo",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"airportId\": \"{{atlanta_airport_id}}\",\n  \"weight\": 40,\n  \"boxes\": 2\n}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.carrier",
+          "value": "SOUTHWEST_CARGO"
+        },
+        {
+          "type": "json-query",
+          "path": "$.amount",
+          "operator": ">",
+          "value": "0"
+        },
+        {
+          "type": "set-env-var",
+          "property": "southwest_rate",
+          "value": "{{$.amount}}"
+        }
+      ]
+    },
+    {
+      "id": "req-012",
+      "folderId": "folder-5",
+      "name": "Process Square Payment - Test Card",
+      "method": "POST",
+      "url": "http://localhost:3000/api/checkout/process-square-payment",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"sourceId\": \"cnon:card-nonce-ok\",\n  \"amount\": 3500.00,\n  \"currency\": \"USD\",\n  \"idempotencyKey\": \"{{$guid}}\",\n  \"billingAddress\": {\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe.{{$timestamp}}@uvcoatedtest.com\",\n    \"addressLine1\": \"976 Carr Street\",\n    \"city\": \"Atlanta\",\n    \"state\": \"GA\",\n    \"postalCode\": \"30318\",\n    \"country\": \"US\"\n  }\n}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.success",
+          "value": "true"
+        },
+        {
+          "type": "json-query",
+          "path": "$.transactionId",
+          "operator": "istype",
+          "value": "string"
+        },
+        {
+          "type": "set-env-var",
+          "property": "transaction_id",
+          "value": "{{$.transactionId}}"
+        }
+      ]
+    },
+    {
+      "id": "req-013",
+      "folderId": "folder-5",
+      "name": "Create Order - FedEx Ground",
+      "method": "POST",
+      "url": "http://localhost:3000/api/orders/create",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"customer\": {\n    \"email\": \"john.doe.{{$timestamp}}@uvcoatedtest.com\",\n    \"name\": \"John Doe\",\n    \"phone\": \"(555) 123-4567\"\n  },\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"productName\": \"UV Coated Club Flyers\",\n      \"quantity\": 5000,\n      \"unitPrice\": 0.70,\n      \"totalPrice\": 3500.00,\n      \"configuration\": {\n        \"size\": \"4x6\",\n        \"paperStock\": \"9pt C2S Cardstock\",\n        \"coating\": \"UV Both Sides\",\n        \"turnaround\": \"2-4 Days Standard\",\n        \"frontFileId\": \"{{front_file_id}}\",\n        \"backFileId\": \"{{back_file_id}}\"\n      }\n    }\n  ],\n  \"billingAddress\": {\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe.{{$timestamp}}@uvcoatedtest.com\",\n    \"phone\": \"(555) 123-4567\",\n    \"address1\": \"976 Carr Street\",\n    \"city\": \"Atlanta\",\n    \"state\": \"GA\",\n    \"postcode\": \"30318\",\n    \"country\": \"US\"\n  },\n  \"shippingAddress\": {\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"address1\": \"976 Carr Street\",\n    \"city\": \"Atlanta\",\n    \"state\": \"GA\",\n    \"postcode\": \"30318\",\n    \"country\": \"US\"\n  },\n  \"shipping\": {\n    \"carrier\": \"FEDEX\",\n    \"service\": \"FEDEX_GROUND\",\n    \"cost\": 45.00\n  },\n  \"payment\": {\n    \"method\": \"square\",\n    \"status\": \"paid\",\n    \"transactionId\": \"{{transaction_id}}\",\n    \"amount\": 3545.00\n  },\n  \"pricing\": {\n    \"subtotal\": 3500.00,\n    \"shipping\": 45.00,\n    \"tax\": 0.00,\n    \"total\": 3545.00\n  }\n}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.success",
+          "value": "true"
+        },
+        {
+          "type": "json-query",
+          "path": "$.orderNumber",
+          "operator": "matches",
+          "value": "^ORD-\\d{8}-\\d{5}$"
+        },
+        {
+          "type": "json-query",
+          "path": "$.orderId",
+          "operator": "istype",
+          "value": "number"
+        },
+        {
+          "type": "set-env-var",
+          "property": "fedex_order_number",
+          "value": "{{$.orderNumber}}"
+        },
+        {
+          "type": "set-env-var",
+          "property": "fedex_order_id",
+          "value": "{{$.orderId}}"
+        }
+      ]
+    },
+    {
+      "id": "req-014",
+      "folderId": "folder-5",
+      "name": "Create Order - Southwest Cargo",
+      "method": "POST",
+      "url": "http://localhost:3000/api/orders/create",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"customer\": {\n    \"email\": \"jane.smith.{{$timestamp}}@uvcoatedtest.com\",\n    \"name\": \"Jane Smith\",\n    \"phone\": \"(555) 987-6543\"\n  },\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"productName\": \"UV Coated Club Flyers\",\n      \"quantity\": 5000,\n      \"unitPrice\": 0.70,\n      \"totalPrice\": 3500.00,\n      \"configuration\": {\n        \"size\": \"4x6\",\n        \"paperStock\": \"9pt C2S Cardstock\",\n        \"coating\": \"UV Both Sides\",\n        \"turnaround\": \"2-4 Days Standard\",\n        \"frontFileId\": \"{{front_file_id}}\",\n        \"backFileId\": \"{{back_file_id}}\"\n      }\n    }\n  ],\n  \"billingAddress\": {\n    \"firstName\": \"Jane\",\n    \"lastName\": \"Smith\",\n    \"email\": \"jane.smith.{{$timestamp}}@uvcoatedtest.com\",\n    \"phone\": \"(555) 987-6543\",\n    \"address1\": \"123 Peachtree St\",\n    \"city\": \"Atlanta\",\n    \"state\": \"GA\",\n    \"postcode\": \"30303\",\n    \"country\": \"US\"\n  },\n  \"shipping\": {\n    \"carrier\": \"SOUTHWEST_CARGO\",\n    \"service\": \"AIRPORT_PICKUP\",\n    \"airportId\": \"{{atlanta_airport_id}}\",\n    \"cost\": 38.00\n  },\n  \"payment\": {\n    \"method\": \"square\",\n    \"status\": \"paid\",\n    \"transactionId\": \"{{transaction_id}}\",\n    \"amount\": 3538.00\n  },\n  \"pricing\": {\n    \"subtotal\": 3500.00,\n    \"shipping\": 38.00,\n    \"tax\": 0.00,\n    \"total\": 3538.00\n  }\n}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.success",
+          "value": "true"
+        },
+        {
+          "type": "json-query",
+          "path": "$.orderNumber",
+          "operator": "matches",
+          "value": "^ORD-\\d{8}-\\d{5}$"
+        },
+        {
+          "type": "set-env-var",
+          "property": "southwest_order_number",
+          "value": "{{$.orderNumber}}"
+        },
+        {
+          "type": "set-env-var",
+          "property": "southwest_order_id",
+          "value": "{{$.orderId}}"
+        }
+      ]
+    },
+    {
+      "id": "req-015",
+      "folderId": "folder-6",
+      "name": "Admin - Get All Orders",
+      "method": "GET",
+      "url": "http://localhost:3000/api/admin/orders",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.orders",
+          "operator": "istype",
+          "value": "array"
+        }
+      ]
+    },
+    {
+      "id": "req-016",
+      "folderId": "folder-6",
+      "name": "Admin - Get Order by Number (FedEx)",
+      "method": "GET",
+      "url": "http://localhost:3000/api/admin/orders?search={{fedex_order_number}}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.orders[0].order_number",
+          "value": "{{fedex_order_number}}"
+        },
+        {
+          "type": "json-query",
+          "path": "$.orders[0].status",
+          "value": "pending"
+        },
+        {
+          "type": "json-query",
+          "path": "$.orders[0].payment_status",
+          "value": "paid"
+        },
+        {
+          "type": "json-query",
+          "path": "$.orders[0].shipping_carrier",
+          "value": "FEDEX"
+        }
+      ]
+    },
+    {
+      "id": "req-017",
+      "folderId": "folder-6",
+      "name": "Admin - Get Order by Number (Southwest)",
+      "method": "GET",
+      "url": "http://localhost:3000/api/admin/orders?search={{southwest_order_number}}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.orders[0].order_number",
+          "value": "{{southwest_order_number}}"
+        },
+        {
+          "type": "json-query",
+          "path": "$.orders[0].shipping_carrier",
+          "value": "SOUTHWEST_CARGO"
+        },
+        {
+          "type": "json-query",
+          "path": "$.orders[0].pickup_airport_id",
+          "operator": "istype",
+          "value": "number"
+        }
+      ]
+    },
+    {
+      "id": "req-018",
+      "folderId": "folder-6",
+      "name": "Admin - Update Order Status",
+      "method": "PATCH",
+      "url": "http://localhost:3000/api/orders/{{fedex_order_id}}/status",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"status\": \"processing\"\n}"
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "path": "$.success",
+          "value": "true"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "baseUrl": "http://localhost:3000",
+    "timeout": 30000,
+    "followRedirects": true
+  },
+  "environment": {
+    "name": "UV Flyers Test Environment",
+    "variables": [
+      {
+        "name": "base_url",
+        "value": "http://localhost:3000"
+      },
+      {
+        "name": "product_id",
+        "value": ""
+      },
+      {
+        "name": "cart_id",
+        "value": ""
+      },
+      {
+        "name": "cart_item_id",
+        "value": ""
+      },
+      {
+        "name": "front_file_id",
+        "value": ""
+      },
+      {
+        "name": "back_file_id",
+        "value": ""
+      },
+      {
+        "name": "atlanta_airport_id",
+        "value": ""
+      },
+      {
+        "name": "transaction_id",
+        "value": ""
+      },
+      {
+        "name": "fedex_order_number",
+        "value": ""
+      },
+      {
+        "name": "fedex_order_id",
+        "value": ""
+      },
+      {
+        "name": "southwest_order_number",
+        "value": ""
+      },
+      {
+        "name": "southwest_order_id",
+        "value": ""
+      },
+      {
+        "name": "total_weight",
+        "value": "40"
+      },
+      {
+        "name": "fedex_rate",
+        "value": ""
+      },
+      {
+        "name": "southwest_rate",
+        "value": ""
+      }
+    ]
+  }
+}

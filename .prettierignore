@@ -1,0 +1,31 @@
+# Dependencies
+node_modules
+package-lock.json
+
+# Build outputs
+.next
+dist
+build
+out
+tsconfig.tsbuildinfo
+
+# Test results
+test-results
+coverage
+screenshots
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Generated files
+*.min.js
+*.min.css
+
+# Documentation
+CHANGELOG.md

@@ -28,6 +28,9 @@ Thumbs.db
 # Testing
 coverage/
 .nyc_output/
+test-results/
+screenshots/
+playwright-report/
 
 # Database
 *.db
@@ -37,6 +40,16 @@ coverage/
 # Logs
 logs/
 *.log
+
+# Build artifacts
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Temporary documentation (root level)
+*.md
+!README.md
+!CHANGELOG.md
+!CODE-CLEANING-REPORT.md
 
 # Misc
 .cache/

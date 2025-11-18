@@ -1,0 +1,40 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "UV Coated Flyers Tests",
+  "dateExported": "2025-11-17",
+  "version": "1.0",
+  "folders": [],
+  "requests": [
+    {
+      "name": "Create Order - FedEx Ground",
+      "url": "{{baseUrl}}/api/orders/create",
+      "method": "POST",
+      "headers": [{"name": "Content-Type", "value": "application/json"}],
+      "body": {
+        "orderNumber": "TEST-FEDEX-{{timestamp}}",
+        "paymentMethod": "cash",
+        "cart": {
+          "items": [{
+            "productId": "4x6-flyers",
+            "productName": "4x6 UV Coated Flyers",
+            "quantity": 5000,
+            "unitPrice": 1500,
+            "price": 7500000
+          }],
+          "total": 7500000
+        },
+        "shippingAddress": {
+          "address": "976 Carr Street",
+          "city": "Atlanta",
+          "state": "GA",
+          "zipCode": "30318"
+        },
+        "shipping": {
+          "carrier": "fedex",
+          "service": "FEDEX_GROUND",
+          "cost": 45.50
+        }
+      }
+    }
+  ]
+}
