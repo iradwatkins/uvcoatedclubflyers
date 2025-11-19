@@ -214,13 +214,7 @@ export function DesignOptionSelector({
             <FileUploadDropzone
               onFilesSelected={handleFilesChange}
               maxFiles={maxFiles}
-              acceptedFileTypes={{
-                'image/*': ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp'],
-                'application/pdf': ['.pdf'],
-                'application/postscript': ['.ai', '.eps'],
-                'image/vnd.adobe.photoshop': ['.psd'],
-                'application/illustrator': ['.ai'],
-              }}
+              acceptedFileTypes={['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp', '.pdf', '.ai', '.eps', '.psd']}
             />
             {uploadedFiles.length > 0 && (
               <p className="text-xs text-muted-foreground">

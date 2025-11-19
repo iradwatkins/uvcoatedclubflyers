@@ -11,7 +11,7 @@
  */
 
 import axios, { type AxiosError, type AxiosResponse } from 'axios';
-import type { FedExApiError, FedExErrorCode, FedExRateResponse } from '../types';
+import type { FedExApiError, FedExErrorCode, FedExRateResponse } from './types';
 
 export class FedExError extends Error implements FedExApiError {
   code: string;

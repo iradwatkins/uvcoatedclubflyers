@@ -11,8 +11,8 @@ async function executeRawQuery(strings: TemplateStringsArray, values: any[]) {
   return await query(text, values);
 }
 
-// Define $queryRaw as a standalone generic function
-async function $queryRaw(strings: TemplateStringsArray, ...values: any[]): Promise<T> {
+// Define $queryRaw as a standalone function
+async function $queryRaw<T = any[]>(strings: TemplateStringsArray, ...values: any[]): Promise<T> {
   const result = await executeRawQuery(strings, values);
   return result.rows as T;
 }
@@ -23,10 +23,23 @@ async function $executeRaw(strings: TemplateStringsArray, ...values: any[]): Pro
   return result.rowCount || 0;
 }
 
+// Define unsafe query functions
+async function $queryRawUnsafe(sql: string, ...values: any[]): Promise<any[]> {
+  const result = await query(sql, values);
+  return result.rows;
+}
+
+async function $executeRawUnsafe(sql: string, ...values: any[]): Promise<number> {
+  const result = await query(sql, values);
+  return result.rowCount || 0;
+}
+
 export const prisma = {
   // Raw query methods for compatibility
   $queryRaw,
   $executeRaw,
+  $queryRawUnsafe,
+  $executeRawUnsafe,
 
   // Product queries
   product: {
@@ -381,41 +394,6 @@ export const prisma = {
     },
   },
 
-  // Raw query methods
-  $queryRaw: async (strings: TemplateStringsArray, ...values: any[]) => {
-    // Build the query from template literal
-    let sql = '';
-    for (let i = 0; i < strings.length; i++) {
-      sql += strings[i];
-      if (i < values.length) {
-        sql += `$${i + 1}`;
-      }
-    }
-    const result = await query(sql, values);
-    return result.rows;
-  },
-
-  $queryRawUnsafe: async (sql: string, ...values: any[]) => {
-    const result = await query(sql, values);
-    return result.rows;
-  },
-
-  $executeRaw: async (strings: TemplateStringsArray, ...values: any[]) => {
-    let sql = '';
-    for (let i = 0; i < strings.length; i++) {
-      sql += strings[i];
-      if (i < values.length) {
-        sql += `$${i + 1}`;
-      }
-    }
-    const result = await query(sql, values);
-    return result.rowCount || 0;
-  },
-
-  $executeRawUnsafe: async (sql: string, ...values: any[]) => {
-    const result = await query(sql, values);
-    return result.rowCount || 0;
-  },
 
   // User queries
   user: {

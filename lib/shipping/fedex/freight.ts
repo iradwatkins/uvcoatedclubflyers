@@ -6,12 +6,8 @@
  * Uses NMFC (National Motor Freight Classification) classes
  */
 
-import type {
-  FreightClass,
-  FreightShipmentDetail,
-  ShippingAddress,
-  ShippingPackage,
-} from '../types';
+import type { ShippingAddress, ShippingPackage } from '../interfaces';
+import type { FreightClass, FreightShipmentDetail } from './types';
 
 /**
  * NMFC Freight Classes (50-500)

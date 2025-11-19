@@ -29,7 +29,7 @@ interface SendOrderConfirmationParams {
 
 export async function sendOrderConfirmation(params: SendOrderConfirmationParams) {
   try {
-    const emailHtml = render(OrderConfirmationEmail(params));
+    const emailHtml = await render(OrderConfirmationEmail(params));
 
     const info = await transporter.sendMail({
       from: `"UV Coated Club Flyers" <${FROM_EMAIL}>`,
@@ -60,7 +60,7 @@ interface SendAdminNotificationParams {
 
 export async function sendAdminOrderNotification(params: SendAdminNotificationParams) {
   try {
-    const emailHtml = render(AdminOrderNotification(params));
+    const emailHtml = await render(AdminOrderNotification(params));
 
     const info = await transporter.sendMail({
       from: `"UV Coated Club Flyers" <${FROM_EMAIL}>`,

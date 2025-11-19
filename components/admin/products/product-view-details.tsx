@@ -143,7 +143,7 @@ export function ProductViewDetails({ product }: ProductViewDetailsProps) {
                 <ProductImage
                   imageUrl={product.imageUrl}
                   productName={product.name}
-                  variant="default"
+                  variant="thumbnail"
                 />
                 <p className="text-xs text-center mt-1 text-muted-foreground">Primary</p>
               </div>
@@ -153,7 +153,7 @@ export function ProductViewDetails({ product }: ProductViewDetailsProps) {
                 <ProductImage
                   imageUrl={product.imageUrl2}
                   productName={product.name}
-                  variant="default"
+                  variant="thumbnail"
                 />
                 <p className="text-xs text-center mt-1 text-muted-foreground">Image 2</p>
               </div>
@@ -163,7 +163,7 @@ export function ProductViewDetails({ product }: ProductViewDetailsProps) {
                 <ProductImage
                   imageUrl={product.imageUrl3}
                   productName={product.name}
-                  variant="default"
+                  variant="thumbnail"
                 />
                 <p className="text-xs text-center mt-1 text-muted-foreground">Image 3</p>
               </div>
@@ -173,7 +173,7 @@ export function ProductViewDetails({ product }: ProductViewDetailsProps) {
                 <ProductImage
                   imageUrl={product.imageUrl4}
                   productName={product.name}
-                  variant="default"
+                  variant="thumbnail"
                 />
                 <p className="text-xs text-center mt-1 text-muted-foreground">Image 4</p>
               </div>

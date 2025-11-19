@@ -36,11 +36,6 @@ interface SquareCardPaymentProps {
   onBack: () => void;
 }
 
-declare global {
-  interface Window {
-    Square?: Record<string, unknown>;
-  }
-}
 
 export function SquareCardPayment({
   applicationId,

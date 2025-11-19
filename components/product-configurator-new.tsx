@@ -795,7 +795,7 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
             {/* 8. Design & Files (Above Turnaround Time) */}
             {options.addOns?.above_upload && options.addOns.above_upload.length > 0 && (
               <DesignOptionSelector
-                designOptions={options.addOns.above_upload}
+                designOptions={options.addOns.above_upload as any}
                 selectedOptionId={selectedDesignOptionId}
                 onOptionChange={(optionId) => {
                   setSelectedDesignOptionId(optionId);

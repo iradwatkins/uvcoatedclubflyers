@@ -13,11 +13,6 @@ interface CashAppQRPaymentProps {
   onBack: () => void;
 }
 
-declare global {
-  interface Window {
-    Square?: any;
-  }
-}
 
 export function CashAppQRPayment({
   total,

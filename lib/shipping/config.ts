@@ -137,6 +137,9 @@ export const DEFAULT_SENDER_ADDRESS = {
 export const CARRIER_AVAILABILITY: Record<Carrier, string[]> = {
   FEDEX: [], // Available in all states
   UPS: [], // Available in all states
+  USPS: [], // Available in all states
+  DHL: [], // Available in all states
+  FREIGHT: [], // Available in all states
   SOUTHWEST_CARGO: [], // Dynamically loaded from 82 airports in database
 };
 
