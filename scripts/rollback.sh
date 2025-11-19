@@ -21,9 +21,9 @@ echo -e "${BLUE}  Rolling back deployment${NC}"
 echo -e "${BLUE}========================================${NC}"
 
 # Determine current active environment
-if grep -q "^upstream" "$UPSTREAM_CONF" && grep -q "uvcoated-app-blue" "$UPSTREAM_CONF"; then
+if grep -q "^upstream" "$UPSTREAM_CONF" && grep -q "uvcoatedclubflyers-app-blue" "$UPSTREAM_CONF"; then
     # Check if blue is active (not commented)
-    if grep "uvcoated-app-blue" "$UPSTREAM_CONF" | head -1 | grep -qv "^#"; then
+    if grep "uvcoatedclubflyers-app-blue" "$UPSTREAM_CONF" | head -1 | grep -qv "^#"; then
         CURRENT_ENV="blue"
         TARGET_ENV="green"
     else
@@ -39,7 +39,7 @@ echo -e "\n${YELLOW}Current active environment: ${CURRENT_ENV^^}${NC}"
 echo -e "${YELLOW}Rolling back to: ${TARGET_ENV^^}${NC}"
 
 # Check if target container is running
-CONTAINER_NAME="uvcoated-app-${TARGET_ENV}"
+CONTAINER_NAME="uvcoatedclubflyers-app-${TARGET_ENV}"
 
 if ! docker ps | grep -q $CONTAINER_NAME; then
     echo -e "${RED}Error: Container $CONTAINER_NAME is not running${NC}"

@@ -89,7 +89,7 @@ sudo ./scripts/setup-vps.sh
 
 4. **Create Docker network**
    ```bash
-   docker network create uvcoated-network
+   docker network create uvcoatedclubflyers-network
    ```
 
 5. **Start shared services**
@@ -183,8 +183,8 @@ docker ps
 docker-compose -f docker-compose.shared.yml logs -f
 
 # Specific service
-docker logs uvcoated-app-blue -f
-docker logs uvcoated-nginx -f
+docker logs uvcoatedclubflyers-app-blue -f
+docker logs uvcoatedclubflyers-nginx -f
 ```
 
 ### Health checks
@@ -221,7 +221,7 @@ For production, configure SSL with Let's Encrypt:
 ### Container won't start
 ```bash
 # Check logs
-docker logs uvcoated-app-blue
+docker logs uvcoatedclubflyers-app-blue
 
 # Check if ports are in use
 netstat -tlnp | grep 3015
@@ -230,16 +230,16 @@ netstat -tlnp | grep 3015
 ### Database connection issues
 ```bash
 # Check PostgreSQL is running
-docker exec uvcoated-postgres pg_isready
+docker exec uvcoatedclubflyers-postgres pg_isready
 
 # Test connection
-docker exec uvcoated-app-blue npm run db:migrate
+docker exec uvcoatedclubflyers-app-blue npm run db:migrate
 ```
 
 ### Traffic not switching
 ```bash
 # Verify Nginx config
-docker exec uvcoated-nginx nginx -t
+docker exec uvcoatedclubflyers-nginx nginx -t
 
 # Check upstream config
 cat nginx/conf.d/upstream.conf
@@ -259,10 +259,10 @@ docker-compose -f docker-compose.green.yml up -d
 
 ### Database backup
 ```bash
-docker exec uvcoated-postgres pg_dump -U appuser uvcoated > backup.sql
+docker exec uvcoatedclubflyers-postgres pg_dump -U appuser uvcoated > backup.sql
 ```
 
 ### View database
 ```bash
-docker exec -it uvcoated-postgres psql -U appuser -d uvcoated
+docker exec -it uvcoatedclubflyers-postgres psql -U appuser -d uvcoated
 ```

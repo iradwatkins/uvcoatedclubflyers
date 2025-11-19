@@ -36,7 +36,7 @@ echo -e "${BLUE}========================================${NC}"
 
 # Check if target container is healthy
 echo -e "\n${YELLOW}Checking ${TARGET_ENV} container health...${NC}"
-CONTAINER_NAME="uvcoated-app-${TARGET_ENV}"
+CONTAINER_NAME="uvcoatedclubflyers-app-${TARGET_ENV}"
 
 if ! docker ps | grep -q $CONTAINER_NAME; then
     echo -e "${RED}Error: Container $CONTAINER_NAME is not running${NC}"
@@ -63,13 +63,13 @@ if [ "$TARGET_ENV" = "blue" ]; then
 # Active: BLUE
 
 upstream uvcoated_app {
-    server uvcoated-app-blue:3000;
+    server uvcoatedclubflyers-app-blue:3000;
     keepalive 32;
 }
 
 # Green environment (inactive)
 # upstream uvcoated_app {
-#     server uvcoated-app-green:3000;
+#     server uvcoatedclubflyers-app-green:3000;
 #     keepalive 32;
 # }
 EOF
@@ -80,12 +80,12 @@ else
 
 # Blue environment (inactive)
 # upstream uvcoated_app {
-#     server uvcoated-app-blue:3000;
+#     server uvcoatedclubflyers-app-blue:3000;
 #     keepalive 32;
 # }
 
 upstream uvcoated_app {
-    server uvcoated-app-green:3000;
+    server uvcoatedclubflyers-app-green:3000;
     keepalive 32;
 }
 EOF
@@ -93,7 +93,7 @@ fi
 
 # Test Nginx configuration
 echo -e "\n${YELLOW}Testing Nginx configuration...${NC}"
-if ! docker exec uvcoated-nginx nginx -t; then
+if ! docker exec uvcoatedclubflyers-nginx nginx -t; then
     echo -e "${RED}Error: Nginx configuration test failed${NC}"
     echo -e "${YELLOW}Restoring backup...${NC}"
     mv "$UPSTREAM_CONF.backup" "$UPSTREAM_CONF"
@@ -102,7 +102,7 @@ fi
 
 # Reload Nginx
 echo -e "\n${YELLOW}Reloading Nginx...${NC}"
-docker exec uvcoated-nginx nginx -s reload
+docker exec uvcoatedclubflyers-nginx nginx -s reload
 
 # Verify switch
 echo -e "\n${YELLOW}Verifying traffic switch...${NC}"

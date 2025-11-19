@@ -19,7 +19,7 @@ REPO_URL="https://github.com/iradwatkins/uvcoatedclubflyers.git"
 # Determine which environment to deploy to
 get_inactive_env() {
     # Check which environment is currently active in nginx
-    if grep -q "uvcoated-app-blue" "$PROJECT_DIR/nginx/conf.d/upstream.conf" | grep -v "^#"; then
+    if grep -q "uvcoatedclubflyers-app-blue" "$PROJECT_DIR/nginx/conf.d/upstream.conf" | grep -v "^#"; then
         echo "green"
     else
         echo "blue"
@@ -64,7 +64,7 @@ docker-compose -f docker-compose.${TARGET_ENV}.yml up -d
 
 # Step 5: Wait for health check
 echo -e "\n${YELLOW}Step 5: Waiting for health check...${NC}"
-CONTAINER_NAME="uvcoated-app-${TARGET_ENV}"
+CONTAINER_NAME="uvcoatedclubflyers-app-${TARGET_ENV}"
 MAX_RETRIES=30
 RETRY_COUNT=0
 

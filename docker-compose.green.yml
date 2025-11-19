@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: uvcoated-app-green
+    container_name: uvcoatedclubflyers-app-green
     restart: unless-stopped
     expose:
       - "3000"
@@ -35,15 +35,15 @@ services:
       # NextAuth Configuration
       NEXTAUTH_URL: "https://uvcoatedclubflyers.com"
       # Database connection
-      DATABASE_HOST: uvcoated-postgres
+      DATABASE_HOST: uvcoatedclubflyers-postgres
       DATABASE_PORT: "5432"
       DATABASE_NAME: uvcoated
       DATABASE_USER: appuser
       # Redis connection
-      REDIS_HOST: uvcoated-redis
+      REDIS_HOST: uvcoatedclubflyers-redis
       REDIS_PORT: "6379"
       # MinIO connection
-      MINIO_ENDPOINT: uvcoated-minio
+      MINIO_ENDPOINT: uvcoatedclubflyers-minio
       MINIO_PORT: "9000"
       MINIO_USE_SSL: "false"
       MINIO_BUCKET: uploads
@@ -51,7 +51,7 @@ services:
       NEXT_PUBLIC_APP_URL: "https://uvcoatedclubflyers.com"
       NEXT_PUBLIC_APP_NAME: "UV Coated Club Flyers"
     networks:
-      - uvcoated-network
+      - uvcoatedclubflyers-network
     volumes:
       - app-green-public:/app/public
       - app-green-cache:/app/.next/cache
@@ -96,5 +96,5 @@ volumes:
 
 # Networks - use external network from shared services
 networks:
-  uvcoated-network:
+  uvcoatedclubflyers-network:
     external: true

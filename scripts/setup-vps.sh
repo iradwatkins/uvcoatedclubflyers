@@ -89,7 +89,7 @@ chmod 600 "$PROJECT_DIR/secrets/"* 2>/dev/null || true
 
 # Step 6: Create Docker network
 echo -e "\n${YELLOW}Step 6: Creating Docker network...${NC}"
-docker network create uvcoated-network 2>/dev/null || echo "Network already exists"
+docker network create uvcoatedclubflyers-network 2>/dev/null || echo "Network already exists"
 
 # Step 7: Start shared services
 echo -e "\n${YELLOW}Step 7: Starting shared services...${NC}"
