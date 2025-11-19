@@ -161,8 +161,8 @@ export function categorizeAddOns(addOns: AddOn[]): Record<string, AddOn[]> {
     let found = false;
 
     for (const [categoryKey, categoryInfo] of Object.entries(ADDON_CATEGORIES)) {
-      if (categoryInfo.slugs.includes(addOn.slug)) {
-        categorized[categoryKey].push(addOn);
+      if ((categoryInfo.slugs as readonly string[]).includes(addOn.slug)) {
+        categorized[categoryKey as keyof typeof categorized].push(addOn);
         found = true;
         break;
       }
