@@ -30,7 +30,7 @@ export async function createSquareCheckout(orderData: {
   }>;
 }) {
   try {
-    const { result } = await client.checkoutApi.createPaymentLink({
+    const { result } = await (client as any).checkout.createPaymentLink({
       checkoutOptions: {
         acceptedPaymentMethods: {
           applePay: true,
@@ -77,7 +77,7 @@ export async function createSquareCheckout(orderData: {
 // Retrieve payment details
 export async function retrieveSquarePayment(paymentId: string) {
   try {
-    const { result } = await client.paymentsApi.getPayment(paymentId);
+    const { result } = await (client as any).payments.getPayment(paymentId);
 
     return {
       id: result.payment?.id,
@@ -100,7 +100,7 @@ export async function retrieveSquarePayment(paymentId: string) {
 export async function createOrUpdateSquareCustomer(email: string, name?: string, phone?: string) {
   try {
     // First, try to find existing customer by email
-    const searchResult = await client.customersApi.searchCustomers({
+    const searchResult = await (client as any).customers.searchCustomers({
       query: {
         filter: {
           emailAddress: {
@@ -116,7 +116,7 @@ export async function createOrUpdateSquareCustomer(email: string, name?: string,
       // Update existing customer
       customerId = searchResult.result.customers[0].id;
 
-      await client.customersApi.updateCustomer(customerId, {
+      await (client as any).customers.updateCustomer(customerId, {
         emailAddress: email,
         ...(name && {
           givenName: name.split(' ')[0],
@@ -126,7 +126,7 @@ export async function createOrUpdateSquareCustomer(email: string, name?: string,
       });
     } else {
       // Create new customer
-      const createResult = await client.customersApi.createCustomer({
+      const createResult = await (client as any).customers.createCustomer({
         emailAddress: email,
         ...(name && {
           givenName: name.split(' ')[0],
@@ -170,7 +170,7 @@ export async function createSquareOrder(orderData: {
   }>;
 }) {
   try {
-    const { result } = await client.ordersApi.createOrder({
+    const { result } = await (client as any).orders.createOrder({
       order: {
         locationId: SQUARE_LOCATION_ID,
         referenceId: orderData.referenceId,
@@ -197,7 +197,7 @@ export async function createSquareOrder(orderData: {
 // Retrieve an order
 export async function retrieveSquareOrder(orderId: string) {
   try {
-    const { result } = await client.ordersApi.retrieveOrder(orderId);
+    const { result } = await (client as any).orders.retrieveOrder(orderId);
 
     return {
       id: result.order?.id,
@@ -222,7 +222,7 @@ export async function updateSquareFulfillment(
   state: 'PROPOSED' | 'RESERVED' | 'PREPARED' | 'COMPLETED' | 'CANCELED' | 'FAILED'
 ) {
   try {
-    const { result } = await client.ordersApi.updateOrder(orderId, {
+    const { result } = await (client as any).orders.updateOrder(orderId, {
       order: {
         locationId: SQUARE_LOCATION_ID,
         fulfillments: [
@@ -241,7 +241,7 @@ export async function updateSquareFulfillment(
   } catch (error) {
     if (error instanceof SquareError) {
       throw new Error(
-        `Fulfillment update failed: ${error.result.errors?.[0]?.detail || 'Unknown error'}`
+        `Fulfillment update failed: ${error.message || 'Unknown error'}`
       );
     }
     throw error;
@@ -303,7 +303,7 @@ export async function saveCardOnFile(params: {
   verificationToken?: string; // Optional 3DS verification token
 }) {
   try {
-    const { result } = await client.cardsApi.createCard({
+    const { result } = await (client as any).cards.createCard({
       sourceId: params.sourceId,
       card: {
         customerId: params.customerId,
@@ -339,7 +339,7 @@ export async function saveCardOnFile(params: {
  */
 export async function listCustomerCards(customerId: string) {
   try {
-    const { result } = await client.cardsApi.listCards(
+    const { result } = await (client as any).cards.listCards(
       undefined, // cursor
       customerId, // customerId
       undefined, // includeDisabled
@@ -372,7 +372,7 @@ export async function listCustomerCards(customerId: string) {
  */
 export async function disableCard(cardId: string) {
   try {
-    const { result } = await client.cardsApi.disableCard(cardId);
+    const { result } = await (client as any).cards.disableCard(cardId);
 
     return {
       success: true,
@@ -399,7 +399,7 @@ export async function chargeCardOnFile(params: {
   verificationToken?: string; // Optional 3DS verification token
 }) {
   try {
-    const { result } = await client.paymentsApi.createPayment({
+    const { result } = await (client as any).payments.createPayment({
       sourceId: params.cardId,
       customerId: params.customerId,
       amountMoney: {
@@ -424,7 +424,7 @@ export async function chargeCardOnFile(params: {
     };
   } catch (error) {
     if (error instanceof SquareError) {
-      const errorMessage = error.result?.errors?.[0]?.detail || error.message || 'Unknown error';
+      const errorMessage = error.message || 'Unknown error';
       throw new Error(`Failed to charge card: ${errorMessage}`);
     }
     throw error;

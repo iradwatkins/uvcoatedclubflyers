@@ -37,7 +37,7 @@ export function CashAppQRPayment({
   // Define loadSquareScript BEFORE useEffect so it's available when called
   const loadSquareScript = () => {
     return new Promise((resolve, reject) => {
-      if (window.Square) {
+      if ((window as any).Square) {
         resolve(true);
         return;
       }
@@ -93,19 +93,19 @@ export function CashAppQRPayment({
         // Wait for Square SDK to be available
         let attempts = 0;
         const maxAttempts = 50;
-        while (!window.Square && attempts < maxAttempts) {
+        while (!(window as any).Square && attempts < maxAttempts) {
           await new Promise((resolve) => setTimeout(resolve, 100));
           attempts++;
         }
 
-        if (!window.Square) {
+        if (!(window as any).Square) {
           throw new Error('Square SDK failed to load. Please refresh the page.');
         }
 
         console.log('[Cash App Pay] Square SDK loaded');
 
         // Initialize payments
-        const paymentsInstance = window.Square.payments(appId, locationId);
+        const paymentsInstance = (window as any).Square.payments(appId, locationId);
         setPayments(paymentsInstance);
 
         console.log('[Cash App Pay] Payments initialized');

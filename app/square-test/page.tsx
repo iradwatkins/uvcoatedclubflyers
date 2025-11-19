@@ -66,11 +66,11 @@ export default function SquareSDKTest() {
         document.head.appendChild(script);
         addLog('Script tag appended to document head');
 
-        // Wait for window.Square to be available
+        // Wait for (window as any).Square to be available
         let attempts = 0;
         const maxAttempts = 50;
 
-        while (!window.Square && attempts < maxAttempts) {
+        while (!(window as any).Square && attempts < maxAttempts) {
           await new Promise((resolve) => setTimeout(resolve, 100));
           attempts++;
 
@@ -79,17 +79,17 @@ export default function SquareSDKTest() {
           }
         }
 
-        if (!window.Square) {
-          addLog(`❌ window.Square not available after ${attempts} attempts (5 seconds)`);
-          throw new Error('Square SDK failed to initialize - window.Square is undefined');
+        if (!(window as any).Square) {
+          addLog(`❌ (window as any).Square not available after ${attempts} attempts (5 seconds)`);
+          throw new Error('Square SDK failed to initialize - (window as any).Square is undefined');
         }
 
-        addLog(`✅ window.Square is available after ${attempts} attempts`);
+        addLog(`✅ (window as any).Square is available after ${attempts} attempts`);
         setSquareAvailable(true);
 
         // Try to initialize payments
         addLog('Attempting to initialize payments...');
-        const payments = (window.Square as any).payments(appId, locationId);
+        const payments = ((window as any).Square as any).payments(appId, locationId);
         addLog('✅ Payments instance created successfully');
 
         setStatus('success');
@@ -140,7 +140,7 @@ export default function SquareSDKTest() {
                   ) : (
                     <Loader2 className="h-8 w-8 mx-auto animate-spin mb-2" />
                   )}
-                  <p className="text-sm font-medium">window.Square</p>
+                  <p className="text-sm font-medium">(window as any).Square</p>
                 </div>
               </CardContent>
             </Card>

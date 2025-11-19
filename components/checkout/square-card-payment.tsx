@@ -64,7 +64,7 @@ export function SquareCardPayment({
   const loadSquareScript = () => {
     console.log('[Square Card] loadSquareScript called');
     return new Promise((resolve, reject) => {
-      if (window.Square) {
+      if ((window as any).Square) {
         resolve(true);
         return;
       }
@@ -113,16 +113,16 @@ export function SquareCardPayment({
         // Wait for Square SDK
         let attempts = 0;
         const maxAttempts = 50;
-        while (!window.Square && attempts < maxAttempts) {
+        while (!(window as any).Square && attempts < maxAttempts) {
           await new Promise((resolve) => setTimeout(resolve, 100));
           attempts++;
         }
 
-        if (!window.Square) {
+        if (!(window as any).Square) {
           throw new Error('Square Web Payments SDK failed to load - please refresh the page');
         }
 
-        const paymentsInstance = (window.Square as any).payments(applicationId, locationId);
+        const paymentsInstance = ((window as any).Square as any).payments(applicationId, locationId);
         setPayments(paymentsInstance);
 
         // Initialize card

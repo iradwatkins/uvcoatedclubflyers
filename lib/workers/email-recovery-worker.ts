@@ -368,8 +368,9 @@ async function markLostCarts() {
       AND status != 'lost'
     `;
 
-    console.log(`[Email Worker] Marked ${result.count} carts as lost`);
-    return { marked: result.count };
+    const count = Array.isArray(result) ? result.length : 0;
+    console.log(`[Email Worker] Marked ${count} carts as lost`);
+    return { marked: count };
   } catch (error) {
     console.error('[Email Worker] Error marking lost carts:', error);
     throw error;

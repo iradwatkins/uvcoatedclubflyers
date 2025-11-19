@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2, ShoppingCart, AlertCircle, CheckCircle2 } from 'lucide-react';
 
@@ -17,7 +17,7 @@ interface RecoveredCart {
   discountPercent?: number;
 }
 
-export default function CartRecoveryPage() {
+function CartRecoveryContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -199,5 +199,24 @@ export default function CartRecoveryPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CartRecoveryPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full">
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="flex flex-col items-center justify-center py-8">
+              <Loader2 className="w-12 h-12 text-purple-600 animate-spin mb-4" />
+              <p className="text-gray-600 text-center">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <CartRecoveryContent />
+    </Suspense>
   );
 }
