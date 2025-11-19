@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Get the saved payment method from database
-      const savedMethod = await prisma.$queryRaw<any[]>`
+      const savedMethod = await prisma.$queryRaw`
         SELECT
           payment_token,
           provider_customer_id

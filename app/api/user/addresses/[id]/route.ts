@@ -25,7 +25,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     } = data;
 
     // Verify address belongs to user
-    const existingAddress = await prisma.$queryRaw<any[]>`
+    const existingAddress = await prisma.$queryRaw`
       SELECT id FROM saved_addresses
       WHERE id = ${parseInt(id)}
       AND user_id = ${parseInt(session.user.id)}
@@ -85,7 +85,7 @@ export async function DELETE(
     const { id } = await params;
 
     // Verify address belongs to user
-    const existingAddress = await prisma.$queryRaw<any[]>`
+    const existingAddress = await prisma.$queryRaw`
       SELECT id FROM saved_addresses
       WHERE id = ${parseInt(id)}
       AND user_id = ${parseInt(session.user.id)}

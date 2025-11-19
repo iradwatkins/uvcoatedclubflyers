@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const addresses = await prisma.$queryRaw<any[]>`
+    const addresses = await prisma.$queryRaw`
       SELECT * FROM saved_addresses
       WHERE user_id = ${parseInt(session.user.id)}
       ORDER BY is_default DESC, created_at DESC
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert new address
-    const result = await prisma.$queryRaw<any[]>`
+    const result = await prisma.$queryRaw`
       INSERT INTO saved_addresses (
         user_id, label, full_name, address_line1, address_line2,
         city, state, zip_code, phone, is_default, created_at, updated_at

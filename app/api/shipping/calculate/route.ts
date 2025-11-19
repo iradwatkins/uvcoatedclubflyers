@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       // Fetch rates from each module with error handling
       const ratePromises = enabledModules.map((module) =>
         module.provider
-          .getRates(shipFrom, toAddress, packages)
+          .getRates(shipFrom, toAddress as ShippingAddress, packages)
           .then((moduleRates) => {
             console.log(`[Shipping API] ${module.name} returned ${moduleRates.length} rates`);
             return moduleRates;

@@ -2,7 +2,32 @@
 // Re-export the db pool as 'prisma' for compatibility with generated code
 import pool, { query } from './db';
 
+// Helper function for raw queries
+async function executeRawQuery(strings: TemplateStringsArray, values: any[]) {
+  let text = strings[0];
+  for (let i = 0; i < values.length; i++) {
+    text += `$${i + 1}${strings[i + 1]}`;
+  }
+  return await query(text, values);
+}
+
+// Define $queryRaw as a standalone generic function
+async function $queryRaw(strings: TemplateStringsArray, ...values: any[]): Promise<T> {
+  const result = await executeRawQuery(strings, values);
+  return result.rows as T;
+}
+
+// Define $executeRaw as a standalone function
+async function $executeRaw(strings: TemplateStringsArray, ...values: any[]): Promise<number> {
+  const result = await executeRawQuery(strings, values);
+  return result.rowCount || 0;
+}
+
 export const prisma = {
+  // Raw query methods for compatibility
+  $queryRaw,
+  $executeRaw,
+
   // Product queries
   product: {
     findMany: async (options?: any) => {

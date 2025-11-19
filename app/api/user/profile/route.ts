@@ -20,7 +20,7 @@ export async function PUT(request: NextRequest) {
 
     // Check if email is already taken by another user
     if (email !== session.user.email) {
-      const existingUser = await prisma.$queryRaw<any[]>`
+      const existingUser = await prisma.$queryRaw`
         SELECT id FROM users WHERE email = ${email} AND id != ${parseInt(session.user.id)}
       `;
 

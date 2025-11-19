@@ -92,9 +92,10 @@ export async function DELETE(
     const productId = parseInt(id);
 
     // Check if product has orders
-    const orderCount = await prisma.orderItem.count({
-      where: { productId },
-    });
+    const orderCountResult = await prisma.$queryRaw`
+      SELECT COUNT(*)::int as count FROM order_items WHERE product_id = ${productId}
+    `;
+    const orderCount = (orderCountResult as any[])[0]?.count || 0;
 
     if (orderCount > 0) {
       return NextResponse.json(
@@ -104,9 +105,9 @@ export async function DELETE(
     }
 
     // Delete product (will cascade delete options)
-    await prisma.product.delete({
-      where: { id: productId },
-    });
+    await prisma.$executeRaw`
+      DELETE FROM products WHERE id = ${productId}
+    `;
 
     return NextResponse.json({
       success: true,

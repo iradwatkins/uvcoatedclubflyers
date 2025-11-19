@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     // Check if SKU already exists
     if (sku) {
-      const existingSku = await prisma.$queryRaw<any[]>`
+      const existingSku = await prisma.$queryRaw`
         SELECT id FROM products WHERE sku = ${sku}
       `;
 
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create product
-    const result = await prisma.$queryRaw<any[]>`
+    const result = await prisma.$queryRaw`
       INSERT INTO products (
         name,
         description,

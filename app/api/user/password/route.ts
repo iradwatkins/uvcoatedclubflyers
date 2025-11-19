@@ -29,7 +29,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Get user's current password hash
-    const users = await prisma.$queryRaw<any[]>`
+    const users = await prisma.$queryRaw`
       SELECT password_hash FROM users
       WHERE id = ${parseInt(session.user.id)}
     `;

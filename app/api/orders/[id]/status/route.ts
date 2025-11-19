@@ -58,14 +58,25 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     // Update order status
-    const updatedOrder = await prisma.order.update({
-      where: { id: id },
-      data: {
-        status,
-        completedAt: status === 'COMPLETED' ? new Date() : order.completedAt,
-        updatedAt: new Date(),
-      },
-    });
+    const orderId = parseInt(id);
+    const completedAt = status === 'COMPLETED' ? new Date() : order.completedAt;
+
+    await prisma.$executeRaw`
+      UPDATE orders
+      SET
+        status = ${status.toLowerCase()},
+        completed_at = ${completedAt},
+        updated_at = NOW()
+      WHERE id = ${orderId}
+    `;
+
+    // Create updatedOrder object manually
+    const updatedOrder = {
+      ...order,
+      status,
+      completedAt,
+      updatedAt: new Date(),
+    };
 
     // Send status update email to customer
     if (order.user?.email) {

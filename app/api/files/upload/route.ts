@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     await writeFile(filepath, buffer);
 
     // Save to database
-    const result = await prisma.$queryRaw<any[]>`
+    const result = await prisma.$queryRaw`
       INSERT INTO design_files (
         user_id, filename, original_filename, file_size,
         mime_type, storage_path, created_at, updated_at

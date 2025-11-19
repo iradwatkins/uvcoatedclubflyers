@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const preferences = await prisma.$queryRaw<any[]>`
+    const preferences = await prisma.$queryRaw`
       SELECT * FROM user_preferences
       WHERE user_id = ${parseInt(session.user.id)}
     `;
@@ -53,7 +53,7 @@ export async function PUT(request: NextRequest) {
     const { email_order_updates, email_promotions, email_newsletters } = await request.json();
 
     // Check if preferences exist
-    const existing = await prisma.$queryRaw<any[]>`
+    const existing = await prisma.$queryRaw`
       SELECT id FROM user_preferences
       WHERE user_id = ${parseInt(session.user.id)}
     `;

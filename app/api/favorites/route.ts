@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const favorites = await prisma.$queryRaw<any[]>`
+    const favorites = await prisma.$queryRaw`
       SELECT pf.id, pf.created_at, p.*
       FROM product_favorites pf
       INNER JOIN products p ON pf.product_id = p.id

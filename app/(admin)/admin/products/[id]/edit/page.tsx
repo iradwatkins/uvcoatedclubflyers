@@ -29,7 +29,7 @@ export default async function ProductEditPage({ params }: { params: Promise<{ id
   });
 
   // Fetch paper stocks
-  const paperStocks = await prisma.$queryRaw<any[]>`
+  const paperStocks = await prisma.$queryRaw`
     SELECT id, name, display_order
     FROM paper_stocks
     WHERE is_active = true
@@ -37,7 +37,7 @@ export default async function ProductEditPage({ params }: { params: Promise<{ id
   `;
 
   // Fetch turnarounds
-  const turnarounds = await prisma.$queryRaw<any[]>`
+  const turnarounds = await prisma.$queryRaw`
     SELECT id, name, production_days, display_order
     FROM turnarounds
     WHERE is_active = true

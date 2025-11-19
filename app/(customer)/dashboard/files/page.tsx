@@ -15,7 +15,7 @@ export default async function FilesPage() {
   }
 
   // Fetch user's design files
-  const files = await prisma.$queryRaw<any[]>`
+  const files = await prisma.$queryRaw`
     SELECT * FROM design_files
     WHERE user_id = ${parseInt(session.user.id)}
     ORDER BY created_at DESC

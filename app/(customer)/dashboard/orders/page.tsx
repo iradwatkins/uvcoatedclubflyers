@@ -46,21 +46,21 @@ export default async function OrdersPage({
   const orders = (await prisma.$queryRawUnsafe(query)) as any[];
 
   // Calculate statistics using raw SQL
-  const totalResult = await prisma.$queryRaw<[{ count: bigint }]>`
+  const totalResult = await prisma.$queryRaw`
     SELECT COUNT(*)::int as count FROM orders WHERE user_id = ${userId}
   `;
 
-  const pendingResult = await prisma.$queryRaw<[{ count: bigint }]>`
+  const pendingResult = await prisma.$queryRaw`
     SELECT COUNT(*)::int as count FROM orders
     WHERE user_id = ${userId} AND status IN ('pending', 'pending_payment')
   `;
 
-  const processingResult = await prisma.$queryRaw<[{ count: bigint }]>`
+  const processingResult = await prisma.$queryRaw`
     SELECT COUNT(*)::int as count FROM orders
     WHERE user_id = ${userId} AND status IN ('processing', 'printing')
   `;
 
-  const completedResult = await prisma.$queryRaw<[{ count: bigint }]>`
+  const completedResult = await prisma.$queryRaw`
     SELECT COUNT(*)::int as count FROM orders
     WHERE user_id = ${userId} AND status = 'completed'
   `;
@@ -110,8 +110,8 @@ export default async function OrdersPage({
       {/* Orders Table with Filters */}
       <OrdersTable
         orders={orders}
-        initialStatus={searchParams.status}
-        initialSearch={searchParams.search}
+        initialStatus={params.status}
+        initialSearch={params.search}
       />
     </div>
   );

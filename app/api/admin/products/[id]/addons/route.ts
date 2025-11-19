@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const productId = parseInt(id);
 
     // Get all add-ons with assignment status for this product
-    const allAddOns = await prisma.$queryRaw<any[]>`
+    const allAddOns = await prisma.$queryRaw`
       SELECT
         a.*,
         pa.id as assignment_id,

@@ -28,4 +28,19 @@ export const query = async (text: string, params?: any[]) => {
 
 export const getClient = () => pool.connect();
 
+// Tagged template literal for SQL queries (similar to postgres.js API)
+export const sql = async (strings: TemplateStringsArray, ...values: any[]) => {
+  // Build the query string with numbered placeholders
+  let text = strings[0];
+  for (let i = 0; i < values.length; i++) {
+    text += `$${i + 1}${strings[i + 1]}`;
+  }
+
+  const result = await query(text, values);
+  return result.rows;
+};
+
+// Helper for dynamic SQL parts (identifiers, etc.)
+sql.unsafe = (value: string) => value;
+
 export default pool;

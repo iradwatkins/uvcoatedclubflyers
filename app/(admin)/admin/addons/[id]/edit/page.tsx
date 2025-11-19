@@ -10,7 +10,7 @@ interface EditAddonPageProps {
 }
 
 async function getAddon(id: number) {
-  const addons = await prisma.$queryRaw<any[]>`
+  const addons = await prisma.$queryRaw`
     SELECT * FROM add_ons WHERE id = ${id} LIMIT 1
   `;
 
@@ -18,7 +18,7 @@ async function getAddon(id: number) {
     return null;
   }
 
-  const subOptions = await prisma.$queryRaw<any[]>`
+  const subOptions = await prisma.$queryRaw`
     SELECT * FROM add_on_sub_options
     WHERE add_on_id = ${id}
     ORDER BY display_order

@@ -13,7 +13,7 @@ interface ProductAddOnsPageProps {
 }
 
 async function getProduct(id: number) {
-  const products = await prisma.$queryRaw<any[]>`
+  const products = await prisma.$queryRaw`
     SELECT * FROM products WHERE id = ${id} LIMIT 1
   `;
 

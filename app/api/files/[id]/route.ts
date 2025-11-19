@@ -14,7 +14,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Fetch file metadata from database (using files table, not design_files)
-    const files = await prisma.$queryRaw<any[]>`
+    const files = await prisma.$queryRaw`
       SELECT id, filename, original_filename, file_size, mime_type, storage_path, uploaded_at
       FROM files
       WHERE id = ${fileId}
@@ -48,7 +48,7 @@ export async function DELETE(
     const { id } = await params;
 
     // Get file info
-    const files = await prisma.$queryRaw<any[]>`
+    const files = await prisma.$queryRaw`
       SELECT * FROM design_files
       WHERE id = ${parseInt(id)}
       AND user_id = ${parseInt(session.user.id)}

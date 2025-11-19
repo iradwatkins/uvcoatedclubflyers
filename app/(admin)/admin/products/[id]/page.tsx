@@ -37,7 +37,7 @@ async function getProduct(id: number) {
   }
 
   // Manually count order items using raw SQL
-  const countResult = await prisma.$queryRaw<{ count: bigint }[]>`
+  const countResult = await prisma.$queryRaw`
     SELECT COUNT(*) as count FROM order_items WHERE product_id = ${id}
   `;
   const orderItemCount = Number(countResult[0]?.count || 0);

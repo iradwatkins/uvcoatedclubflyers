@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       FROM add_ons
       ${whereClause}
     `;
-    const countResult = await prisma.$queryRawUnsafe<[{ total: bigint }]>(countQuery, ...params);
+    const countResult = await prisma.$queryRawUnsafe(countQuery, ...params);
     const total = Number(countResult[0].total);
 
     // Get addons with sub-options count
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
     `;
 
-    const addons = await prisma.$queryRawUnsafe<any[]>(addonsQuery, ...params, limit, offset);
+    const addons = await prisma.$queryRawUnsafe(addonsQuery, ...params, limit, offset);
 
     return NextResponse.json({
       success: true,
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     const slug = generateSlug(name);
 
     // Check if name or slug already exists
-    const existingCheck = await prisma.$queryRaw<any[]>`
+    const existingCheck = await prisma.$queryRaw`
       SELECT id FROM add_ons
       WHERE name = ${name} OR slug = ${slug}
       LIMIT 1
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert addon
-    const insertResult = await prisma.$queryRaw<any[]>`
+    const insertResult = await prisma.$queryRaw`
       INSERT INTO add_ons (
         name,
         slug,
@@ -263,11 +263,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch the created addon with sub-options
-    const createdAddon = await prisma.$queryRaw<any[]>`
+    const createdAddon = await prisma.$queryRaw`
       SELECT * FROM add_ons WHERE id = ${addonId}
     `;
 
-    const createdSubOptions = await prisma.$queryRaw<any[]>`
+    const createdSubOptions = await prisma.$queryRaw`
       SELECT * FROM add_on_sub_options
       WHERE add_on_id = ${addonId}
       ORDER BY display_order

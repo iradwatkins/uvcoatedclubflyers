@@ -8,7 +8,7 @@ import { Plus, Edit } from 'lucide-react';
 import Link from 'next/link';
 
 async function getAddOns() {
-  const addOns = await prisma.$queryRaw<any[]>`
+  const addOns = await prisma.$queryRaw`
     SELECT
       a.*,
       COUNT(pa.id) as product_count

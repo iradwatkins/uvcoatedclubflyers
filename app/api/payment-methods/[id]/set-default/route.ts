@@ -23,7 +23,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     }
 
     // Verify the payment method belongs to the current user
-    const existing = await prisma.$queryRaw<any[]>`
+    const existing = await prisma.$queryRaw`
       SELECT id FROM saved_payment_methods
       WHERE id = ${paymentMethodId}
         AND user_id = ${parseInt(session.user.id)}
@@ -43,7 +43,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     `;
 
     // Fetch all payment methods to return updated list
-    const paymentMethods = await prisma.$queryRaw<any[]>`
+    const paymentMethods = await prisma.$queryRaw`
       SELECT
         id,
         user_id,

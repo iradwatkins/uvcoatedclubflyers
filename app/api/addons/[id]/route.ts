@@ -25,7 +25,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const addonId = parseInt(id);
 
     // Get addon
-    const addon = await prisma.$queryRaw<any[]>`
+    const addon = await prisma.$queryRaw`
       SELECT * FROM add_ons WHERE id = ${addonId}
     `;
 
@@ -34,14 +34,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Get sub-options
-    const subOptions = await prisma.$queryRaw<any[]>`
+    const subOptions = await prisma.$queryRaw`
       SELECT * FROM add_on_sub_options
       WHERE add_on_id = ${addonId}
       ORDER BY display_order
     `;
 
     // Get usage stats
-    const usageStats = await prisma.$queryRaw<any[]>`
+    const usageStats = await prisma.$queryRaw`
       SELECT
         COUNT(DISTINCT pa.product_id) as product_count
       FROM product_addons pa
@@ -95,7 +95,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     } = body;
 
     // Check if addon exists
-    const existingAddon = await prisma.$queryRaw<any[]>`
+    const existingAddon = await prisma.$queryRaw`
       SELECT * FROM add_ons WHERE id = ${addonId}
     `;
 
@@ -112,7 +112,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const slug = generateSlug(name);
 
     // Check if name or slug conflicts with another addon
-    const conflictCheck = await prisma.$queryRaw<any[]>`
+    const conflictCheck = await prisma.$queryRaw`
       SELECT id FROM add_ons
       WHERE (name = ${name} OR slug = ${slug})
         AND id != ${addonId}
@@ -218,11 +218,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Fetch updated addon with sub-options
-    const updatedAddon = await prisma.$queryRaw<any[]>`
+    const updatedAddon = await prisma.$queryRaw`
       SELECT * FROM add_ons WHERE id = ${addonId}
     `;
 
-    const updatedSubOptions = await prisma.$queryRaw<any[]>`
+    const updatedSubOptions = await prisma.$queryRaw`
       SELECT * FROM add_on_sub_options
       WHERE add_on_id = ${addonId}
       ORDER BY display_order
@@ -257,7 +257,7 @@ export async function DELETE(
     const addonId = parseInt(id);
 
     // Check if addon exists
-    const addon = await prisma.$queryRaw<any[]>`
+    const addon = await prisma.$queryRaw`
       SELECT * FROM add_ons WHERE id = ${addonId}
     `;
 
@@ -266,7 +266,7 @@ export async function DELETE(
     }
 
     // Check if addon is in use
-    const productUsage = await prisma.$queryRaw<any[]>`
+    const productUsage = await prisma.$queryRaw`
       SELECT COUNT(*) as count FROM product_addons WHERE addon_id = ${addonId}
     `;
 
@@ -322,7 +322,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     // Check if addon exists
-    const addon = await prisma.$queryRaw<any[]>`
+    const addon = await prisma.$queryRaw`
       SELECT * FROM add_ons WHERE id = ${addonId}
     `;
 

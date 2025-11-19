@@ -18,7 +18,10 @@ export async function POST(request: NextRequest) {
 
     // Create user
     const user = await createUser({
-      ...validatedData,
+      email: validatedData.email,
+      password: validatedData.password,
+      name: validatedData.name,
+      phone: validatedData.phone,
       role: 'customer',
     });
 

@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Step 3: Save to our database
-    const paymentMethodId = await prisma.$queryRaw<any[]>`
+    const paymentMethodId = await prisma.$queryRaw`
       INSERT INTO saved_payment_methods (
         user_id,
         provider,
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Return the saved payment method
-    const savedPaymentMethod = await prisma.$queryRaw<any[]>`
+    const savedPaymentMethod = await prisma.$queryRaw`
       SELECT
         id,
         user_id,

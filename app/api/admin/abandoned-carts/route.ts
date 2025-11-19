@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { sql } from '@/lib/db';
+import { query } from '@/lib/db';
 
 /**
  * GET /api/admin/abandoned-carts
@@ -21,14 +21,13 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'abandoned_at';
     const sortOrder = searchParams.get('sortOrder') || 'DESC';
 
-    // Build WHERE clause
-    let whereClause = '';
-    if (status !== 'all') {
-      whereClause = `WHERE status = '${status}'`;
-    }
+    // Validate sortBy to prevent SQL injection
+    const validSortColumns = ['abandoned_at', 'total_value', 'item_count', 'email', 'status'];
+    const safeSortBy = validSortColumns.includes(sortBy) ? sortBy : 'abandoned_at';
+    const safeSortOrder = sortOrder === 'ASC' ? 'ASC' : 'DESC';
 
-    // Get abandoned carts
-    const carts = await sql`
+    // Build query with conditional WHERE clause
+    let cartsQuery = `
       SELECT
         ac.id,
         ac.session_id,
@@ -61,23 +60,33 @@ export async function GET(request: NextRequest) {
         u.email as user_email
       FROM abandoned_carts ac
       LEFT JOIN users u ON ac.user_id = u.id
-      ${status !== 'all' ? sql`WHERE ac.status = ${status}` : sql``}
-      ORDER BY ac.${sql(sortBy)} ${sql(sortOrder === 'ASC' ? 'ASC' : 'DESC')}
-      LIMIT ${limit}
-      OFFSET ${offset}
     `;
+
+    const params: any[] = [];
+    if (status !== 'all') {
+      cartsQuery += ` WHERE ac.status = $1`;
+      params.push(status);
+    }
+
+    cartsQuery += ` ORDER BY ac.${safeSortBy} ${safeSortOrder}`;
+    cartsQuery += ` LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    params.push(limit, offset);
+
+    const cartsResult = await query(cartsQuery, params);
+    const carts = cartsResult.rows;
 
     // Get total count
-    const countResult = await sql`
-      SELECT COUNT(*)::int as total
-      FROM abandoned_carts
-      ${status !== 'all' ? sql`WHERE status = ${status}` : sql``}
-    `;
-
-    const total = countResult[0]?.total || 0;
+    let countQuery = `SELECT COUNT(*)::int as total FROM abandoned_carts`;
+    const countParams: any[] = [];
+    if (status !== 'all') {
+      countQuery += ` WHERE status = $1`;
+      countParams.push(status);
+    }
+    const countResult = await query(countQuery, countParams);
+    const total = countResult.rows[0]?.total || 0;
 
     // Get summary statistics
-    const stats = await sql`
+    const statsResult = await query(`
       SELECT
         COUNT(*)::int as total_abandoned,
         COUNT(CASE WHEN status = 'recovered' THEN 1 END)::int as total_recovered,
@@ -88,7 +97,7 @@ export async function GET(request: NextRequest) {
         COALESCE(AVG(total_value), 0)::int as avg_cart_value,
         COUNT(CASE WHEN email IS NOT NULL THEN 1 END)::int as with_email
       FROM abandoned_carts
-    `;
+    `);
 
     return NextResponse.json({
       success: true,
@@ -99,7 +108,7 @@ export async function GET(request: NextRequest) {
         offset,
         hasMore: offset + limit < total,
       },
-      stats: stats[0],
+      stats: statsResult.rows[0],
     });
   } catch (error: any) {
     console.error('[Abandoned Carts API] Error:', error);
@@ -145,13 +154,10 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    await sql`
-      UPDATE abandoned_carts
-      SET
-        status = ${status},
-        updated_at = NOW()
-      WHERE id = ${id}
-    `;
+    await query(
+      `UPDATE abandoned_carts SET status = $1, updated_at = NOW() WHERE id = $2`,
+      [status, id]
+    );
 
     return NextResponse.json({
       success: true,

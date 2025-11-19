@@ -14,7 +14,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const sourceProductId = parseInt(id);
 
     // Fetch the source product using raw SQL
-    const sourceProducts = await prisma.$queryRaw<any[]>`
+    const sourceProducts = await prisma.$queryRaw`
       SELECT * FROM products WHERE id = ${sourceProductId}
     `;
 
@@ -33,21 +33,21 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     // Check if this SKU already exists and increment if needed
     if (duplicateSku) {
       let counter = 1;
-      let skuCheck = await prisma.$queryRaw<any[]>`
+      let skuCheck = await prisma.$queryRaw`
         SELECT id FROM products WHERE sku = ${duplicateSku}
       `;
 
       while (skuCheck.length > 0) {
         counter++;
         duplicateSku = sourceProduct.sku ? `${sourceProduct.sku}-copy-${counter}` : null;
-        skuCheck = await prisma.$queryRaw<any[]>`
+        skuCheck = await prisma.$queryRaw`
           SELECT id FROM products WHERE sku = ${duplicateSku}
         `;
       }
     }
 
     // Create the new product using raw SQL
-    const newProducts = await prisma.$queryRaw<any[]>`
+    const newProducts = await prisma.$queryRaw`
       INSERT INTO products (
         name,
         description,
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const newProduct = newProducts[0];
 
     // Copy product-addon relationships
-    const productAddons = await prisma.$queryRaw<any[]>`
+    const productAddons = await prisma.$queryRaw`
       SELECT addon_id, is_mandatory, is_enabled
       FROM product_addons
       WHERE product_id = ${sourceProductId}

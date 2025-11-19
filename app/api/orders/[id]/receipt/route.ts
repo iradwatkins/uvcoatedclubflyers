@@ -218,7 +218,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     });
 
     // Return PDF
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(new Uint8Array(pdfBuffer), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="Invoice-${order.orderNumber}.pdf"`,

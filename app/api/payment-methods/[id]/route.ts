@@ -26,7 +26,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     const { isDefault } = body;
 
     // Verify the payment method belongs to the current user
-    const existing = await prisma.$queryRaw<any[]>`
+    const existing = await prisma.$queryRaw`
       SELECT id FROM saved_payment_methods
       WHERE id = ${paymentMethodId}
         AND user_id = ${parseInt(session.user.id)}
@@ -45,7 +45,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     `;
 
     // Fetch the updated payment method
-    const updated = await prisma.$queryRaw<any[]>`
+    const updated = await prisma.$queryRaw`
       SELECT * FROM saved_payment_methods
       WHERE id = ${paymentMethodId}
     `;
@@ -93,7 +93,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
     }
 
     // Verify the payment method belongs to the current user
-    const existing = await prisma.$queryRaw<any[]>`
+    const existing = await prisma.$queryRaw`
       SELECT id FROM saved_payment_methods
       WHERE id = ${paymentMethodId}
         AND user_id = ${parseInt(session.user.id)}

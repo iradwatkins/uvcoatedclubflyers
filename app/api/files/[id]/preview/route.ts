@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const { id } = await params;
 
     // Get file info
-    const files = await prisma.$queryRaw<any[]>`
+    const files = await prisma.$queryRaw`
       SELECT * FROM design_files
       WHERE id = ${parseInt(id)}
       AND user_id = ${parseInt(session.user.id)}

@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const paymentMethods = await prisma.$queryRaw<any[]>`
+    const paymentMethods = await prisma.$queryRaw`
       SELECT
         id,
         user_id,
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert the new payment method
-    const result = await prisma.$queryRaw<any[]>`
+    const result = await prisma.$queryRaw`
       INSERT INTO saved_payment_methods (
         user_id,
         provider,

@@ -7,18 +7,18 @@ export default async function AdminDashboardPage() {
   const session = await auth();
 
   // Get statistics using raw SQL
-  const totalOrdersResult = await prisma.$queryRaw<[{ count: bigint }]>`
+  const totalOrdersResult = await prisma.$queryRaw`
     SELECT COUNT(*)::int as count FROM orders
   `;
   const totalOrders = Number(totalOrdersResult[0]?.count || 0);
 
-  const totalCustomersResult = await prisma.$queryRaw<[{ count: bigint }]>`
+  const totalCustomersResult = await prisma.$queryRaw`
     SELECT COUNT(*)::int as count FROM users WHERE role = 'customer'
   `;
   const totalCustomers = Number(totalCustomersResult[0]?.count || 0);
 
   // Get recent orders
-  const recentOrders = await prisma.$queryRaw<any[]>`
+  const recentOrders = await prisma.$queryRaw`
     SELECT
       o.id,
       o.order_number as "orderNumber",
@@ -46,7 +46,7 @@ export default async function AdminDashboardPage() {
   }));
 
   // Calculate total revenue
-  const revenueResult = await prisma.$queryRaw<[{ total: number }]>`
+  const revenueResult = await prisma.$queryRaw`
     SELECT COALESCE(SUM(total_amount), 0)::int as total
     FROM orders
     WHERE payment_status = 'paid'
