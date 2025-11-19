@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCart } from '@/hooks/use-cart';
 import { Loader2, ShoppingCart, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 interface RecoveredCart {
@@ -21,7 +20,6 @@ interface RecoveredCart {
 export default function CartRecoveryPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { mutate } = useCart();
 
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
@@ -86,9 +84,6 @@ export default function CartRecoveryPage() {
       } else {
         setMessage('Your cart has been restored successfully!');
       }
-
-      // Revalidate cart data
-      mutate();
 
       // Redirect to cart after 2 seconds
       setTimeout(() => {
