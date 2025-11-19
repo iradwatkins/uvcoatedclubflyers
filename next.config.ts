@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    // Use webpack instead of Turbopack for production builds
+    turbo: undefined,
+  },
 };
 
 export default nextConfig;

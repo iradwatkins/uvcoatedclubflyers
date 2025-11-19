@@ -6,7 +6,7 @@
  * Benefits: 20-40% cheaper than FedEx Ground for residential lightweight shipments
  */
 
-import type { SmartPostHub } from '../types';
+import type { SmartPostHub } from './types';
 
 /**
  * All 27 FedEx SmartPost hub locations across the US

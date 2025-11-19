@@ -119,7 +119,7 @@ export type {
   FedExErrorCode,
   RateCalculationOptions,
   RateSurcharge,
-} from '../types';
+} from './types';
 
 /**
  * Quick Start Example
