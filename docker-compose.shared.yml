@@ -1,0 +1,146 @@
+# Shared services for blue-green deployment
+# These services run once and are shared between blue and green environments
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: uvcoated-postgres
+    restart: unless-stopped
+    ports:
+      - "5448:5432"
+    environment:
+      POSTGRES_DB: uvcoated
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - uvcoated-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d uvcoated"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: uvcoated-redis
+    restart: unless-stopped
+    ports:
+      - "6302:6379"
+    command: redis-server --requirepass $(cat /run/secrets/redis_password)
+    secrets:
+      - redis_password
+    volumes:
+      - redis-data:/data
+    networks:
+      - uvcoated-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: uvcoated-minio
+    restart: unless-stopped
+    ports:
+      - "9002:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER_FILE: /run/secrets/minio_access_key
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_secret_key
+    secrets:
+      - minio_access_key
+      - minio_secret_key
+    volumes:
+      - minio-data:/data
+    networks:
+      - uvcoated-network
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Vaultwarden Password Manager
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: uvcoated-vaultwarden
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      WEBSOCKET_ENABLED: "true"
+      SIGNUPS_ALLOWED: "false"
+      ADMIN_TOKEN_FILE: /run/secrets/vaultwarden_admin_token
+      DOMAIN: "https://vault.uvcoatedclubflyers.com"
+    secrets:
+      - vaultwarden_admin_token
+    volumes:
+      - vaultwarden-data:/data
+    networks:
+      - uvcoated-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/alive"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nginx Reverse Proxy for Blue-Green Switching
+  nginx:
+    image: nginx:alpine
+    container_name: uvcoated-nginx
+    restart: unless-stopped
+    ports:
+      - "3015:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - uvcoated-network
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# Docker Secrets Configuration
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  redis_password:
+    file: ./secrets/redis_password.txt
+  minio_access_key:
+    file: ./secrets/minio_access_key.txt
+  minio_secret_key:
+    file: ./secrets/minio_secret_key.txt
+  vaultwarden_admin_token:
+    file: ./secrets/vaultwarden_admin_token.txt
+
+# Persistent Volumes
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  minio-data:
+    driver: local
+  vaultwarden-data:
+    driver: local
+
+# Networks
+networks:
+  uvcoated-network:
+    driver: bridge

@@ -1,0 +1,100 @@
+# Green environment for blue-green deployment
+# Runs on internal port 3002, accessed via Nginx on port 3015
+
+services:
+  app-green:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: uvcoated-app-green
+    restart: unless-stopped
+    expose:
+      - "3000"
+    secrets:
+      - db_password
+      - redis_password
+      - minio_access_key
+      - minio_secret_key
+      - square_access_token
+      - square_sandbox_access_token
+      - paypal_client_id
+      - paypal_client_secret
+      - nextauth_secret
+      - google_client_id
+      - google_client_secret
+    environment:
+      # Application environment
+      NODE_ENV: production
+      # Square Payment Configuration
+      NEXT_PUBLIC_SQUARE_APPLICATION_ID: "${SQUARE_APPLICATION_ID}"
+      NEXT_PUBLIC_SQUARE_LOCATION_ID: "${SQUARE_LOCATION_ID}"
+      NEXT_PUBLIC_SQUARE_ENVIRONMENT: "production"
+      # PayPal Configuration
+      NEXT_PUBLIC_PAYPAL_CLIENT_ID: "${PAYPAL_CLIENT_ID_PUBLIC}"
+      NEXT_PUBLIC_PAYPAL_ENVIRONMENT: "production"
+      # NextAuth Configuration
+      NEXTAUTH_URL: "https://uvcoatedclubflyers.com"
+      # Database connection
+      DATABASE_HOST: uvcoated-postgres
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: uvcoated
+      DATABASE_USER: appuser
+      # Redis connection
+      REDIS_HOST: uvcoated-redis
+      REDIS_PORT: "6379"
+      # MinIO connection
+      MINIO_ENDPOINT: uvcoated-minio
+      MINIO_PORT: "9000"
+      MINIO_USE_SSL: "false"
+      MINIO_BUCKET: uploads
+      # App URL
+      NEXT_PUBLIC_APP_URL: "https://uvcoatedclubflyers.com"
+      NEXT_PUBLIC_APP_NAME: "UV Coated Club Flyers"
+    networks:
+      - uvcoated-network
+    volumes:
+      - app-green-public:/app/public
+      - app-green-cache:/app/.next/cache
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Docker Secrets Configuration
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  redis_password:
+    file: ./secrets/redis_password.txt
+  minio_access_key:
+    file: ./secrets/minio_access_key.txt
+  minio_secret_key:
+    file: ./secrets/minio_secret_key.txt
+  square_access_token:
+    file: ./secrets/square_access_token.txt
+  square_sandbox_access_token:
+    file: ./secrets/square_sandbox_access_token.txt
+  paypal_client_id:
+    file: ./secrets/paypal_client_id.txt
+  paypal_client_secret:
+    file: ./secrets/paypal_client_secret.txt
+  nextauth_secret:
+    file: ./secrets/nextauth_secret.txt
+  google_client_id:
+    file: ./secrets/google_client_id.txt
+  google_client_secret:
+    file: ./secrets/google_client_secret.txt
+
+# Volumes
+volumes:
+  app-green-public:
+    driver: local
+  app-green-cache:
+    driver: local
+
+# Networks - use external network from shared services
+networks:
+  uvcoated-network:
+    external: true
