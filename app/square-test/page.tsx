@@ -225,8 +225,3 @@ export default function SquareSDKTest() {
   );
 }
 
-declare global {
-  interface Window {
-    Square?: any;
-  }
-}
