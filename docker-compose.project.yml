@@ -1,0 +1,304 @@
+# UV Coated Club Flyers - Complete Docker Project
+# All services contained within a single Docker project
+# Project name: uvcoatedclubflyers
+#
+# Usage:
+#   docker compose -p uvcoatedclubflyers -f docker-compose.project.yml up -d
+#   docker compose -p uvcoatedclubflyers -f docker-compose.project.yml down
+
+name: uvcoatedclubflyers
+
+services:
+  # ===========================================
+  # PostgreSQL Database
+  # ===========================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: uvcoatedclubflyers-postgres
+    hostname: postgres
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      POSTGRES_DB: uvcoated
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d uvcoated"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===========================================
+  # Redis Cache & Session Store
+  # ===========================================
+  redis:
+    image: redis:7-alpine
+    container_name: uvcoatedclubflyers-redis
+    hostname: redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6303:6379"
+    command: >
+      sh -c "redis-server --requirepass $$(cat /run/secrets/redis_password) --appendonly yes"
+    secrets:
+      - redis_password
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===========================================
+  # MinIO Object Storage (S3 Compatible)
+  # ===========================================
+  minio:
+    image: minio/minio:latest
+    container_name: uvcoatedclubflyers-minio
+    hostname: minio
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9003:9000"   # API
+      - "127.0.0.1:9103:9001"   # Console
+    environment:
+      MINIO_ROOT_USER_FILE: /run/secrets/minio_access_key
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_secret_key
+    secrets:
+      - minio_access_key
+      - minio_secret_key
+    volumes:
+      - minio-data:/data
+    networks:
+      - internal
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ===========================================
+  # MinIO Setup - Creates Initial Bucket
+  # ===========================================
+  minio-setup:
+    image: minio/mc:latest
+    container_name: uvcoatedclubflyers-minio-setup
+    depends_on:
+      minio:
+        condition: service_healthy
+    secrets:
+      - minio_access_key
+      - minio_secret_key
+    entrypoint: >
+      /bin/sh -c "
+      MINIO_ACCESS_KEY=$$(cat /run/secrets/minio_access_key);
+      MINIO_SECRET_KEY=$$(cat /run/secrets/minio_secret_key);
+      mc alias set uvcoated http://minio:9000 $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY;
+      mc mb --ignore-existing uvcoated/uploads;
+      mc anonymous set download uvcoated/uploads/public;
+      echo 'MinIO bucket setup complete';
+      exit 0;
+      "
+    networks:
+      - internal
+
+  # ===========================================
+  # Vaultwarden Password Manager
+  # ===========================================
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: uvcoatedclubflyers-vaultwarden
+    hostname: vaultwarden
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8083:80"
+    environment:
+      WEBSOCKET_ENABLED: "true"
+      SIGNUPS_ALLOWED: "false"
+      ADMIN_TOKEN_FILE: /run/secrets/vaultwarden_admin_token
+      DOMAIN: "https://vault.uvcoatedclubflyers.com"
+    secrets:
+      - vaultwarden_admin_token
+    volumes:
+      - vaultwarden-data:/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/alive"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===========================================
+  # Next.js Application
+  # ===========================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: uvcoatedclubflyers-app
+    hostname: app
+    restart: unless-stopped
+    expose:
+      - "3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    secrets:
+      - db_password
+      - redis_password
+      - minio_access_key
+      - minio_secret_key
+      - square_access_token
+      - square_sandbox_access_token
+      - paypal_client_id
+      - paypal_client_secret
+      - nextauth_secret
+      - google_client_id
+      - google_client_secret
+      - resend_api_key
+      - fedex_api_key
+      - fedex_secret_key
+    environment:
+      # Application
+      NODE_ENV: production
+      NEXT_PUBLIC_APP_URL: ${APP_URL:-https://uvcoatedclubflyers.com}
+      NEXT_PUBLIC_APP_NAME: "UV Coated Club Flyers"
+
+      # NextAuth
+      NEXTAUTH_URL: ${APP_URL:-https://uvcoatedclubflyers.com}
+
+      # Database (internal Docker network)
+      DATABASE_HOST: postgres
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: uvcoated
+      DATABASE_USER: appuser
+
+      # Redis (internal Docker network)
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+
+      # MinIO (internal Docker network)
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: "9000"
+      MINIO_USE_SSL: "false"
+      MINIO_BUCKET: uploads
+
+      # Square Configuration
+      NEXT_PUBLIC_SQUARE_APPLICATION_ID: ${SQUARE_APPLICATION_ID:-}
+      NEXT_PUBLIC_SQUARE_LOCATION_ID: ${SQUARE_LOCATION_ID:-}
+      NEXT_PUBLIC_SQUARE_ENVIRONMENT: ${SQUARE_ENVIRONMENT:-sandbox}
+
+      # PayPal Configuration
+      NEXT_PUBLIC_PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID_PUBLIC:-}
+      NEXT_PUBLIC_PAYPAL_ENVIRONMENT: ${PAYPAL_ENVIRONMENT:-sandbox}
+    networks:
+      - internal
+    volumes:
+      - app-uploads:/app/uploads
+      - app-cache:/app/.next/cache
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://app:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ===========================================
+  # Nginx Reverse Proxy
+  # ===========================================
+  nginx:
+    image: nginx:alpine
+    container_name: uvcoatedclubflyers-nginx
+    hostname: nginx
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3003:80"
+    depends_on:
+      app:
+        condition: service_healthy
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# ===========================================
+# Docker Secrets
+# ===========================================
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  redis_password:
+    file: ./secrets/redis_password.txt
+  minio_access_key:
+    file: ./secrets/minio_access_key.txt
+  minio_secret_key:
+    file: ./secrets/minio_secret_key.txt
+  vaultwarden_admin_token:
+    file: ./secrets/vaultwarden_admin_token.txt
+  square_access_token:
+    file: ./secrets/square_access_token.txt
+  square_sandbox_access_token:
+    file: ./secrets/square_sandbox_access_token.txt
+  paypal_client_id:
+    file: ./secrets/paypal_client_id.txt
+  paypal_client_secret:
+    file: ./secrets/paypal_client_secret.txt
+  nextauth_secret:
+    file: ./secrets/nextauth_secret.txt
+  google_client_id:
+    file: ./secrets/google_client_id.txt
+  google_client_secret:
+    file: ./secrets/google_client_secret.txt
+  resend_api_key:
+    file: ./secrets/resend_api_key.txt
+  fedex_api_key:
+    file: ./secrets/fedex_api_key.txt
+  fedex_secret_key:
+    file: ./secrets/fedex_secret_key.txt
+
+# ===========================================
+# Persistent Volumes
+# ===========================================
+volumes:
+  postgres-data:
+    name: uvcoatedclubflyers_postgres-data
+  redis-data:
+    name: uvcoatedclubflyers_redis-data
+  minio-data:
+    name: uvcoatedclubflyers_minio-data
+  vaultwarden-data:
+    name: uvcoatedclubflyers_vaultwarden-data
+  app-uploads:
+    name: uvcoatedclubflyers_app-uploads
+  app-cache:
+    name: uvcoatedclubflyers_app-cache
+
+# ===========================================
+# Network - Internal Only
+# ===========================================
+networks:
+  internal:
+    name: uvcoatedclubflyers_network
+    driver: bridge

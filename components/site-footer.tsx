@@ -100,7 +100,7 @@ export function SiteFooter() {
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="h-4 w-4 flex-shrink-0" />
-                <span>(555) 123-4567</span>
+                <span>(404) 668-2401</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="h-4 w-4 flex-shrink-0" />

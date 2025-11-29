@@ -80,7 +80,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="(555) 123-4567"
+              placeholder="(404) 668-2401"
             />
           </div>
 

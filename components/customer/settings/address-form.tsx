@@ -154,7 +154,7 @@ export function AddressForm({ userId, address, onSuccess, onCancel }: AddressFor
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              placeholder="(555) 123-4567"
+              placeholder="(404) 668-2401"
             />
           </div>
 

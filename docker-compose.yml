@@ -99,7 +99,7 @@ services:
     container_name: uvcoated-app
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3003:3000"
     depends_on:
       postgres:
         condition: service_healthy
