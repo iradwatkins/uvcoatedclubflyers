@@ -126,7 +126,8 @@ services:
       NEXT_PUBLIC_SQUARE_LOCATION_ID: "LLAA4E8NME90R"
       NEXT_PUBLIC_SQUARE_ENVIRONMENT: "sandbox"
       NEXT_PUBLIC_PAYPAL_ENVIRONMENT: "sandbox"
-      NEXTAUTH_URL: "http://localhost:3000"
+      NEXTAUTH_URL: "https://uvcoatedclubflyers.com"
+      AUTH_TRUST_HOST: "true"
       # Database connection (non-sensitive parts)
       DATABASE_HOST: postgres
       DATABASE_PORT: "5432"
