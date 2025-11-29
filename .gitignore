@@ -51,6 +51,8 @@ tsconfig.tsbuildinfo
 !CHANGELOG.md
 !CODE-CLEANING-REPORT.md
 !CODE-JANITOR-REPORT.md
+!DOCKER-PROJECT.md
+!DEPLOYMENT.md
 
 # Misc
 .cache/
