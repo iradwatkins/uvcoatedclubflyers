@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Menu, X, User, LayoutDashboard, Settings, LogOut, Shield } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ShoppingCart, Menu, X, LayoutDashboard, Settings, LogOut, Shield, ChevronDown } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import {
   DropdownMenu,
@@ -18,6 +19,7 @@ interface SiteHeaderProps {
   user?: {
     name?: string | null;
     email?: string | null;
+    image?: string | null;
     role?: string;
   } | null;
 }
@@ -76,17 +78,30 @@ export function SiteHeader({ user }: SiteHeaderProps) {
               <div className="hidden md:flex md:items-center">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="relative">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                        {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
-                      </div>
+                    <Button variant="outline" className="gap-2 px-2">
+                      <Avatar className="h-6 w-6 rounded-lg">
+                        <AvatarImage src={user.image || undefined} alt={user.name || 'User'} />
+                        <AvatarFallback className="rounded-lg bg-primary text-primary-foreground text-xs">
+                          {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="truncate max-w-[100px] text-sm">{user.name || 'User'}</span>
+                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>
-                      <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{user.name || 'User'}</p>
-                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10 rounded-lg">
+                          <AvatarImage src={user.image || undefined} alt={user.name || 'User'} />
+                          <AvatarFallback className="rounded-lg bg-primary text-primary-foreground">
+                            {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">{user.name || 'User'}</p>
+                          <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                        </div>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
@@ -169,10 +184,13 @@ export function SiteHeader({ user }: SiteHeaderProps) {
               <div className="border-t pt-3">
                 {user ? (
                   <div className="space-y-3">
-                    <div className="flex items-center space-x-2 pb-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                        {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
-                      </div>
+                    <div className="flex items-center gap-3 pb-2">
+                      <Avatar className="h-10 w-10 rounded-lg">
+                        <AvatarImage src={user.image || undefined} alt={user.name || 'User'} />
+                        <AvatarFallback className="rounded-lg bg-primary text-primary-foreground">
+                          {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="flex flex-col">
                         <span className="text-sm font-medium">{user.name || 'User'}</span>
                         <span className="text-xs text-muted-foreground">{user.email}</span>
