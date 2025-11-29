@@ -29,7 +29,7 @@ services:
     restart: unless-stopped
     ports:
       - "6302:6379"
-    command: redis-server --requirepass $(cat /run/secrets/redis_password)
+    command: ["sh", "-c", "redis-server --requirepass $$(cat /run/secrets/redis_password)"]
     secrets:
       - redis_password
     volumes:
@@ -37,7 +37,7 @@ services:
     networks:
       - uvcoated-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "sh", "-c", "redis-cli -a $$(cat /run/secrets/redis_password) ping"]
       interval: 10s
       timeout: 5s
       retries: 5
