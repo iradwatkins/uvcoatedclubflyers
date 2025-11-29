@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { Zap, Shield, Truck, Star, CheckCircle } from 'lucide-react';
@@ -10,13 +9,9 @@ import { Zap, Shield, Truck, Star, CheckCircle } from 'lucide-react';
 export default async function Home() {
   const session = await auth();
 
-  if (session?.user) {
-    redirect('/dashboard');
-  }
-
   return (
     <div className="flex min-h-screen flex-col">
-      <SiteHeader user={null} />
+      <SiteHeader user={session?.user || null} />
 
       <main className="flex-1">
         {/* Hero Section */}
