@@ -18,16 +18,24 @@ read_secret() {
   fi
 }
 
+# Function to URL-encode a string (for passwords with special chars)
+# Uses printf and sed - compatible with busybox/alpine
+urlencode() {
+  printf '%s' "$1" | od -An -tx1 | tr ' ' '%' | tr -d '\n' | sed 's/%0a$//'
+}
+
 # Database Credentials
 echo "Loading database credentials..."
 export DATABASE_PASSWORD=$(read_secret "db_password")
-export DATABASE_URL="postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"
+ENCODED_DB_PASSWORD=$(urlencode "$DATABASE_PASSWORD")
+export DATABASE_URL="postgresql://${DATABASE_USER}:${ENCODED_DB_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"
 echo "✅ Database credentials loaded"
 
 # Redis Credentials
 echo "Loading Redis credentials..."
 export REDIS_PASSWORD=$(read_secret "redis_password")
-export REDIS_URL="redis://:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}"
+ENCODED_REDIS_PASSWORD=$(urlencode "$REDIS_PASSWORD")
+export REDIS_URL="redis://:${ENCODED_REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}"
 echo "✅ Redis credentials loaded"
 
 # MinIO/S3 Credentials
