@@ -77,12 +77,11 @@ start() {
 
     print_msg "\n${PROJECT_NAME} started successfully!" "$GREEN"
     print_msg "Services available at:" "$BLUE"
-    print_msg "  - App:        http://localhost:3015 (via Nginx)"
-    print_msg "  - App Direct: http://localhost:3000"
-    print_msg "  - MinIO:      http://localhost:9001 (Console)"
-    print_msg "  - Vaultwarden: http://localhost:8080"
-    print_msg "  - PostgreSQL: localhost:5448"
-    print_msg "  - Redis:      localhost:6379"
+    print_msg "  - App:         http://localhost:3003 (via Nginx)"
+    print_msg "  - MinIO:       http://localhost:9103 (Console)"
+    print_msg "  - Vaultwarden: http://localhost:8083"
+    print_msg "  - PostgreSQL:  localhost:5433"
+    print_msg "  - Redis:       localhost:6303"
 }
 
 # Stop the project

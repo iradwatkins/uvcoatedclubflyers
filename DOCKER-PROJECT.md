@@ -8,12 +8,12 @@ All services are containerized within a single Docker project named `uvcoatedclu
 
 | Service | Container Name | Internal Port | External Port |
 |---------|---------------|---------------|---------------|
-| PostgreSQL | uvcoatedclubflyers-postgres | 5432 | 5448 |
-| Redis | uvcoatedclubflyers-redis | 6379 | 6379 |
-| MinIO | uvcoatedclubflyers-minio | 9000/9001 | 9000/9001 |
-| Vaultwarden | uvcoatedclubflyers-vaultwarden | 80 | 8080 |
-| App | uvcoatedclubflyers-app | 3000 | 3000 |
-| Nginx | uvcoatedclubflyers-nginx | 80 | 3015 |
+| PostgreSQL | uvcoatedclubflyers-postgres | 5432 | 5433 |
+| Redis | uvcoatedclubflyers-redis | 6379 | 6303 |
+| MinIO | uvcoatedclubflyers-minio | 9000/9001 | 9003/9103 |
+| Vaultwarden | uvcoatedclubflyers-vaultwarden | 80 | 8083 |
+| App | uvcoatedclubflyers-app | 3000 | (internal only) |
+| Nginx | uvcoatedclubflyers-nginx | 80 | 3003 |
 
 ## Quick Start
 
@@ -109,14 +109,14 @@ All services communicate via the internal Docker network `uvcoatedclubflyers_net
 Internet
     │
     ▼
-[Nginx :3015]
+[Nginx :3003]
     │
     ▼
-[App :3000] ──────► [PostgreSQL :5432]
+[App :3000] ──────► [PostgreSQL :5433]
     │                      │
-    ├──────────────► [Redis :6379]
+    ├──────────────► [Redis :6303]
     │
-    └──────────────► [MinIO :9000]
+    └──────────────► [MinIO :9003]
 ```
 
 ## Volume Storage
@@ -142,7 +142,8 @@ All services have health checks configured:
 
 ## Security Notes
 
-1. All external ports bind to `127.0.0.1` by default (except Nginx on 3015)
-2. Secrets are managed via Docker secrets
-3. Never commit the `secrets/` directory
-4. The app runs as non-root user inside the container
+1. All external ports bind to `127.0.0.1` (localhost only)
+2. Nginx on port 3003 is the only public-facing service
+3. Secrets are managed via Docker secrets
+4. Never commit the `secrets/` directory
+5. The app runs as non-root user inside the container
