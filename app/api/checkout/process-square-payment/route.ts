@@ -188,7 +188,6 @@ export async function POST(request: NextRequest) {
             )
           `;
 
-          console.log('[Square Payment] Card saved successfully for future use');
         } catch (saveError) {
           console.error(
             '[Square Payment] Failed to save card (payment still succeeded):',

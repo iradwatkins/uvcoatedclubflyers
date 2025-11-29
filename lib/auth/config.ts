@@ -54,7 +54,7 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        token.id = user.id;
+        token.id = user.id || '';
         token.role = user.role;
       }
 

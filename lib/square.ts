@@ -348,7 +348,7 @@ export async function listCustomerCards(customerId: string) {
     );
 
     return (
-      result.cards?.map((card) => ({
+      result.cards?.map((card: { id?: string; customerId?: string; cardBrand?: string; last4?: string; expMonth?: bigint; expYear?: bigint; cardholderName?: string; enabled?: boolean }) => ({
         id: card.id || '',
         customerId: card.customerId || '',
         cardBrand: card.cardBrand || 'UNKNOWN',

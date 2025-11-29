@@ -11,6 +11,16 @@ const minioClient = new Minio.Client({
 const BUCKET_NAME = process.env.MINIO_BUCKET_NAME || 'design-files';
 const PRODUCT_IMAGES_BUCKET = 'product-images';
 
+// Helper to generate public MinIO URLs respecting SSL settings
+function getMinioPublicUrl(objectName: string, bucket: string = PRODUCT_IMAGES_BUCKET): string {
+  const protocol = process.env.MINIO_USE_SSL === 'true' ? 'https' : 'http';
+  const endpoint = process.env.MINIO_ENDPOINT || 'localhost';
+  const port = process.env.MINIO_PORT || '9002';
+  // In production with SSL, typically don't need port in URL
+  const portSuffix = process.env.MINIO_USE_SSL === 'true' ? '' : `:${port}`;
+  return `${protocol}://${endpoint}${portSuffix}/${bucket}/${objectName}`;
+}
+
 // Ensure bucket exists
 export async function ensureBucket() {
   try {
@@ -127,9 +137,7 @@ export async function uploadProductImage(
     });
 
     // Return permanent public URL
-    const publicUrl = `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${PRODUCT_IMAGES_BUCKET}/${objectName}`;
-
-    return publicUrl;
+    return getMinioPublicUrl(objectName);
   } catch (error) {
     console.error('Error uploading product image:', error);
     throw new Error('Failed to upload product image');
@@ -167,8 +175,7 @@ export async function listProductImages(): Promise<string[]> {
     return new Promise((resolve, reject) => {
       stream.on('data', (obj) => {
         if (obj.name) {
-          const url = `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${PRODUCT_IMAGES_BUCKET}/${obj.name}`;
-          images.push(url);
+          images.push(getMinioPublicUrl(obj.name));
         }
       });
 

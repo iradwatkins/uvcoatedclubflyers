@@ -23,7 +23,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ShoppingCart, Check, Info, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
+import { ShoppingCart, Check, Info, Loader2, ChevronDown, ChevronUp, Download, FileText } from 'lucide-react';
 import { ProductImage } from '@/components/product-image';
 import { FileUploadDropzone } from '@/components/file-upload-dropzone';
 import { cn } from '@/lib/utils';
@@ -116,6 +116,13 @@ interface PriceBreakdown {
   turnaround: string;
   quantity: number;
   size: string;
+  // Enhanced breakdown details
+  squareInches?: number;
+  sidesMultiplier?: number;
+  turnaroundMultiplier?: number;
+  addOnsCost?: number;
+  addOnsDetails?: Array<{ name: string; cost: number }>;
+  discountAmount?: number;
 }
 
 interface ProductConfiguratorNewProps {
@@ -608,6 +615,77 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
               </Select>
             </div>
 
+            {/* Template Download Section */}
+            {selectedSizeId && selectedSizeId > 0 && (
+              <div className="rounded-lg border bg-blue-50 dark:bg-blue-950/20 p-4">
+                <div className="flex items-start gap-3">
+                  <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                  <div className="flex-1 space-y-2">
+                    <div>
+                      <h4 className="font-medium text-sm">Download Template</h4>
+                      <p className="text-xs text-muted-foreground">
+                        Use our template to ensure your artwork is print-ready
+                      </p>
+                    </div>
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      <p><strong>Specifications:</strong></p>
+                      <ul className="list-disc list-inside space-y-0.5 pl-2">
+                        <li>Resolution: 300dpi</li>
+                        <li>Bleed: 1/8" (0.125")</li>
+                        <li>Color Mode: CMYK</li>
+                        <li>File Format: PDF, AI, PSD, JPG</li>
+                      </ul>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-2"
+                      onClick={() => {
+                        const selectedSize = options.sizes.find(s => s.id === selectedSizeId);
+                        if (selectedSize) {
+                          // Create a simple template info download (placeholder)
+                          const templateInfo = `UV Coated Club Flyers - Template Specifications
+
+Size: ${selectedSize.name} (${selectedSize.width}" x ${selectedSize.height}")
+
+Document Setup:
+- Width: ${selectedSize.width + 0.25}" (includes 0.125" bleed on each side)
+- Height: ${selectedSize.height + 0.25}" (includes 0.125" bleed on each side)
+- Resolution: 300 DPI
+- Color Mode: CMYK
+- Bleed: 0.125" on all sides
+- Safety Margin: 0.125" from trim line
+
+File Formats Accepted:
+- PDF (preferred)
+- Adobe Illustrator (.ai)
+- Adobe Photoshop (.psd)
+- High-resolution JPG (300dpi minimum)
+
+Tips:
+- Extend background images/colors to the bleed line
+- Keep important text/logos within the safety margin
+- Convert all fonts to outlines
+- Embed all linked images
+`;
+                          const blob = new Blob([templateInfo], { type: 'text/plain' });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `template-${selectedSize.width}x${selectedSize.height}.txt`;
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        }
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Template Guide
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* 3. Paper Stock */}
             <div className="space-y-2">
               <Label htmlFor="paperStock">Paper Stock</Label>
@@ -884,21 +962,82 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
               </RadioGroup>
             </div>
 
-            {/* 9. Price Summary */}
+            {/* 9. Price Summary - Enhanced M13Print-style breakdown */}
             <div className="space-y-3">
-              <Label>Price Summary</Label>
-              <div className="space-y-2 rounded-lg border bg-muted/50 p-4">
+              <Label>Price Calculator</Label>
+              <div className="space-y-3 rounded-lg border bg-muted/50 p-4">
                 {priceBreakdown ? (
-                  <div className="flex justify-between items-center">
-                    <span className="text-lg font-semibold">Total:</span>
-                    <span className="text-3xl font-bold text-primary">
-                      {isCalculatingPrice ? (
-                        <Loader2 className="h-8 w-8 animate-spin" />
-                      ) : (
-                        formatPrice(priceBreakdown.totalPrice)
+                  <>
+                    {/* Configuration Summary */}
+                    <div className="space-y-1 text-sm border-b pb-3">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Size:</span>
+                        <span className="font-medium">{priceBreakdown.size}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Quantity:</span>
+                        <span className="font-medium">{priceBreakdown.quantity.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Paper:</span>
+                        <span className="font-medium">{priceBreakdown.paperStock}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Coating:</span>
+                        <span className="font-medium">{priceBreakdown.coating}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Turnaround:</span>
+                        <span className="font-medium">{priceBreakdown.turnaround}</span>
+                      </div>
+                    </div>
+
+                    {/* Price Breakdown */}
+                    <div className="space-y-1 text-sm border-b pb-3">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Base Price:</span>
+                        <span>{formatPrice(priceBreakdown.baseCost)}</span>
+                      </div>
+                      {priceBreakdown.addOnsCost && priceBreakdown.addOnsCost > 0 && (
+                        <>
+                          <div className="flex justify-between text-muted-foreground">
+                            <span>Add-ons:</span>
+                            <span>+{formatPrice(priceBreakdown.addOnsCost)}</span>
+                          </div>
+                          {priceBreakdown.addOnsDetails?.map((addon, idx) => (
+                            <div key={idx} className="flex justify-between text-xs pl-2 text-muted-foreground">
+                              <span>• {addon.name}</span>
+                              <span>+{formatPrice(addon.cost)}</span>
+                            </div>
+                          ))}
+                        </>
                       )}
-                    </span>
-                  </div>
+                      {priceBreakdown.discountAmount && priceBreakdown.discountAmount > 0 && (
+                        <div className="flex justify-between text-green-600">
+                          <span>Discount:</span>
+                          <span>-{formatPrice(priceBreakdown.discountAmount)}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Total */}
+                    <div className="space-y-2 pt-1">
+                      <div className="flex justify-between items-center">
+                        <span className="text-lg font-semibold">Total:</span>
+                        <span className="text-2xl font-bold text-primary">
+                          {isCalculatingPrice ? (
+                            <Loader2 className="h-6 w-6 animate-spin" />
+                          ) : (
+                            formatPrice(priceBreakdown.totalPrice)
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm text-muted-foreground">
+                        <span>Price per piece:</span>
+                        <span className="font-medium">{formatPrice(priceBreakdown.unitPrice)}</span>
+                      </div>
+                    </div>
+                  </>
                 ) : (
                   <div className="flex justify-center py-4">
                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />

@@ -2,6 +2,7 @@ import { Worker } from 'bullmq';
 import { Redis } from 'ioredis';
 import { sql } from '@/lib/db';
 import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 import {
   generateEmail1,
   generateEmail2,
@@ -27,11 +28,11 @@ const transporter = nodemailer.createTransport({
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 /**
- * Generate a unique discount code
+ * Generate a unique discount code using cryptographically secure random bytes
  */
 function generateDiscountCode(prefix: string = 'SAVE'): string {
   const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+  const random = crypto.randomBytes(4).toString('hex').toUpperCase();
   return `${prefix}${timestamp}${random}`;
 }
 

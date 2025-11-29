@@ -124,7 +124,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Items
     let itemY = tableTop + 25;
-    order.orderItems.forEach((item) => {
+    order.orderItems.forEach((item: { product: { name: string }; quantity: number; unitPrice: number; totalPrice: number; options?: Record<string, unknown> }) => {
       if (itemY > 700) {
         doc.addPage();
         itemY = 50;

@@ -138,7 +138,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {order.orderItems.map((item) => (
+                {order.orderItems.map((item: { id: string | number; product?: { name?: string }; quantity: number; options?: Record<string, unknown>; unitPrice: number; totalPrice: number }) => (
                   <div key={item.id} className="flex items-start gap-4 p-4 border rounded-lg">
                     <div className="flex-1">
                       <h3 className="font-semibold">{item.product?.name || 'Product'}</h3>

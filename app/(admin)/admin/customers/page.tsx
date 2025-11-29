@@ -41,8 +41,8 @@ export default async function AdminCustomersPage() {
     return (
       sum +
       customer.orders
-        .filter((o) => o.paymentStatus === 'PAID')
-        .reduce((orderSum, order) => orderSum + order.totalAmount, 0)
+        .filter((o: { paymentStatus: string }) => o.paymentStatus === 'PAID')
+        .reduce((orderSum: number, order: { totalAmount: number }) => orderSum + order.totalAmount, 0)
     );
   }, 0);
 
@@ -148,8 +148,8 @@ export default async function AdminCustomersPage() {
                 ) : (
                   customers.map((customer) => {
                     const totalSpent = customer.orders
-                      .filter((o) => o.paymentStatus === 'PAID')
-                      .reduce((sum, order) => sum + order.totalAmount, 0);
+                      .filter((o: { paymentStatus: string }) => o.paymentStatus === 'PAID')
+                      .reduce((sum: number, order: { totalAmount: number }) => sum + order.totalAmount, 0);
 
                     return (
                       <tr key={customer.id} className="border-b hover:bg-muted/50">

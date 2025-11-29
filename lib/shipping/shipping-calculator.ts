@@ -15,7 +15,7 @@ import { fedexConfig, upsConfig } from './config';
 // import { SOUTHWEST_CARGO_CONFIG as southwestCargoConfig } from './modules/southwest-cargo/config';
 import { prisma } from '@/lib/db/prisma-adapter';
 // import redis from '@/lib/redis' // Optional: comment out if not using Redis
-const redis = null; // Disable Redis for now
+const redis: { get: (key: string) => Promise<string | null>; setex: (key: string, seconds: number, value: string) => Promise<void> } | null = null; // Disable Redis for now
 
 export class ShippingCalculator {
   private providers: Map<Carrier, ShippingProvider>;

@@ -136,7 +136,7 @@ export default async function PrintQueuePage() {
                   </div>
 
                   <div className="space-y-1">
-                    {job.orderItems.map((item) => (
+                    {job.orderItems.map((item: { id: string | number; quantity: number; product: { name: string } }) => (
                       <p key={item.id} className="text-sm text-muted-foreground">
                         {item.quantity}× {item.product.name}
                       </p>

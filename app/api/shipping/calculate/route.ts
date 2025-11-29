@@ -55,13 +55,9 @@ export async function POST(request: NextRequest) {
       totalWeight += item.weightLbs * item.quantity;
     }
 
-    console.log(`[Shipping API] Total weight: ${totalWeight.toFixed(2)} lbs`);
-
     // Split into boxes using standard box dimensions and 36lb max weight
     const boxes = splitIntoBoxes(totalWeight);
     const boxSummary = getBoxSplitSummary(boxes);
-
-    console.log(`[Shipping API] Box split: ${boxSummary}`);
 
     // Create shipping packages with airport metadata for Southwest Cargo
     const packages: ShippingPackage[] = boxes.map((box) => ({
@@ -75,20 +71,15 @@ export async function POST(request: NextRequest) {
 
     try {
       const enabledModules = registry.getEnabledModules();
-      console.log(
-        '[Shipping API] Enabled modules:',
-        enabledModules.map((m) => m.name)
-      );
 
       // Fetch rates from each module with error handling
       const ratePromises = enabledModules.map((module) =>
         module.provider
           .getRates(shipFrom, toAddress as ShippingAddress, packages)
-          .then((moduleRates) => {
-            console.log(`[Shipping API] ${module.name} returned ${moduleRates.length} rates`);
+          .then((moduleRates: unknown[]) => {
             return moduleRates;
           })
-          .catch((err) => {
+          .catch((err: Error) => {
             console.error(`[Shipping API] ${module.name} error:`, err.message || err);
             return [];
           })
@@ -128,8 +119,6 @@ export async function POST(request: NextRequest) {
         const serviceCode = r.serviceCode || r.service;
         return serviceCode ? ALLOWED_SERVICE_CODES.includes(serviceCode) : false;
       });
-
-      console.log(`[Shipping API] Filtered to ${rates.length} rates`);
 
       // Sort rates by price (lowest to highest)
       rates.sort((a: unknown, b: unknown) => {

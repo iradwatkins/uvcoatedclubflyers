@@ -1,4 +1,5 @@
 import { redis } from '@/lib/redis';
+import crypto from 'crypto';
 
 export interface CartItem {
   id: string;
@@ -44,8 +45,8 @@ export async function addToCart(sessionId: string, item: Omit<CartItem, 'id'>): 
   try {
     const cart = await getCart(sessionId);
 
-    // Generate unique ID for cart item
-    const itemId = `${item.productId}-${JSON.stringify(item.options)}-${Date.now()}`;
+    // Generate unique ID for cart item using cryptographically secure random bytes
+    const itemId = `${item.productId}-${crypto.randomUUID()}`;
 
     const newItem: CartItem = {
       ...item,

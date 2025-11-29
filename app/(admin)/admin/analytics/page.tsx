@@ -64,7 +64,7 @@ export default async function AnalyticsPage() {
   // Top products
   const productSales: Record<string, { name: string; quantity: number; revenue: number }> = {};
   orders.forEach((order) => {
-    order.orderItems.forEach((item) => {
+    order.orderItems.forEach((item: { product?: { name?: string }; quantity: number; totalPrice: number }) => {
       const productName = item.product?.name || 'Unknown';
       if (!productSales[productName]) {
         productSales[productName] = { name: productName, quantity: 0, revenue: 0 };
