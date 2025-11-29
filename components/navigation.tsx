@@ -3,9 +3,17 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ShoppingCart, User } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, LayoutDashboard, Settings, LogOut, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface NavigationProps {
   user?: {
@@ -71,12 +79,56 @@ export function Navigation({ user, cartItemCount = 0 }: NavigationProps) {
 
           {/* User Menu */}
           {user ? (
-            <Link href="/dashboard">
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
-                <span className="sr-only">Dashboard</span>
-              </Button>
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                    {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.name || 'User'}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard" className="cursor-pointer">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/settings" className="cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                {user.role === 'admin' && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="cursor-pointer">
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin Panel
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <form action="/api/auth/signout" method="post" className="w-full">
+                    <button type="submit" className="flex w-full items-center cursor-pointer">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </button>
+                  </form>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-2">
               <Link href="/login">
@@ -142,16 +194,51 @@ export function Navigation({ user, cartItemCount = 0 }: NavigationProps) {
             {/* Mobile User Actions */}
             <div className="border-t pt-4">
               {user ? (
-                <Link
-                  href="/dashboard"
-                  className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <div className="flex items-center">
-                    <User className="mr-2 h-5 w-5" />
-                    Dashboard
+                <div className="space-y-3 px-3">
+                  <div className="flex items-center space-x-2 pb-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                      {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">{user.name || 'User'}</span>
+                      <span className="text-xs text-muted-foreground">{user.email}</span>
+                    </div>
                   </div>
-                </Link>
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center text-base font-medium text-muted-foreground hover:text-primary"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="mr-2 h-5 w-5" />
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/dashboard/settings"
+                    className="flex items-center text-base font-medium text-muted-foreground hover:text-primary"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="mr-2 h-5 w-5" />
+                    Settings
+                  </Link>
+                  {user.role === 'admin' && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center text-base font-medium text-muted-foreground hover:text-primary"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Shield className="mr-2 h-5 w-5" />
+                      Admin Panel
+                    </Link>
+                  )}
+                  <div className="pt-2 border-t">
+                    <form action="/api/auth/signout" method="post">
+                      <Button variant="outline" className="w-full">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                      </Button>
+                    </form>
+                  </div>
+                </div>
               ) : (
                 <div className="space-y-2 px-3">
                   <Link href="/login" onClick={() => setMobileMenuOpen(false)}>

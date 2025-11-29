@@ -3,8 +3,16 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Menu, X, User } from 'lucide-react';
+import { ShoppingCart, Menu, X, User, LayoutDashboard, Settings, LogOut, Shield } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface SiteHeaderProps {
   user?: {
@@ -21,8 +29,6 @@ export function SiteHeader({ user }: SiteHeaderProps) {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/products', label: 'Products' },
-    ...(user ? [{ href: '/dashboard', label: 'Dashboard' }] : []),
-    ...(user?.role === 'admin' ? [{ href: '/admin', label: 'Admin' }] : []),
   ];
 
   const isActive = (href: string) => {
@@ -67,15 +73,57 @@ export function SiteHeader({ user }: SiteHeaderProps) {
             </Link>
 
             {user ? (
-              <div className="hidden md:flex md:items-center md:space-x-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                  {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
-                </div>
-                <form action="/api/auth/signout" method="post">
-                  <Button variant="outline" size="sm" type="submit">
-                    Sign Out
-                  </Button>
-                </form>
+              <div className="hidden md:flex md:items-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                        {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                      </div>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">{user.name || 'User'}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard" className="cursor-pointer">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/settings" className="cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    {user.role === 'admin' && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin" className="cursor-pointer">
+                            <Shield className="mr-2 h-4 w-4" />
+                            Admin Panel
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <form action="/api/auth/signout" method="post" className="w-full">
+                        <button type="submit" className="flex w-full items-center cursor-pointer">
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Sign Out
+                        </button>
+                      </form>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ) : (
               <div className="hidden md:flex md:items-center md:space-x-2">
@@ -120,18 +168,50 @@ export function SiteHeader({ user }: SiteHeaderProps) {
               ))}
               <div className="border-t pt-3">
                 {user ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2 pb-2">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
                         {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
                       </div>
-                      <span className="text-sm font-medium">{user.email}</span>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium">{user.name || 'User'}</span>
+                        <span className="text-xs text-muted-foreground">{user.email}</span>
+                      </div>
                     </div>
-                    <form action="/api/auth/signout" method="post">
-                      <Button variant="outline" size="sm" type="submit" className="w-full">
-                        Sign Out
-                      </Button>
-                    </form>
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </Link>
+                    <Link
+                      href="/dashboard/settings"
+                      className="flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </Link>
+                    {user.role === 'admin' && (
+                      <Link
+                        href="/admin"
+                        className="flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin Panel
+                      </Link>
+                    )}
+                    <div className="pt-2 border-t">
+                      <form action="/api/auth/signout" method="post">
+                        <Button variant="outline" size="sm" type="submit" className="w-full">
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Sign Out
+                        </Button>
+                      </form>
+                    </div>
                   </div>
                 ) : (
                   <div className="flex flex-col space-y-2">
