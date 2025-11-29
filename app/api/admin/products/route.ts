@@ -25,6 +25,10 @@ export async function POST(request: NextRequest) {
       isFeatured,
       categoryId,
       options,
+      quantities,
+      sizes,
+      availablePaperStocks,
+      availableTurnarounds,
     } = data;
 
     // Validation
@@ -61,6 +65,8 @@ export async function POST(request: NextRequest) {
         is_active,
         is_featured,
         category_id,
+        quantities,
+        sizes,
         created_at,
         updated_at
       ) VALUES (
@@ -75,6 +81,8 @@ export async function POST(request: NextRequest) {
         ${isActive},
         ${isFeatured},
         ${categoryId || null},
+        ${quantities || null},
+        ${sizes || null},
         NOW(),
         NOW()
       )
@@ -111,6 +119,26 @@ export async function POST(request: NextRequest) {
             )
           `;
         }
+      }
+    }
+
+    // Insert paper stock associations if provided
+    if (availablePaperStocks && Array.isArray(availablePaperStocks)) {
+      for (const paperStockId of availablePaperStocks) {
+        await prisma.$executeRaw`
+          INSERT INTO product_paper_stocks (product_id, paper_stock_id)
+          VALUES (${productId}, ${paperStockId})
+        `;
+      }
+    }
+
+    // Insert turnaround associations if provided
+    if (availableTurnarounds && Array.isArray(availableTurnarounds)) {
+      for (const turnaroundId of availableTurnarounds) {
+        await prisma.$executeRaw`
+          INSERT INTO product_turnarounds (product_id, turnaround_id)
+          VALUES (${productId}, ${turnaroundId})
+        `;
       }
     }
 

@@ -25,8 +25,23 @@ interface Category {
   name: string;
 }
 
+interface PaperStock {
+  id: number;
+  name: string;
+  display_order: number;
+}
+
+interface Turnaround {
+  id: number;
+  name: string;
+  production_days: number;
+  display_order: number;
+}
+
 interface ProductCreateFormProps {
   categories: Category[];
+  paperStocks: PaperStock[];
+  turnarounds: Turnaround[];
 }
 
 interface ProductOption {
@@ -38,7 +53,7 @@ interface ProductOption {
   sort_order: number;
 }
 
-export function ProductCreateForm({ categories }: ProductCreateFormProps) {
+export function ProductCreateForm({ categories, paperStocks, turnarounds }: ProductCreateFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -61,6 +76,12 @@ export function ProductCreateForm({ categories }: ProductCreateFormProps) {
   // Product options state
   const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
 
+  // Product configuration state
+  const [quantities, setQuantities] = useState('25,50,100,250,500,1000,2500,5000');
+  const [sizes, setSizes] = useState('4x6,5x7,6x9,8.5x11');
+  const [selectedPaperStocks, setSelectedPaperStocks] = useState<number[]>([]);
+  const [selectedTurnarounds, setSelectedTurnarounds] = useState<number[]>([]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -75,6 +96,10 @@ export function ProductCreateForm({ categories }: ProductCreateFormProps) {
           basePrice: Math.round(parseFloat(formData.basePrice) * 100),
           categoryId: formData.categoryId ? parseInt(formData.categoryId) : null,
           options: productOptions,
+          quantities,
+          sizes,
+          availablePaperStocks: selectedPaperStocks,
+          availableTurnarounds: selectedTurnarounds,
         }),
       });
 
@@ -148,6 +173,7 @@ export function ProductCreateForm({ categories }: ProductCreateFormProps) {
       <Tabs defaultValue="details" className="space-y-6">
         <TabsList>
           <TabsTrigger value="details">Product Details</TabsTrigger>
+          <TabsTrigger value="configuration">Product Configuration</TabsTrigger>
           <TabsTrigger value="options">Product Options</TabsTrigger>
         </TabsList>
 
@@ -288,6 +314,144 @@ export function ProductCreateForm({ categories }: ProductCreateFormProps) {
                     Featured Product
                   </Label>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="configuration" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Customer Configurator Settings</CardTitle>
+              <CardDescription>
+                Configure what options customers can select when ordering this product
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Quantities */}
+              <div className="space-y-2">
+                <Label htmlFor="quantities">
+                  Available Quantities *
+                  <span className="text-sm text-muted-foreground ml-2">
+                    (Comma-separated, e.g., "25,50,100,250,500,1000,2500,5000")
+                  </span>
+                </Label>
+                <Input
+                  id="quantities"
+                  value={quantities}
+                  onChange={(e) => setQuantities(e.target.value)}
+                  placeholder="25,50,100,250,500,1000,2500,5000"
+                  required
+                />
+              </div>
+
+              {/* Sizes */}
+              <div className="space-y-2">
+                <Label htmlFor="sizes">
+                  Available Sizes *
+                  <span className="text-sm text-muted-foreground ml-2">
+                    (Comma-separated, e.g., "4x6,5x7,6x9,8.5x11")
+                  </span>
+                </Label>
+                <Input
+                  id="sizes"
+                  value={sizes}
+                  onChange={(e) => setSizes(e.target.value)}
+                  placeholder="4x6,5x7,6x9,8.5x11"
+                  required
+                />
+              </div>
+
+              {/* Paper Stocks */}
+              <div className="space-y-2">
+                <Label>Available Paper Stocks</Label>
+                <div className="grid gap-3 md:grid-cols-2 border rounded-lg p-4">
+                  {paperStocks.length > 0 ? (
+                    paperStocks.map((stock) => (
+                      <div key={stock.id} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id={`paper-stock-${stock.id}`}
+                          checked={selectedPaperStocks.includes(stock.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedPaperStocks([...selectedPaperStocks, stock.id]);
+                            } else {
+                              setSelectedPaperStocks(
+                                selectedPaperStocks.filter((id) => id !== stock.id)
+                              );
+                            }
+                          }}
+                          className="h-4 w-4"
+                        />
+                        <Label
+                          htmlFor={`paper-stock-${stock.id}`}
+                          className="cursor-pointer font-normal"
+                        >
+                          {stock.name}
+                        </Label>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground col-span-2">
+                      No paper stocks configured. Add paper stocks in the system settings.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Turnaround Times */}
+              <div className="space-y-2">
+                <Label>
+                  Turnaround Times
+                  <span className="text-sm text-muted-foreground ml-2">
+                    (Select up to 4 options to show as checkboxes)
+                  </span>
+                </Label>
+                <div className="grid gap-3 md:grid-cols-2 border rounded-lg p-4">
+                  {turnarounds.length > 0 ? (
+                    turnarounds.map((turnaround) => (
+                      <div key={turnaround.id} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id={`turnaround-${turnaround.id}`}
+                          checked={selectedTurnarounds.includes(turnaround.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              if (selectedTurnarounds.length < 4) {
+                                setSelectedTurnarounds([...selectedTurnarounds, turnaround.id]);
+                              }
+                            } else {
+                              setSelectedTurnarounds(
+                                selectedTurnarounds.filter((id) => id !== turnaround.id)
+                              );
+                            }
+                          }}
+                          className="h-4 w-4"
+                          disabled={
+                            !selectedTurnarounds.includes(turnaround.id) &&
+                            selectedTurnarounds.length >= 4
+                          }
+                        />
+                        <Label
+                          htmlFor={`turnaround-${turnaround.id}`}
+                          className="cursor-pointer font-normal"
+                        >
+                          {turnaround.name} ({turnaround.production_days} days)
+                        </Label>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground col-span-2">
+                      No turnaround times configured. Add turnarounds in the system settings.
+                    </p>
+                  )}
+                </div>
+                {selectedTurnarounds.length > 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    Selected: {selectedTurnarounds.length}/4
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
