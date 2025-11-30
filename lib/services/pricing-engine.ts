@@ -370,20 +370,6 @@ export class PricingEngine {
         cost = 60.0 + 0.02 * quantity;
         break;
 
-      case 'postal-delivery-ddu':
-        // Postal Delivery (DDU): $30/box
-        // Box calculation would need product dimensions
-        // For now, estimate 1 box per 1000 pieces
-        const boxCount = Math.ceil(quantity / 1000);
-        cost = boxCount * 30.0;
-        break;
-
-      case 'eddm-process-postage':
-        // EDDM Process & Postage: $50 setup + $0.239/piece (includes postage)
-        cost = 50.0 + 0.239 * quantity;
-        // Note: This should also auto-enable banding addon
-        break;
-
       case 'corner-rounding':
         // Corner Rounding: $25 setup + $0.02/piece
         cost = 25.0 + 0.02 * quantity;
@@ -464,9 +450,6 @@ export class PricingEngine {
       case 'padding':
         const sheetsPerPad = subOptions.sheets_per_pad || 25;
         return `${sheetsPerPad} sheets per pad`;
-
-      case 'eddm-process-postage':
-        return subOptions.route_selection || 'EDDM service';
 
       default:
         return addOn.description || '';

@@ -235,71 +235,40 @@ INSERT INTO add_on_sub_options (add_on_id, field_name, field_label, field_type, 
 VALUES
 (18, 'qr_content', 'QR Code Content/URL', 'text', NULL, NULL, true, 1);
 
--- ========================================
--- DISCOUNTS & PRICING (Below Upload) - 2 add-ons
--- Display Order: 19-20
--- ========================================
-
--- 19. Our Tagline (Discount)
+-- 19. Our Tagline (5% Discount)
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
 VALUES
 (19, 'Our Tagline', 'our-tagline', 'Add our tagline for 5% discount on base price', 'PERCENTAGE', 0, 0, -5.00, 'checkbox', 'below_upload', 19, false, true, 0);
 
--- 20. Exact Size (Markup)
+-- 20. Exact Size (+12.5% Markup)
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
 VALUES
 (20, 'Exact Size', 'exact-size', 'Precise cutting to exact specifications (+12.5% markup)', 'PERCENTAGE', 0, 0, 12.50, 'checkbox', 'below_upload', 20, false, true, 0);
 
--- ========================================
--- SHIPPING & MAILING (Below Upload) - 2 add-ons
--- Display Order: 21-22
--- ========================================
-
--- 21. Postal Delivery (DDU)
+-- 21. Foil Stamping (+25% on base price)
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
 VALUES
-(21, 'Postal Delivery (DDU)', 'postal-delivery-ddu', 'EDDM postal delivery service ($30/box)', 'CUSTOM', 30, 0, 0, 'checkbox', 'below_upload', 21, false, false, 1);
-
--- 22. EDDM Process & Postage
-INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add, depends_on_add_on_id)
-VALUES
-(22, 'EDDM Process & Postage', 'eddm-process-postage', 'Every Door Direct Mail service with postage ($50 setup + $0.239/piece)', 'CUSTOM', 50, 0.239, 0, 'checkbox', 'below_upload', 22, false, false, 2, 13);
-
--- Sub-options for EDDM
-INSERT INTO add_on_sub_options (add_on_id, field_name, field_label, field_type, options, default_value, is_required, display_order)
-VALUES
-(22, 'route_selection', 'Route Selection', 'select', '{"options": [{"value": "customer", "label": "I Will Provide Routes"}, {"value": "provider", "label": "Select Routes For Me"}]}', 'customer', true, 1),
-(22, 'routes', 'Route Numbers', 'textarea', NULL, NULL, false, 2);
-
--- ========================================
--- PREMIUM FINISHES (Below Upload) - 2 add-ons
--- Display Order: 23-24
--- ========================================
-
--- 23. Foil Stamping
-INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
-VALUES
-(23, 'Foil Stamping', 'foil-stamping', 'Metallic foil stamping (+25% on base price)', 'PERCENTAGE', 0, 0, 25.00, 'dropdown', 'below_upload', 23, false, true, 3);
+(21, 'Foil Stamping', 'foil-stamping', 'Metallic foil stamping (+25% on base price)', 'PERCENTAGE', 0, 0, 25.00, 'dropdown', 'below_upload', 21, false, true, 3);
 
 -- Sub-options for Foil Stamping
 INSERT INTO add_on_sub_options (add_on_id, field_name, field_label, field_type, options, default_value, is_required, display_order)
 VALUES
-(23, 'foil_color', 'Foil Color', 'select', '{"options": [
+(21, 'foil_color', 'Foil Color', 'select', '{"options": [
   {"value": "gold", "label": "Gold"},
   {"value": "silver", "label": "Silver"},
   {"value": "rose_gold", "label": "Rose Gold"},
   {"value": "copper", "label": "Copper"}
 ]}', 'gold', true, 1);
 
--- 24. Spot UV
+-- 22. Spot UV (+20% on base price)
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
 VALUES
-(24, 'Spot UV', 'spot-uv', 'Raised UV coating for premium look (+20% on base price)', 'PERCENTAGE', 0, 0, 20.00, 'dropdown', 'below_upload', 24, false, true, 2);
+(22, 'Spot UV', 'spot-uv', 'Raised UV coating for premium look (+20% on base price)', 'PERCENTAGE', 0, 0, 20.00, 'dropdown', 'below_upload', 22, false, true, 2);
 
 -- Sub-options for Spot UV
 INSERT INTO add_on_sub_options (add_on_id, field_name, field_label, field_type, options, default_value, is_required, display_order)
 VALUES
-(24, 'uv_coverage', 'Coverage Area', 'select', '{"options": [
+(22, 'uv_coverage', 'Coverage Area', 'select', '{"options": [
   {"value": "logo", "label": "Logo Only"},
   {"value": "text", "label": "Text Only"},
   {"value": "custom", "label": "Custom Pattern"}
