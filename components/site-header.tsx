@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { signOut } from 'next-auth/react';
 import { ShoppingCart, Menu, X, LayoutDashboard, Settings, LogOut, Shield, ChevronDown } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import {
@@ -142,13 +143,12 @@ export function SiteHeader({ user }: SiteHeaderProps) {
                       </>
                     )}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <form action="/api/auth/signout" method="post" className="w-full">
-                        <button type="submit" className="flex w-full items-center cursor-pointer">
-                          <LogOut className="mr-2 h-4 w-4" />
-                          Sign Out
-                        </button>
-                      </form>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => signOut({ callbackUrl: '/login' })}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -236,12 +236,15 @@ export function SiteHeader({ user }: SiteHeaderProps) {
                       </Link>
                     )}
                     <div className="pt-2 border-t">
-                      <form action="/api/auth/signout" method="post">
-                        <Button variant="outline" size="sm" type="submit" className="w-full">
-                          <LogOut className="mr-2 h-4 w-4" />
-                          Sign Out
-                        </Button>
-                      </form>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => signOut({ callbackUrl: '/login' })}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                      </Button>
                     </div>
                   </div>
                 ) : (

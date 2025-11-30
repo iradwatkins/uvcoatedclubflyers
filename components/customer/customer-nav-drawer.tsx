@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
+import { signOut } from 'next-auth/react';
 
 interface CustomerNavDrawerProps {
   user: {
@@ -165,11 +166,14 @@ export function CustomerNavDrawer({ user, onClose }: CustomerNavDrawerProps) {
               </div>
             </div>
 
-            <form action="/api/auth/signout" method="post" className="mt-2">
-              <Button variant="outline" size="sm" type="submit" className="w-full">
-                Sign Out
-              </Button>
-            </form>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2 w-full"
+              onClick={() => signOut({ callbackUrl: '/login' })}
+            >
+              Sign Out
+            </Button>
           </div>
         </div>
       </aside>

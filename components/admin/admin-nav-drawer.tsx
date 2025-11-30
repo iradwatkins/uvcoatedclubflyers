@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
+import { signOut } from 'next-auth/react';
 
 interface AdminNavDrawerProps {
   user: {
@@ -164,12 +165,15 @@ export function AdminNavDrawer({ user, onClose }: AdminNavDrawerProps) {
               </div>
             </div>
 
-            <form action="/api/auth/signout" method="post" className="mt-2">
-              <Button variant="outline" size="sm" type="submit" className="w-full">
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign Out
-              </Button>
-            </form>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2 w-full"
+              onClick={() => signOut({ callbackUrl: '/login' })}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </Button>
           </div>
         </div>
       </aside>

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 import { Menu, X, ShoppingCart, User, LayoutDashboard, Settings, LogOut, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -119,13 +120,12 @@ export function Navigation({ user, cartItemCount = 0 }: NavigationProps) {
                   </>
                 )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <form action="/api/auth/signout" method="post" className="w-full">
-                    <button type="submit" className="flex w-full items-center cursor-pointer">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Sign Out
-                    </button>
-                  </form>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => signOut({ callbackUrl: '/login' })}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -231,12 +231,14 @@ export function Navigation({ user, cartItemCount = 0 }: NavigationProps) {
                     </Link>
                   )}
                   <div className="pt-2 border-t">
-                    <form action="/api/auth/signout" method="post">
-                      <Button variant="outline" className="w-full">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Sign Out
-                      </Button>
-                    </form>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => signOut({ callbackUrl: '/login' })}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </Button>
                   </div>
                 </div>
               ) : (
