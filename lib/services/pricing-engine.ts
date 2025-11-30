@@ -302,13 +302,8 @@ export class PricingEngine {
 
       case 'perforation':
         // Perforation: $20 setup + $0.01/piece
-        // If both vertical AND horizontal selected, double the per-piece cost
-        const verticalCount = parseInt(subOptions.vertical_count) || 0;
-        const horizontalCount = parseInt(subOptions.horizontal_count) || 0;
-        const hasVertical = verticalCount > 0;
-        const hasHorizontal = horizontalCount > 0;
-        const perforationMultiplier = hasVertical && hasHorizontal ? 2 : 1;
-        cost += (parseFloat(addOn.per_unit_price) || 0.01) * quantity * perforationMultiplier;
+        // Orientation is just for specification (vertical or horizontal)
+        cost = 20.0 + 0.01 * quantity;
         break;
 
       case 'score-only':
@@ -356,11 +351,11 @@ export class PricingEngine {
         break;
 
       case 'banding':
-        // Banding: $0.75/bundle
+        // Banding: $15 setup + $2.00/bundle
         // Calculate number of bundles based on items per bundle
         const itemsPerBundleBanding = parseInt(subOptions.bundle_size) || 100;
         const numberOfBundles = Math.ceil(quantity / itemsPerBundleBanding);
-        cost = numberOfBundles * 0.75;
+        cost = 15.0 + numberOfBundles * 2.0;
         break;
 
       case 'shrink-wrapping':
@@ -390,6 +385,10 @@ export class PricingEngine {
         break;
 
       case 'corner-rounding':
+        // Corner Rounding: $25 setup + $0.02/piece
+        cost = 25.0 + 0.02 * quantity;
+        break;
+
       case 'wafer-seal':
         // Generic per-piece addons: setup + per-piece cost
         cost += (parseFloat(addOn.per_unit_price) || 0) * quantity;

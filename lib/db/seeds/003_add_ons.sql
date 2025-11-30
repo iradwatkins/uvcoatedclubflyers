@@ -16,24 +16,26 @@ VALUES
 (1, 'Upload My Artwork', 'upload-my-artwork', 'Upload your print-ready files (PDF, JPG, PNG, EPS, AI)', 'FLAT', 0, 0, 0, 'checkbox', 'above_upload', 1, false, true, 0);
 
 -- 2. Standard Custom Design
+-- Pricing: One Side: $90, Two Sides: $135
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
 VALUES
-(2, 'Standard Custom Design', 'standard-custom-design', 'Professional design service - standard turnaround', 'CUSTOM', 75, 0, 0, 'dropdown', 'above_upload', 2, false, true, 2);
+(2, 'Standard Custom Design', 'standard-custom-design', 'Professional design service - standard turnaround (72 hours)', 'CUSTOM', 90, 0, 0, 'dropdown', 'above_upload', 2, false, true, 3);
 
 -- Sub-options for Standard Custom Design
 INSERT INTO add_on_sub_options (add_on_id, field_name, field_label, field_type, options, default_value, is_required, display_order)
 VALUES
-(2, 'sides', 'Design Sides', 'select', '{"options": [{"value": "one", "label": "One Side - $75"}, {"value": "two", "label": "Two Sides - $120"}]}', 'one', true, 1);
+(2, 'sides', 'Design Sides', 'select', '{"options": [{"value": "one", "label": "One Side - $90"}, {"value": "two", "label": "Two Sides - $135"}]}', 'one', true, 1);
 
 -- 3. Rush Custom Design
+-- Pricing: One Side: $160, Two Sides: $240
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
 VALUES
-(3, 'Rush Custom Design', 'rush-custom-design', 'Professional design service - rush turnaround (24-36 hours)', 'CUSTOM', 125, 0, 0, 'dropdown', 'above_upload', 3, false, true, 1);
+(3, 'Rush Custom Design', 'rush-custom-design', 'Professional design service - rush turnaround (24-36 hours)', 'CUSTOM', 160, 0, 0, 'dropdown', 'above_upload', 3, false, true, 1);
 
 -- Sub-options for Rush Custom Design
 INSERT INTO add_on_sub_options (add_on_id, field_name, field_label, field_type, options, default_value, is_required, display_order)
 VALUES
-(3, 'sides', 'Design Sides', 'select', '{"options": [{"value": "one", "label": "One Side - $125"}, {"value": "two", "label": "Two Sides - $200"}]}', 'one', true, 1);
+(3, 'sides', 'Design Sides', 'select', '{"options": [{"value": "one", "label": "One Side - $160"}, {"value": "two", "label": "Two Sides - $240"}]}', 'one', true, 1);
 
 -- 4. Design Changes - Minor
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
@@ -56,31 +58,16 @@ VALUES
 -- ========================================
 
 -- 7. Perforation
+-- Pricing: $20.00 setup + $0.01 per piece
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
 VALUES
-(7, 'Perforation', 'perforation', 'Add perforations for easy tear-off sections', 'CUSTOM', 20, 0.01, 0, 'checkbox', 'below_upload', 7, false, true, 1);
+(7, 'Perforation', 'perforation', 'Add tear-off perforations for coupons, tickets, or tear-off sections', 'CUSTOM', 20, 0.01, 0, 'checkbox', 'below_upload', 7, false, true, 1);
 
 -- Sub-options for Perforation
 INSERT INTO add_on_sub_options (add_on_id, field_name, field_label, field_type, options, default_value, is_required, display_order)
 VALUES
-(7, 'vertical_count', 'How Many Vertical', 'select', '{"options": [
-  {"value": "0", "label": "0"},
-  {"value": "1", "label": "1"},
-  {"value": "2", "label": "2"},
-  {"value": "3", "label": "3"},
-  {"value": "4", "label": "4"},
-  {"value": "5", "label": "5"}
-]}', '0', false, 1),
-(7, 'vertical_position', 'Vertical Position', 'text', NULL, NULL, false, 2),
-(7, 'horizontal_count', 'How Many Horizontal', 'select', '{"options": [
-  {"value": "0", "label": "0"},
-  {"value": "1", "label": "1"},
-  {"value": "2", "label": "2"},
-  {"value": "3", "label": "3"},
-  {"value": "4", "label": "4"},
-  {"value": "5", "label": "5"}
-]}', '0', false, 3),
-(7, 'horizontal_position', 'Horizontal Position', 'text', NULL, NULL, false, 4);
+(7, 'orientation', 'Orientation', 'select', '{"options": [{"value": "vertical", "label": "Vertical"}, {"value": "horizontal", "label": "Horizontal"}]}', 'vertical', true, 1),
+(7, 'position', 'Position (e.g., 1 inch from top)', 'text', NULL, NULL, true, 2);
 
 -- 8. Score Only
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
@@ -120,27 +107,26 @@ VALUES
 ]}', 'half', true, 1);
 
 -- 10. Corner Rounding
+-- Pricing: $25.00 setup + $0.02 per piece
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
 VALUES
-(10, 'Corner Rounding', 'corner-rounding', 'Rounded corners for professional finish', 'CUSTOM', 20, 0.01, 0, 'dropdown', 'below_upload', 10, false, true, 1);
+(10, 'Corner Rounding', 'corner-rounding', 'Professional corner rounding for improved appearance and handling', 'CUSTOM', 25, 0.02, 0, 'dropdown', 'below_upload', 10, false, true, 1);
 
 -- Sub-options for Corner Rounding
 INSERT INTO add_on_sub_options (add_on_id, field_name, field_label, field_type, options, default_value, is_required, display_order)
 VALUES
-(10, 'corners', 'Which Corners', 'select', '{"options": [
+(10, 'corners', 'Corners to Round', 'select', '{"options": [
   {"value": "all_four", "label": "All Four Corners"},
   {"value": "top_two", "label": "Top Two Corners"},
   {"value": "bottom_two", "label": "Bottom Two Corners"},
-  {"value": "left_two", "label": "Left Two Corners"},
-  {"value": "right_two", "label": "Right Two Corners"}
+  {"value": "custom", "label": "Custom Selection"}
 ]}', 'all_four', true, 1),
-(10, 'radius', 'Corner Radius', 'select', '{"options": [
-  {"value": "1/8", "label": "1/8 inch"},
-  {"value": "1/4", "label": "1/4 inch"},
-  {"value": "3/16", "label": "3/16 inch"},
-  {"value": "3/8", "label": "3/8 inch"},
-  {"value": "1/2", "label": "1/2 inch"}
-]}', '1/4', true, 2);
+(10, 'radius', 'Radius', 'select', '{"options": [
+  {"value": "1/8", "label": "Standard 1/8 inch"},
+  {"value": "1/4", "label": "Standard 1/4 inch"},
+  {"value": "custom", "label": "Custom Radius"}
+]}', '1/4', true, 2),
+(10, 'custom_radius', 'Custom Radius (if selected)', 'text', NULL, NULL, false, 3);
 
 -- 11. Hole Drilling
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
@@ -181,14 +167,15 @@ VALUES
 -- ========================================
 
 -- 13. Banding
+-- Pricing: $15.00 setup + $2.00 per bundle
 INSERT INTO add_ons (id, name, slug, description, pricing_model, base_price, per_unit_price, percentage, ui_component, position, display_order, is_mandatory_default, is_enabled_default, turnaround_days_add)
 VALUES
-(13, 'Banding', 'banding', 'Bundle your prints with paper or rubber bands ($0.75/bundle)', 'CUSTOM', 0, 0.75, 0, 'checkbox', 'below_upload', 13, false, true, 1);
+(13, 'Banding', 'banding', 'Bundle your prints with paper or rubber bands ($15 setup + $2/bundle)', 'CUSTOM', 15, 2.00, 0, 'checkbox', 'below_upload', 13, false, true, 1);
 
 -- Sub-options for Banding
 INSERT INTO add_on_sub_options (add_on_id, field_name, field_label, field_type, options, default_value, is_required, display_order)
 VALUES
-(13, 'band_type', 'Band Type', 'select', '{"options": [{"value": "paper", "label": "Paper Bands"}, {"value": "rubber", "label": "Rubber Bands"}]}', 'paper', true, 1),
+(13, 'band_type', 'Band Type', 'select', '{"options": [{"value": "paper", "label": "Paper Band"}, {"value": "rubber", "label": "Rubber Band"}]}', 'paper', true, 1),
 (13, 'bundle_size', 'Items Per Bundle', 'number', NULL, '100', true, 2);
 
 -- 14. Shrink Wrapping
