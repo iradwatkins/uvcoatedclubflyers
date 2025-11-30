@@ -165,6 +165,10 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
   // Calculated price
   const [priceBreakdown, setPriceBreakdown] = useState<PriceBreakdown | null>(null);
 
+  // Prices for all turnaround options (for comparison display)
+  const [turnaroundPrices, setTurnaroundPrices] = useState<Record<number, { total: number; unit: number }>>({});
+  const [isCalculatingTurnarounds, setIsCalculatingTurnarounds] = useState(false);
+
   // Validation errors
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
@@ -323,6 +327,101 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
       setError('Unable to calculate price. Please try again.');
     } finally {
       setIsCalculatingPrice(false);
+    }
+  };
+
+  // ========================================
+  // CALCULATE PRICES FOR ALL TURNAROUNDS
+  // ========================================
+
+  useEffect(() => {
+    if (
+      options?.turnarounds &&
+      selectedPaperStockId &&
+      selectedCoatingId &&
+      selectedSizeId &&
+      selectedQuantity
+    ) {
+      calculateAllTurnaroundPrices();
+    }
+  }, [
+    selectedPaperStockId,
+    selectedCoatingId,
+    selectedSizeId,
+    selectedQuantity,
+    selectedSides,
+    selectedAddOns,
+    addOnSubOptions,
+    selectedDesignOptionId,
+    designOptionSides,
+    options?.turnarounds,
+  ]);
+
+  const calculateAllTurnaroundPrices = async () => {
+    if (!options || !selectedSizeId) return;
+
+    setIsCalculatingTurnarounds(true);
+
+    try {
+      const size = options.sizes.find((s) => s.id === selectedSizeId);
+      if (!size) return;
+
+      const selectedSidesOption = SIDES_OPTIONS.find((opt) => opt.value === selectedSides);
+      const pricingSides = selectedSidesOption?.pricingValue || 'double';
+
+      const addOnsPayload = selectedAddOns.map((addOnId) => ({
+        addOnId,
+        subOptions: addOnSubOptions[addOnId] || {},
+      }));
+
+      if (selectedDesignOptionId) {
+        addOnsPayload.push({
+          addOnId: selectedDesignOptionId,
+          subOptions: { sides: designOptionSides },
+        });
+      }
+
+      // Calculate price for each turnaround option
+      const prices: Record<number, { total: number; unit: number }> = {};
+
+      await Promise.all(
+        options.turnarounds.map(async (turnaround) => {
+          try {
+            const response = await fetch('/api/products/calculate-price', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                productId,
+                paperStockId: selectedPaperStockId,
+                coatingId: selectedCoatingId,
+                turnaroundId: turnaround.id,
+                quantity: selectedQuantity,
+                width: size.width,
+                height: size.height,
+                sides: pricingSides,
+                addOns: addOnsPayload,
+              }),
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              const data = result.data || result;
+              prices[turnaround.id] = {
+                total: data.totalPrice,
+                unit: data.unitPrice,
+              };
+            }
+          } catch (err) {
+            console.error(`Error calculating price for turnaround ${turnaround.id}:`, err);
+          }
+        })
+      );
+
+      setTurnaroundPrices(prices);
+    } catch (err) {
+      console.error('Error calculating turnaround prices:', err);
+    } finally {
+      setIsCalculatingTurnarounds(false);
     }
   };
 
@@ -918,19 +1017,38 @@ Tips:
             {/* 9. Turnaround Time */}
             <div className="space-y-3">
               <Label>Turnaround Time</Label>
+              {isCalculatingTurnarounds && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Calculating prices...
+                </div>
+              )}
               <RadioGroup
                 value={selectedTurnaroundId?.toString()}
                 onValueChange={(value) => setSelectedTurnaroundId(parseInt(value))}
               >
                 {options.turnarounds.map((turnaround) => {
-                  // Calculate price for this turnaround if we have a breakdown
-                  const turnaroundPrice = priceBreakdown?.totalPrice || 0;
-                  const unitPrice = priceBreakdown?.unitPrice || 0;
+                  // Get pre-calculated price for this turnaround
+                  const turnaroundPriceData = turnaroundPrices[turnaround.id];
+                  const totalPrice = turnaroundPriceData?.total || 0;
+                  const unitPrice = turnaroundPriceData?.unit || 0;
+
+                  // Find lowest price for "Best Value" badge
+                  const allPrices = Object.values(turnaroundPrices).map((p) => p.total);
+                  const lowestPrice = allPrices.length > 0 ? Math.min(...allPrices) : 0;
+                  const isLowestPrice = totalPrice > 0 && totalPrice === lowestPrice;
+
+                  // Check if this is the selected option
+                  const isSelected = selectedTurnaroundId === turnaround.id;
 
                   return (
                     <div
                       key={turnaround.id}
-                      className="flex items-center space-x-3 rounded-lg border p-3 hover:bg-accent"
+                      className={cn(
+                        'flex items-center space-x-3 rounded-lg border p-3 hover:bg-accent transition-colors',
+                        isSelected && 'border-primary bg-primary/5',
+                        isLowestPrice && 'border-green-500/50'
+                      )}
                     >
                       <RadioGroupItem
                         value={turnaround.id.toString()}
@@ -941,18 +1059,31 @@ Tips:
                         className="flex flex-1 cursor-pointer items-center justify-between"
                       >
                         <div className="flex flex-col">
-                          <span className="font-medium text-sm">{turnaround.name}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm">{turnaround.name}</span>
+                            {isLowestPrice && (
+                              <Badge variant="outline" className="text-xs text-green-600 border-green-500">
+                                Best Value
+                              </Badge>
+                            )}
+                          </div>
                           <span className="text-xs text-muted-foreground">
                             {turnaround.description ||
-                              `${turnaround.production_days} business days`}
+                              `${turnaround.production_days} business day${turnaround.production_days !== 1 ? 's' : ''}`}
                           </span>
                         </div>
-                        {priceBreakdown && (
+                        {turnaroundPriceData ? (
                           <div className="text-right">
-                            <div className="font-bold">{formatPrice(turnaroundPrice)}</div>
+                            <div className={cn('font-bold', isLowestPrice && 'text-green-600')}>
+                              {formatPrice(totalPrice)}
+                            </div>
                             <div className="text-xs text-muted-foreground">
                               ({formatPrice(unitPrice)} ea)
                             </div>
+                          </div>
+                        ) : (
+                          <div className="text-right">
+                            <div className="text-sm text-muted-foreground">—</div>
                           </div>
                         )}
                       </label>

@@ -646,12 +646,26 @@ export async function getProductPricingOptions(productId: number) {
         )
       : { rows: [] };
 
-  // Map sub-options to their parent add-ons
+  // Transform sub-options from snake_case to camelCase and map to parent add-ons
   const subOptionsByAddOn = subOptionsResult.rows.reduce((acc: any, subOption: any) => {
     if (!acc[subOption.add_on_id]) {
       acc[subOption.add_on_id] = [];
     }
-    acc[subOption.add_on_id].push(subOption);
+    // Transform snake_case database columns to camelCase for frontend
+    acc[subOption.add_on_id].push({
+      id: subOption.id,
+      addOnId: subOption.add_on_id,
+      fieldName: subOption.field_name,
+      fieldLabel: subOption.field_label,
+      fieldType: subOption.field_type,
+      options: subOption.options,
+      defaultValue: subOption.default_value,
+      isRequired: subOption.is_required,
+      affectsPricing: subOption.affects_pricing,
+      tooltip: subOption.tooltip,
+      displayOrder: subOption.display_order,
+      showWhen: subOption.show_when,
+    });
     return acc;
   }, {});
 
