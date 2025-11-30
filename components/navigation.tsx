@@ -97,27 +97,18 @@ export function Navigation({ user, cartItemCount = 0 }: NavigationProps) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard" className="cursor-pointer">
+                  <Link href={user.role === 'admin' ? '/admin' : '/dashboard'} className="cursor-pointer">
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     Dashboard
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/settings" className="cursor-pointer">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </Link>
-                </DropdownMenuItem>
-                {user.role === 'admin' && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin" className="cursor-pointer">
-                        <Shield className="mr-2 h-4 w-4" />
-                        Admin Panel
-                      </Link>
-                    </DropdownMenuItem>
-                  </>
+                {user.role !== 'admin' && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard/settings" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -205,29 +196,21 @@ export function Navigation({ user, cartItemCount = 0 }: NavigationProps) {
                     </div>
                   </div>
                   <Link
-                    href="/dashboard"
+                    href={user.role === 'admin' ? '/admin' : '/dashboard'}
                     className="flex items-center text-base font-medium text-muted-foreground hover:text-primary"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <LayoutDashboard className="mr-2 h-5 w-5" />
                     Dashboard
                   </Link>
-                  <Link
-                    href="/dashboard/settings"
-                    className="flex items-center text-base font-medium text-muted-foreground hover:text-primary"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Settings className="mr-2 h-5 w-5" />
-                    Settings
-                  </Link>
-                  {user.role === 'admin' && (
+                  {user.role !== 'admin' && (
                     <Link
-                      href="/admin"
+                      href="/dashboard/settings"
                       className="flex items-center text-base font-medium text-muted-foreground hover:text-primary"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <Shield className="mr-2 h-5 w-5" />
-                      Admin Panel
+                      <Settings className="mr-2 h-5 w-5" />
+                      Settings
                     </Link>
                   )}
                   <div className="pt-2 border-t">

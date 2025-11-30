@@ -52,8 +52,16 @@ export const authConfig: NextAuthConfig = {
     error: '/login',
   },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
-      if (user) {
+    async jwt({ token, user, account, trigger, session }) {
+      // For OAuth sign-in, fetch user data from database to get role
+      if (account?.provider === 'google' && token.email) {
+        const result = await query('SELECT id, role FROM users WHERE email = $1', [token.email]);
+        if (result.rows.length > 0) {
+          token.id = result.rows[0].id.toString();
+          token.role = result.rows[0].role;
+        }
+      } else if (user) {
+        // For credentials sign-in
         token.id = user.id || '';
         token.role = user.role;
       }
