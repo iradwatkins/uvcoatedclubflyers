@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -11,7 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Info, Upload } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { FileUploadDropzone } from '@/components/file-upload-dropzone';
 
 export interface DesignOption {
@@ -40,30 +39,25 @@ export interface DesignOptionSelectorProps {
 }
 
 /**
- * Format price display for design option
+ * Format price display for design option in dropdown
  */
-const formatDesignOptionPrice = (option: DesignOption, sides?: string): string => {
+const formatDesignOptionPrice = (option: DesignOption): string => {
   const basePrice = parseFloat(option.base_price || '0');
   const perUnitPrice = parseFloat(option.per_unit_price || '0');
 
   // Free options
   if (basePrice === 0 && perUnitPrice === 0) {
-    return 'FREE';
+    return '';
   }
 
   // Custom design with sides-based pricing
   if (option.slug === 'standard-custom-design' || option.slug === 'rush-custom-design') {
-    if (sides === 'one') {
-      return `+$${basePrice.toFixed(2)}`;
-    } else if (sides === 'two') {
-      return `+$${perUnitPrice.toFixed(2)}`;
-    }
-    return `$${basePrice.toFixed(2)} / $${perUnitPrice.toFixed(2)}`;
+    return ` (from $${basePrice.toFixed(0)})`;
   }
 
   // Flat pricing
   if (basePrice > 0) {
-    return `+$${basePrice.toFixed(2)}`;
+    return ` (+$${basePrice.toFixed(0)})`;
   }
 
   return '';
@@ -71,7 +65,8 @@ const formatDesignOptionPrice = (option: DesignOption, sides?: string): string =
 
 /**
  * Component for selecting design/file upload option
- * Always appears above turnaround time as core product configuration
+ * Uses dropdown selector - file uploader shows by default when "Upload My Artwork" is selected
+ * File uploader hides when other design services are selected
  */
 export function DesignOptionSelector({
   designOptions,
@@ -91,6 +86,18 @@ export function DesignOptionSelector({
 
   // Get selected option details
   const selectedOption = sortedOptions.find((opt) => opt.id === selectedOptionId);
+
+  // Auto-select "Upload My Artwork" (first option) if nothing is selected
+  useEffect(() => {
+    if (!selectedOptionId && sortedOptions.length > 0) {
+      const uploadOption = sortedOptions.find(opt => opt.slug === 'upload-my-artwork');
+      if (uploadOption) {
+        onOptionChange(uploadOption.id);
+      } else {
+        onOptionChange(sortedOptions[0].id);
+      }
+    }
+  }, [sortedOptions, selectedOptionId, onOptionChange]);
 
   // Validate when selection changes
   useEffect(() => {
@@ -132,60 +139,49 @@ export function DesignOptionSelector({
     }
   };
 
+  // Determine if file uploader should show
+  // Show for: upload-my-artwork, design-changes-minor, design-changes-major
+  const showFileUploader = selectedOption?.requires_upload === true;
+
   return (
     <div className={className}>
       <div className="space-y-4">
-        {/* Design Options Radio Group */}
-        <div>
-          <Label className="text-base font-semibold mb-3 block">
-            Design & Files
-            <span className="text-red-500 ml-1">*</span>
+        {/* Design Services Dropdown */}
+        <div className="space-y-2">
+          <Label htmlFor="design-service" className="text-base font-semibold">
+            Design Services
           </Label>
-          <RadioGroup value={selectedOptionId?.toString() || ''} onValueChange={handleOptionChange}>
-            <div className="space-y-2">
+          <Select
+            value={selectedOptionId?.toString() || ''}
+            onValueChange={handleOptionChange}
+          >
+            <SelectTrigger id="design-service" className="w-full">
+              <SelectValue placeholder="Select design service" />
+            </SelectTrigger>
+            <SelectContent>
               {sortedOptions.map((option) => (
-                <div
-                  key={option.id}
-                  className="flex items-start space-x-3 rounded-lg border p-4 hover:bg-accent/50 transition-colors"
-                >
-                  <RadioGroupItem
-                    value={option.id.toString()}
-                    id={`design-option-${option.id}`}
-                    className="mt-1"
-                  />
-                  <div className="flex-1">
-                    <Label
-                      htmlFor={`design-option-${option.id}`}
-                      className="cursor-pointer font-medium leading-none"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span>{option.name}</span>
-                        <span className="text-xs text-muted-foreground font-medium">
-                          {formatDesignOptionPrice(option, selectedSides)}
-                        </span>
-                      </div>
-                      {option.description && (
-                        <p className="mt-1 text-sm text-muted-foreground font-normal">
-                          {option.description}
-                        </p>
-                      )}
-                    </Label>
-                  </div>
-                </div>
+                <SelectItem key={option.id} value={option.id.toString()}>
+                  {option.name}{formatDesignOptionPrice(option)}
+                </SelectItem>
               ))}
-            </div>
-          </RadioGroup>
+            </SelectContent>
+          </Select>
+          {selectedOption?.description && (
+            <p className="text-sm text-muted-foreground">
+              {selectedOption.description}
+            </p>
+          )}
         </div>
 
         {/* Conditional: Sides Selection for Custom Design */}
         {selectedOption?.requires_sides_selection && (
-          <div className="ml-8 space-y-2">
+          <div className="space-y-2">
             <Label htmlFor="design-sides" className="text-sm font-medium">
               How many sides?
               <span className="text-red-500 ml-1">*</span>
             </Label>
             <Select value={selectedSides || ''} onValueChange={handleSidesChange}>
-              <SelectTrigger id="design-sides" className="w-full max-w-xs">
+              <SelectTrigger id="design-sides" className="w-full">
                 <SelectValue placeholder="Select number of sides" />
               </SelectTrigger>
               <SelectContent>
@@ -204,11 +200,11 @@ export function DesignOptionSelector({
           </div>
         )}
 
-        {/* Conditional: File Upload Dropzone */}
-        {selectedOption?.requires_upload && (
-          <div className="ml-8 space-y-2">
+        {/* File Upload Dropzone - Shows by default for upload options */}
+        {showFileUploader && (
+          <div className="space-y-2">
             <Label className="text-sm font-medium">
-              Upload Your Files
+              Upload Your Artwork
               <span className="text-red-500 ml-1">*</span>
             </Label>
             <FileUploadDropzone
@@ -226,7 +222,7 @@ export function DesignOptionSelector({
 
         {/* Info: Will Upload Later */}
         {selectedOption?.slug === 'will-upload-later' && (
-          <Alert className="ml-8">
+          <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>
               You can upload your files later from your dashboard after placing the order. Your
@@ -237,16 +233,9 @@ export function DesignOptionSelector({
 
         {/* Validation Error */}
         {validationError && (
-          <Alert variant="destructive" className="ml-8">
+          <Alert variant="destructive">
             <AlertDescription>{validationError}</AlertDescription>
           </Alert>
-        )}
-
-        {/* Helper Text */}
-        {!selectedOption && (
-          <p className="text-xs text-muted-foreground ml-8">
-            Please select how you'd like to provide your design files.
-          </p>
         )}
       </div>
     </div>

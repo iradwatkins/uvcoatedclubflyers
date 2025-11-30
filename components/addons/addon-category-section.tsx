@@ -20,7 +20,8 @@ export interface AddOnCategorySectionProps {
 }
 
 /**
- * Define addon categories based on documentation
+ * Define addon slug groupings for internal reference
+ * Note: These are no longer displayed as grouped sections - addons show as a flat list
  */
 export const ADDON_CATEGORIES = {
   FINISHING: {
@@ -49,11 +50,6 @@ export const ADDON_CATEGORIES = {
     title: 'Premium Finishes',
     description: 'Luxury enhancements for standout prints',
     slugs: ['foil-stamping', 'spot-uv'],
-  },
-  MAILING: {
-    title: 'Mailing Services',
-    description: 'Complete mailing and delivery solutions',
-    slugs: ['postal-delivery-ddu', 'eddm-process-postage'],
   },
   PRICING: {
     title: 'Pricing Adjustments',
@@ -144,6 +140,7 @@ export function AddOnCategorySection({
 
 /**
  * Helper function to categorize addons by slug
+ * Note: This is kept for internal reference but addons are now displayed as a flat list
  */
 export function categorizeAddOns(addOns: AddOn[]): Record<string, AddOn[]> {
   const categorized: Record<string, AddOn[]> = {
@@ -151,7 +148,6 @@ export function categorizeAddOns(addOns: AddOn[]): Record<string, AddOn[]> {
     PACKAGING: [],
     PERSONALIZATION: [],
     PREMIUM: [],
-    MAILING: [],
     PRICING: [],
     PROOFS: [],
     OTHER: [],

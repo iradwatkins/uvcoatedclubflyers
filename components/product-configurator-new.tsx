@@ -910,6 +910,7 @@ Tips:
             {/* 7. Additional Options - Simple Flat List */}
             {options.addOns?.below_upload && options.addOns.below_upload.length > 0 && (
               <div className="space-y-3">
+                <Label className="text-base font-semibold">Additional Options</Label>
                 {options.addOns.below_upload
                   .filter((a) => !a.is_mandatory)
                   .sort((a, b) => a.display_order - b.display_order)
