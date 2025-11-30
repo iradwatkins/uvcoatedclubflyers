@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,7 +17,8 @@ import {
 } from '@/components/ui/select';
 import { FileUploadDropzone } from '@/components/file-upload-dropzone';
 import { Separator } from '@/components/ui/separator';
-import { ShoppingCart, Zap, Clock, CheckCircle, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ShoppingCart, Zap, Clock, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface QuickProduct {
@@ -63,6 +65,8 @@ export function QuickProductConfigurator({
   product,
   turnarounds,
 }: QuickProductConfiguratorProps) {
+  const router = useRouter();
+
   // State - default quantity is 5000
   const [selectedQuantity, setSelectedQuantity] = useState(5000);
   const [selectedSides, setSelectedSides] = useState('different-both');
@@ -74,6 +78,7 @@ export function QuickProductConfigurator({
   const [turnaroundPrices, setTurnaroundPrices] = useState<Record<number, number>>({});
   const [isCalculating, setIsCalculating] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Get the pricing value for the selected sides option
   const selectedSidesOption = SIDES_OPTIONS.find((s) => s.value === selectedSides);
@@ -141,17 +146,86 @@ export function QuickProductConfigurator({
     }
   }, [selectedTurnaroundId, turnaroundPrices]);
 
+  // Upload files to server and return URLs
+  const uploadFilesToServer = async (files: File[]): Promise<string[]> => {
+    const uploadedUrls: string[] = [];
+
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        uploadedUrls.push(result.url);
+      } else {
+        throw new Error(`Failed to upload file: ${file.name}`);
+      }
+    }
+
+    return uploadedUrls;
+  };
+
   const handleAddToCart = async () => {
-    if (!selectedTurnaroundId || selectedQuantity < 25) return;
+    if (!selectedTurnaroundId || selectedQuantity < 25 || calculatedPrice === null) return;
 
     setIsAddingToCart(true);
+    setError(null);
+
     try {
-      // TODO: Implement actual cart functionality
-      // For now, just simulate adding to cart
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      alert('Added to cart! (Cart functionality coming soon)');
-    } catch (error) {
-      console.error('Failed to add to cart:', error);
+      // Upload files if any
+      let fileUrls: string[] = [];
+      if (uploadedFiles.length > 0) {
+        fileUrls = await uploadFilesToServer(uploadedFiles);
+      }
+
+      const selectedTurnaround = turnarounds.find((t) => t.id === selectedTurnaroundId);
+
+      // Prepare cart item
+      const cartItem = {
+        productId: product.id.toString(),
+        productName: product.name,
+        quantity: selectedQuantity,
+        options: {
+          size: `${product.fixed_width}" × ${product.fixed_height}"`,
+          paperStock: product.paper_stock_name,
+          paperStockId: product.fixed_paper_stock_id,
+          coating: product.coating_name,
+          coatingId: product.fixed_coating_id,
+          sides: selectedSidesOption?.label || 'Different Image Both Sides',
+          sidesValue: selectedSides,
+          turnaround: selectedTurnaround?.name,
+          turnaroundId: selectedTurnaroundId,
+          productionDays: selectedTurnaround?.production_days,
+          designFiles: fileUrls,
+        },
+        price: calculatedPrice,
+        unitPrice: calculatedPrice / selectedQuantity,
+        uploadedFiles: fileUrls,
+        addOns: [],
+      };
+
+      // Add to cart via API
+      const response = await fetch('/api/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cartItem),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to add to cart');
+      }
+
+      // Redirect to cart
+      router.push('/cart');
+    } catch (err) {
+      console.error('Failed to add to cart:', err);
+      setError(err instanceof Error ? err.message : 'Failed to add to cart. Please try again.');
     } finally {
       setIsAddingToCart(false);
     }
@@ -370,6 +444,14 @@ export function QuickProductConfigurator({
             <CardTitle>Order Summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Error Alert */}
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
             {/* Product Details */}
             <div className="space-y-2">
               <div className="flex justify-between">
@@ -415,14 +497,14 @@ export function QuickProductConfigurator({
               <div className="flex items-center gap-2 rounded-lg bg-green-50 p-3 text-green-700 dark:bg-green-950/30 dark:text-green-300">
                 <CheckCircle className="h-4 w-4" />
                 <span className="text-sm font-medium">
-                  {uploadedFiles.length} file{uploadedFiles.length !== 1 ? 's' : ''} uploaded
+                  {uploadedFiles.length} file{uploadedFiles.length !== 1 ? 's' : ''} ready to upload
                 </span>
               </div>
             )}
 
             <Separator />
 
-            {/* Total - No per-piece price */}
+            {/* Total */}
             <div className="flex justify-between text-lg font-bold">
               <span>Total</span>
               {isCalculating ? (
