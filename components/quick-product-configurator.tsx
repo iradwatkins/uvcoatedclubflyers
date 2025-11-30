@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
@@ -52,13 +52,20 @@ interface QuickProductConfiguratorProps {
 // Standard quantity options
 const QUANTITY_OPTIONS = [25, 50, 100, 250, 500, 1000, 2500, 5000];
 
+// Sides options
+const SIDES_OPTIONS = [
+  { value: 'different-both', label: 'Different Image Both Sides', pricingValue: 'double' },
+  { value: 'same-both', label: 'Same Image Both Sides', pricingValue: 'double' },
+  { value: 'front-only', label: 'Image One Side Only', pricingValue: 'single' },
+];
+
 export function QuickProductConfigurator({
   product,
   turnarounds,
 }: QuickProductConfiguratorProps) {
-  // State
-  const [selectedQuantity, setSelectedQuantity] = useState(1000);
-  const [customQuantity, setCustomQuantity] = useState('');
+  // State - default quantity is 5000
+  const [selectedQuantity, setSelectedQuantity] = useState(5000);
+  const [selectedSides, setSelectedSides] = useState('different-both');
   const [selectedTurnaroundId, setSelectedTurnaroundId] = useState<number | null>(
     turnarounds[0]?.id || null
   );
@@ -68,16 +75,16 @@ export function QuickProductConfigurator({
   const [isCalculating, setIsCalculating] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
-  // Effective quantity
-  const effectiveQuantity =
-    selectedQuantity === 0 ? parseInt(customQuantity) || 0 : selectedQuantity;
+  // Get the pricing value for the selected sides option
+  const selectedSidesOption = SIDES_OPTIONS.find((s) => s.value === selectedSides);
+  const sidesForPricing = selectedSidesOption?.pricingValue || 'double';
 
   // Calculate price when configuration changes
   useEffect(() => {
-    if (effectiveQuantity >= 25) {
+    if (selectedQuantity >= 25) {
       calculateAllPrices();
     }
-  }, [effectiveQuantity, product.id]);
+  }, [selectedQuantity, selectedSides, product.id]);
 
   const calculateAllPrices = async () => {
     setIsCalculating(true);
@@ -98,10 +105,10 @@ export function QuickProductConfigurator({
               paperStockId: product.fixed_paper_stock_id,
               coatingId: product.fixed_coating_id,
               turnaroundId: turnaround.id,
-              quantity: effectiveQuantity,
+              quantity: selectedQuantity,
               width,
               height,
-              sides: product.fixed_sides,
+              sides: sidesForPricing,
               addOns: [],
             }),
           });
@@ -135,7 +142,7 @@ export function QuickProductConfigurator({
   }, [selectedTurnaroundId, turnaroundPrices]);
 
   const handleAddToCart = async () => {
-    if (!selectedTurnaroundId || effectiveQuantity < 25) return;
+    if (!selectedTurnaroundId || selectedQuantity < 25) return;
 
     setIsAddingToCart(true);
     try {
@@ -156,142 +163,125 @@ export function QuickProductConfigurator({
     <div className="grid gap-8 lg:grid-cols-2">
       {/* Left Column - Product Info & Configuration */}
       <div className="space-y-6">
-        {/* Product Header */}
+        {/* Product Header with Image */}
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-yellow-500" />
-              <Badge variant="secondary">Quick Order</Badge>
-            </div>
-            <CardTitle className="text-2xl">{product.name}</CardTitle>
-            <p className="text-muted-foreground">{product.description}</p>
-          </CardHeader>
-          <CardContent>
-            {/* Fixed Specs */}
-            <div className="grid grid-cols-2 gap-4 rounded-lg bg-muted/50 p-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Size</p>
-                <p className="font-semibold">
-                  {product.fixed_width}" × {product.fixed_height}"
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Paper Stock</p>
-                <p className="font-semibold">{product.paper_stock_name}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Coating</p>
-                <p className="font-semibold">{product.coating_name}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Printing</p>
-                <p className="font-semibold capitalize">{product.fixed_sides}-Sided</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Quantity Selection */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Select Quantity</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-4 gap-2">
-              {QUANTITY_OPTIONS.map((qty) => (
-                <Button
-                  key={qty}
-                  variant={selectedQuantity === qty ? 'default' : 'outline'}
-                  className="w-full"
-                  onClick={() => {
-                    setSelectedQuantity(qty);
-                    setCustomQuantity('');
-                  }}
-                >
-                  {qty.toLocaleString()}
-                </Button>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-4">
-              <Button
-                variant={selectedQuantity === 0 ? 'default' : 'outline'}
-                onClick={() => setSelectedQuantity(0)}
-              >
-                Custom
-              </Button>
-              {selectedQuantity === 0 && (
-                <Input
-                  type="number"
-                  placeholder="Enter quantity (min 25)"
-                  value={customQuantity}
-                  onChange={(e) => setCustomQuantity(e.target.value)}
-                  min={25}
-                  className="flex-1"
-                />
-              )}
-            </div>
-
-            {effectiveQuantity > 0 && effectiveQuantity < 25 && (
-              <p className="text-sm text-destructive">Minimum quantity is 25</p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Turnaround Selection */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Select Turnaround</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RadioGroup
-              value={selectedTurnaroundId?.toString() || ''}
-              onValueChange={(value) => setSelectedTurnaroundId(parseInt(value))}
-              className="space-y-3"
-            >
-              {turnarounds.map((turnaround) => {
-                const price = turnaroundPrices[turnaround.id];
-                return (
-                  <div
-                    key={turnaround.id}
-                    className={cn(
-                      'flex items-center justify-between rounded-lg border p-4 cursor-pointer transition-colors',
-                      selectedTurnaroundId === turnaround.id
-                        ? 'border-primary bg-primary/5'
-                        : 'hover:bg-muted/50'
-                    )}
-                    onClick={() => setSelectedTurnaroundId(turnaround.id)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <RadioGroupItem
-                        value={turnaround.id.toString()}
-                        id={`turnaround-${turnaround.id}`}
-                      />
-                      <div>
-                        <Label
-                          htmlFor={`turnaround-${turnaround.id}`}
-                          className="font-medium cursor-pointer"
-                        >
-                          {turnaround.name}
-                        </Label>
-                        <p className="text-sm text-muted-foreground">
-                          {turnaround.description || `${turnaround.production_days} business days`}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      {isCalculating ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : price !== undefined ? (
-                        <span className="font-bold text-lg">${price.toFixed(2)}</span>
-                      ) : (
-                        <span className="text-muted-foreground">--</span>
-                      )}
-                    </div>
+            <div className="flex gap-6">
+              {/* Product Image */}
+              <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg bg-muted">
+                {product.image_url ? (
+                  <Image
+                    src={product.image_url}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center">
+                    <span className="text-4xl font-bold text-muted-foreground/30">
+                      {product.fixed_width}×{product.fixed_height}
+                    </span>
                   </div>
-                );
-              })}
-            </RadioGroup>
+                )}
+              </div>
+              {/* Product Info */}
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap className="h-5 w-5 text-yellow-500" />
+                  <Badge variant="secondary">Quick Order</Badge>
+                </div>
+                <CardTitle className="text-2xl mb-2">{product.name}</CardTitle>
+                <p className="text-muted-foreground">{product.description}</p>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+
+        {/* Configuration Options */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Configure Your Order</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Quantity Dropdown */}
+            <div className="space-y-2">
+              <Label htmlFor="quantity">Quantity</Label>
+              <Select
+                value={selectedQuantity.toString()}
+                onValueChange={(value) => setSelectedQuantity(parseInt(value))}
+              >
+                <SelectTrigger id="quantity">
+                  <SelectValue placeholder="Select quantity" />
+                </SelectTrigger>
+                <SelectContent>
+                  {QUANTITY_OPTIONS.map((qty) => (
+                    <SelectItem key={qty} value={qty.toString()}>
+                      {qty.toLocaleString()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Size (Disabled) */}
+            <div className="space-y-2">
+              <Label htmlFor="size">Size</Label>
+              <Select disabled value="fixed">
+                <SelectTrigger id="size" className="bg-muted/50">
+                  <SelectValue>
+                    {product.fixed_width}" × {product.fixed_height}"
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fixed">
+                    {product.fixed_width}" × {product.fixed_height}"
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Paper Stock (Disabled) */}
+            <div className="space-y-2">
+              <Label htmlFor="paper-stock">Paper Stock</Label>
+              <Select disabled value="fixed">
+                <SelectTrigger id="paper-stock" className="bg-muted/50">
+                  <SelectValue>{product.paper_stock_name}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fixed">{product.paper_stock_name}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Coating (Disabled) */}
+            <div className="space-y-2">
+              <Label htmlFor="coating">Coating</Label>
+              <Select disabled value="fixed">
+                <SelectTrigger id="coating" className="bg-muted/50">
+                  <SelectValue>{product.coating_name}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fixed">{product.coating_name}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Sides (Selectable) */}
+            <div className="space-y-2">
+              <Label htmlFor="sides">Sides</Label>
+              <Select value={selectedSides} onValueChange={setSelectedSides}>
+                <SelectTrigger id="sides">
+                  <SelectValue placeholder="Select printing sides" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SIDES_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </CardContent>
         </Card>
 
@@ -314,6 +304,61 @@ export function QuickProductConfigurator({
                 '.psd',
               ]}
             />
+          </CardContent>
+        </Card>
+
+        {/* Turnaround Selection - Inline Radio Group */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Select Turnaround</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup
+              value={selectedTurnaroundId?.toString() || ''}
+              onValueChange={(value) => setSelectedTurnaroundId(parseInt(value))}
+              className="space-y-2"
+            >
+              {turnarounds.map((turnaround) => {
+                const price = turnaroundPrices[turnaround.id];
+                return (
+                  <div
+                    key={turnaround.id}
+                    className={cn(
+                      'flex items-center justify-between py-3 px-4 rounded-md cursor-pointer transition-colors',
+                      selectedTurnaroundId === turnaround.id
+                        ? 'bg-primary/10'
+                        : 'hover:bg-muted/50'
+                    )}
+                    onClick={() => setSelectedTurnaroundId(turnaround.id)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <RadioGroupItem
+                        value={turnaround.id.toString()}
+                        id={`turnaround-${turnaround.id}`}
+                      />
+                      <Label
+                        htmlFor={`turnaround-${turnaround.id}`}
+                        className="font-medium cursor-pointer"
+                      >
+                        {turnaround.name}
+                        <span className="ml-2 text-sm font-normal text-muted-foreground">
+                          ({turnaround.production_days} business days)
+                        </span>
+                      </Label>
+                    </div>
+                    <div className="text-right">
+                      {isCalculating ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : price !== undefined ? (
+                        <span className="font-bold">${price.toFixed(2)}</span>
+                      ) : (
+                        <span className="text-muted-foreground">--</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </RadioGroup>
           </CardContent>
         </Card>
       </div>
@@ -339,7 +384,7 @@ export function QuickProductConfigurator({
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Quantity</span>
-                <span>{effectiveQuantity > 0 ? effectiveQuantity.toLocaleString() : '--'}</span>
+                <span>{selectedQuantity.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Paper</span>
@@ -351,7 +396,7 @@ export function QuickProductConfigurator({
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Printing</span>
-                <span className="capitalize">{product.fixed_sides}-Sided</span>
+                <span>{selectedSidesOption?.label || 'Different Image Both Sides'}</span>
               </div>
             </div>
 
@@ -377,22 +422,15 @@ export function QuickProductConfigurator({
 
             <Separator />
 
-            {/* Total */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-lg font-bold">
-                <span>Total</span>
-                {isCalculating ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : calculatedPrice !== null ? (
-                  <span className="text-primary">${calculatedPrice.toFixed(2)}</span>
-                ) : (
-                  <span className="text-muted-foreground">--</span>
-                )}
-              </div>
-              {effectiveQuantity > 0 && calculatedPrice !== null && (
-                <p className="text-sm text-muted-foreground text-right">
-                  ${(calculatedPrice / effectiveQuantity).toFixed(4)} per piece
-                </p>
+            {/* Total - No per-piece price */}
+            <div className="flex justify-between text-lg font-bold">
+              <span>Total</span>
+              {isCalculating ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : calculatedPrice !== null ? (
+                <span className="text-primary">${calculatedPrice.toFixed(2)}</span>
+              ) : (
+                <span className="text-muted-foreground">--</span>
               )}
             </div>
           </CardContent>
@@ -403,7 +441,7 @@ export function QuickProductConfigurator({
               disabled={
                 isAddingToCart ||
                 isCalculating ||
-                effectiveQuantity < 25 ||
+                selectedQuantity < 25 ||
                 !selectedTurnaroundId ||
                 calculatedPrice === null
               }
