@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -150,6 +151,9 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
   const [selectedSizeId, setSelectedSizeId] = useState<number | null>(null);
   const [selectedTurnaroundId, setSelectedTurnaroundId] = useState<number | null>(null);
   const [selectedQuantity, setSelectedQuantity] = useState(5000); // Default 5000
+  const [customQuantity, setCustomQuantity] = useState<string>(''); // Custom quantity input
+  const [customWidth, setCustomWidth] = useState<string>(''); // Custom width input
+  const [customHeight, setCustomHeight] = useState<string>(''); // Custom height input
   const [selectedSides, setSelectedSides] = useState<string>('same-both'); // Default: Same Image Both Sides
 
   // Design & Files state
@@ -244,13 +248,31 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
   // CALCULATE PRICE
   // ========================================
 
+  // Get effective quantity (custom or selected)
+  const effectiveQuantity = selectedQuantity === 0
+    ? (parseInt(customQuantity) || 0)
+    : selectedQuantity;
+
+  // Get effective width/height (custom or from selected size)
+  const getEffectiveSize = () => {
+    if (selectedSizeId === 0) {
+      return {
+        width: parseFloat(customWidth) || 0,
+        height: parseFloat(customHeight) || 0,
+      };
+    }
+    const size = options?.sizes.find((s) => s.id === selectedSizeId);
+    return size ? { width: size.width, height: size.height } : { width: 0, height: 0 };
+  };
+
   useEffect(() => {
+    const { width, height } = getEffectiveSize();
     if (
       selectedPaperStockId &&
       selectedCoatingId &&
-      selectedSizeId &&
+      (selectedSizeId || (width > 0 && height > 0)) &&
       selectedTurnaroundId &&
-      selectedQuantity
+      effectiveQuantity >= 25
     ) {
       calculatePrice();
     }
@@ -260,6 +282,9 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
     selectedSizeId,
     selectedTurnaroundId,
     selectedQuantity,
+    customQuantity,
+    customWidth,
+    customHeight,
     selectedSides,
     selectedAddOns,
     addOnSubOptions,
@@ -268,17 +293,24 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
   ]);
 
   const calculatePrice = async () => {
-    if (!options || !selectedSizeId) return;
+    if (!options) return;
+
+    const { width, height } = getEffectiveSize();
+
+    // Validate we have valid dimensions
+    if (width <= 0 || height <= 0) {
+      return;
+    }
+
+    // Validate quantity
+    if (effectiveQuantity < 25) {
+      return;
+    }
 
     setIsCalculatingPrice(true);
     setError(null);
 
     try {
-      const size = options.sizes.find((s) => s.id === selectedSizeId);
-      if (!size) {
-        throw new Error('Selected size not found');
-      }
-
       // Map selected sides option to pricing value
       const selectedSidesOption = SIDES_OPTIONS.find((opt) => opt.value === selectedSides);
       const pricingSides = selectedSidesOption?.pricingValue || 'double';
@@ -307,9 +339,9 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
           paperStockId: selectedPaperStockId,
           coatingId: selectedCoatingId,
           turnaroundId: selectedTurnaroundId,
-          quantity: selectedQuantity,
-          width: size.width,
-          height: size.height,
+          quantity: effectiveQuantity,
+          width,
+          height,
           sides: pricingSides,
           addOns: addOnsPayload,
         }),
@@ -335,12 +367,13 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
   // ========================================
 
   useEffect(() => {
+    const { width, height } = getEffectiveSize();
     if (
       options?.turnarounds &&
       selectedPaperStockId &&
       selectedCoatingId &&
-      selectedSizeId &&
-      selectedQuantity
+      (selectedSizeId || (width > 0 && height > 0)) &&
+      effectiveQuantity >= 25
     ) {
       calculateAllTurnaroundPrices();
     }
@@ -349,6 +382,9 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
     selectedCoatingId,
     selectedSizeId,
     selectedQuantity,
+    customQuantity,
+    customWidth,
+    customHeight,
     selectedSides,
     selectedAddOns,
     addOnSubOptions,
@@ -358,14 +394,16 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
   ]);
 
   const calculateAllTurnaroundPrices = async () => {
-    if (!options || !selectedSizeId) return;
+    if (!options) return;
+
+    const { width, height } = getEffectiveSize();
+
+    // Validate dimensions and quantity
+    if (width <= 0 || height <= 0 || effectiveQuantity < 25) return;
 
     setIsCalculatingTurnarounds(true);
 
     try {
-      const size = options.sizes.find((s) => s.id === selectedSizeId);
-      if (!size) return;
-
       const selectedSidesOption = SIDES_OPTIONS.find((opt) => opt.value === selectedSides);
       const pricingSides = selectedSidesOption?.pricingValue || 'double';
 
@@ -395,9 +433,9 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
                 paperStockId: selectedPaperStockId,
                 coatingId: selectedCoatingId,
                 turnaroundId: turnaround.id,
-                quantity: selectedQuantity,
-                width: size.width,
-                height: size.height,
+                quantity: effectiveQuantity,
+                width,
+                height,
                 sides: pricingSides,
                 addOns: addOnsPayload,
               }),
@@ -668,12 +706,18 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
           </CardHeader>
 
           <CardContent className="space-y-6">
-            {/* 1. Quantity - MOVED TO FIRST */}
+            {/* 1. Quantity */}
             <div className="space-y-2">
               <Label htmlFor="quantity">Quantity</Label>
               <Select
-                value={selectedQuantity.toString()}
-                onValueChange={(value) => setSelectedQuantity(parseInt(value))}
+                value={selectedQuantity === 0 ? '0' : selectedQuantity.toString()}
+                onValueChange={(value) => {
+                  const qty = parseInt(value);
+                  setSelectedQuantity(qty);
+                  if (qty !== 0) {
+                    setCustomQuantity('');
+                  }
+                }}
               >
                 <SelectTrigger id="quantity">
                   <SelectValue placeholder="Select quantity" />
@@ -689,14 +733,37 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
                   </SelectItem>
                 </SelectContent>
               </Select>
+              {/* Custom Quantity Input */}
+              {selectedQuantity === 0 && (
+                <div className="mt-2">
+                  <Input
+                    type="number"
+                    placeholder="Enter quantity (minimum 25)"
+                    value={customQuantity}
+                    onChange={(e) => setCustomQuantity(e.target.value)}
+                    min={25}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Minimum order: 25 pieces
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* 2. Size */}
             <div className="space-y-2">
               <Label htmlFor="size">Size</Label>
               <Select
-                value={selectedSizeId?.toString() || ''}
-                onValueChange={(value) => setSelectedSizeId(parseInt(value))}
+                value={selectedSizeId === 0 ? '0' : (selectedSizeId?.toString() || '')}
+                onValueChange={(value) => {
+                  const sizeId = parseInt(value);
+                  setSelectedSizeId(sizeId);
+                  if (sizeId !== 0) {
+                    setCustomWidth('');
+                    setCustomHeight('');
+                  }
+                }}
               >
                 <SelectTrigger id="size">
                   <SelectValue placeholder="Select size" />
@@ -712,6 +779,42 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
                   </SelectItem>
                 </SelectContent>
               </Select>
+              {/* Custom Size Inputs */}
+              {selectedSizeId === 0 && (
+                <div className="mt-2 space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label htmlFor="custom-width" className="text-xs">Width (inches)</Label>
+                      <Input
+                        id="custom-width"
+                        type="number"
+                        placeholder="e.g., 4"
+                        value={customWidth}
+                        onChange={(e) => setCustomWidth(e.target.value)}
+                        min={1}
+                        max={28}
+                        step={0.125}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="custom-height" className="text-xs">Height (inches)</Label>
+                      <Input
+                        id="custom-height"
+                        type="number"
+                        placeholder="e.g., 6"
+                        value={customHeight}
+                        onChange={(e) => setCustomHeight(e.target.value)}
+                        min={1}
+                        max={40}
+                        step={0.125}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Max size: 28" × 40" | Standard bleed: 0.125" on all sides
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Template Download Section */}
