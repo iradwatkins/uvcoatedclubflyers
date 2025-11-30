@@ -1,9 +1,6 @@
 import { notFound } from 'next/navigation';
 import { query } from '@/lib/db';
 import { QuickProductConfigurator } from '@/components/quick-product-configurator';
-import { SiteHeader } from '@/components/site-header';
-import { SiteFooter } from '@/components/site-footer';
-import { auth } from '@/lib/auth';
 
 interface QuickProduct {
   id: number;
@@ -65,7 +62,6 @@ export default async function QuickProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const session = await auth();
 
   const [product, turnarounds] = await Promise.all([
     getQuickProduct(slug),
@@ -77,17 +73,13 @@ export default async function QuickProductPage({
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader user={session?.user || null} />
-      <main className="flex-1 bg-muted/30">
-        <div className="container mx-auto px-4 py-8">
-          <QuickProductConfigurator
-            product={product}
-            turnarounds={turnarounds}
-          />
-        </div>
-      </main>
-      <SiteFooter />
+    <div className="bg-muted/30">
+      <div className="container mx-auto px-4 py-8">
+        <QuickProductConfigurator
+          product={product}
+          turnarounds={turnarounds}
+        />
+      </div>
     </div>
   );
 }

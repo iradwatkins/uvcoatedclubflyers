@@ -35,7 +35,6 @@ export function SiteHeader({ user }: SiteHeaderProps) {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/products', label: 'Products' },
-    ...(user ? [{ href: dashboardHref, label: 'Dashboard' }] : []),
   ];
 
   const isActive = (href: string) => {
