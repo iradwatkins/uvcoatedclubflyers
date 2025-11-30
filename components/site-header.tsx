@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -43,12 +44,23 @@ export function SiteHeader({ user }: SiteHeaderProps) {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <span className="text-xl font-bold">UV</span>
-            </div>
-            <span className="hidden font-bold sm:inline-block">UV Coated Club Flyers</span>
-            <span className="font-bold sm:hidden">UV Flyers</span>
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/images/logos/uvcoated-club-flyers-l-logo-01-300x64.webp"
+              alt="UV Coated Club Flyers"
+              width={150}
+              height={32}
+              className="h-8 w-auto sm:hidden"
+              priority
+            />
+            <Image
+              src="/images/logos/uvcoated-club-flyers-l-logo-01-768x165.webp"
+              alt="UV Coated Club Flyers"
+              width={200}
+              height={43}
+              className="hidden h-10 w-auto sm:block"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation */}

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="95" fill="#F97316" stroke="#EA580C" stroke-width="3"/>
+
+  <!-- Inner Circle for depth -->
+  <circle cx="100" cy="100" r="85" fill="#FB923C" opacity="0.3"/>
+
+  <!-- Letter G -->
+  <path d="M 70 100 A 25 25 0 1 1 70 99.9 L 70 100 L 95 100 L 95 115 L 85 115 A 15 15 0 1 0 85 85 L 95 85 L 95 70 L 85 70 A 30 30 0 1 1 85 130 L 95 130 L 95 100 Z"
+        fill="white"
+        stroke="white"
+        stroke-width="2"
+        transform="translate(-5, 0)"/>
+
+  <!-- Letter R -->
+  <path d="M 110 70 L 110 130 M 110 70 L 130 70 A 15 15 0 0 1 130 100 L 110 100 M 125 100 L 135 130"
+        fill="none"
+        stroke="white"
+        stroke-width="8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        transform="translate(5, 0)"/>
+
+  <!-- Tagline -->
+  <text x="100" y="175"
+        font-family="Arial, sans-serif"
+        font-size="12"
+        font-weight="bold"
+        fill="white"
+        text-anchor="middle">
+    GANGRUN PRINTING
+  </text>
+</svg>

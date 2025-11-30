@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 
 export function SiteFooter() {
@@ -9,12 +10,15 @@ export function SiteFooter() {
         <div className="grid gap-8 py-12 md:grid-cols-2 lg:grid-cols-4">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <span className="text-xl font-bold">UV</span>
-              </div>
-              <span className="font-bold">UV Coated Club Flyers</span>
-            </div>
+            <Link href="/" className="inline-block">
+              <Image
+                src="/images/logos/uvcoated-club-flyers-l-logo-01-300x64.webp"
+                alt="UV Coated Club Flyers"
+                width={180}
+                height={39}
+                className="h-10 w-auto"
+              />
+            </Link>
             <p className="text-sm text-muted-foreground">
               Premium UV coated printing services for clubs, events, and businesses. Fast
               turnaround, exceptional quality.
