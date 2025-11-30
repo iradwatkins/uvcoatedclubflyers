@@ -71,7 +71,7 @@ export function AdminNav({ user }: AdminNavProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-card">
+    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 border-r bg-card md:block">
       <div className="flex h-full flex-col">
         {/* Header */}
         <div className="border-b p-6">
