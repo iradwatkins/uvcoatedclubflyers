@@ -18,7 +18,7 @@ import {
 import { FileUploadDropzone } from '@/components/file-upload-dropzone';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ShoppingCart, Zap, Clock, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
+import { ShoppingCart, Zap, Clock, CheckCircle, Loader2, AlertCircle, Palette } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface QuickProduct {
@@ -61,6 +61,18 @@ const SIDES_OPTIONS = [
   { value: 'front-only', label: 'Image One Side Only', pricingValue: 'single' },
 ];
 
+// Design options
+const DESIGN_OPTIONS = [
+  { value: 'upload', label: 'Upload Your Image', price: 0 },
+  { value: 'design-service', label: 'I Need Design Services (+$49.99)', price: 49.99 },
+];
+
+// Format size - remove decimals for whole numbers
+function formatSize(value: string): string {
+  const num = parseFloat(value);
+  return Number.isInteger(num) ? num.toString() : value;
+}
+
 export function QuickProductConfigurator({
   product,
   turnarounds,
@@ -70,6 +82,7 @@ export function QuickProductConfigurator({
   // State - default quantity is 5000
   const [selectedQuantity, setSelectedQuantity] = useState(5000);
   const [selectedSides, setSelectedSides] = useState('different-both');
+  const [selectedDesign, setSelectedDesign] = useState('upload');
   const [selectedTurnaroundId, setSelectedTurnaroundId] = useState<number | null>(
     turnarounds[0]?.id || null
   );
@@ -83,6 +96,15 @@ export function QuickProductConfigurator({
   // Get the pricing value for the selected sides option
   const selectedSidesOption = SIDES_OPTIONS.find((s) => s.value === selectedSides);
   const sidesForPricing = selectedSidesOption?.pricingValue || 'double';
+
+  // Get design service fee
+  const selectedDesignOption = DESIGN_OPTIONS.find((d) => d.value === selectedDesign);
+  const designFee = selectedDesignOption?.price || 0;
+
+  // Format sizes for display
+  const formattedWidth = formatSize(product.fixed_width);
+  const formattedHeight = formatSize(product.fixed_height);
+  const sizeDisplay = `${formattedWidth}"×${formattedHeight}"`;
 
   // Calculate price when configuration changes
   useEffect(() => {
@@ -146,6 +168,9 @@ export function QuickProductConfigurator({
     }
   }, [selectedTurnaroundId, turnaroundPrices]);
 
+  // Total price including design fee
+  const totalPrice = calculatedPrice !== null ? calculatedPrice + designFee : null;
+
   // Upload files to server and return URLs
   const uploadFilesToServer = async (files: File[]): Promise<string[]> => {
     const uploadedUrls: string[] = [];
@@ -171,7 +196,7 @@ export function QuickProductConfigurator({
   };
 
   const handleAddToCart = async () => {
-    if (!selectedTurnaroundId || selectedQuantity < 25 || calculatedPrice === null) return;
+    if (!selectedTurnaroundId || selectedQuantity < 25 || totalPrice === null) return;
 
     setIsAddingToCart(true);
     setError(null);
@@ -179,7 +204,7 @@ export function QuickProductConfigurator({
     try {
       // Upload files if any
       let fileUrls: string[] = [];
-      if (uploadedFiles.length > 0) {
+      if (uploadedFiles.length > 0 && selectedDesign === 'upload') {
         fileUrls = await uploadFilesToServer(uploadedFiles);
       }
 
@@ -191,7 +216,7 @@ export function QuickProductConfigurator({
         productName: product.name,
         quantity: selectedQuantity,
         options: {
-          size: `${product.fixed_width}" × ${product.fixed_height}"`,
+          size: sizeDisplay,
           paperStock: product.paper_stock_name,
           paperStockId: product.fixed_paper_stock_id,
           coating: product.coating_name,
@@ -201,12 +226,14 @@ export function QuickProductConfigurator({
           turnaround: selectedTurnaround?.name,
           turnaroundId: selectedTurnaroundId,
           productionDays: selectedTurnaround?.production_days,
+          designOption: selectedDesignOption?.label,
+          designFee: designFee,
           designFiles: fileUrls,
         },
-        price: calculatedPrice,
-        unitPrice: calculatedPrice / selectedQuantity,
+        price: totalPrice,
+        unitPrice: totalPrice / selectedQuantity,
         uploadedFiles: fileUrls,
-        addOns: [],
+        addOns: designFee > 0 ? [{ name: 'Design Services', price: designFee }] : [],
       };
 
       // Add to cart via API
@@ -237,37 +264,38 @@ export function QuickProductConfigurator({
     <div className="grid gap-8 lg:grid-cols-2">
       {/* Left Column - Product Info & Configuration */}
       <div className="space-y-6">
-        {/* Product Header with Image */}
+        {/* Product Image Only */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted">
+              {product.image_url ? (
+                <Image
+                  src={product.image_url}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">
+                  <span className="text-6xl font-bold text-muted-foreground/30">
+                    {formattedWidth}×{formattedHeight}
+                  </span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Product Info */}
         <Card>
           <CardHeader>
-            <div className="flex gap-6">
-              {/* Product Image */}
-              <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg bg-muted">
-                {product.image_url ? (
-                  <Image
-                    src={product.image_url}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center">
-                    <span className="text-4xl font-bold text-muted-foreground/30">
-                      {product.fixed_width}×{product.fixed_height}
-                    </span>
-                  </div>
-                )}
-              </div>
-              {/* Product Info */}
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <Zap className="h-5 w-5 text-yellow-500" />
-                  <Badge variant="secondary">Quick Order</Badge>
-                </div>
-                <CardTitle className="text-2xl mb-2">{product.name}</CardTitle>
-                <p className="text-muted-foreground">{product.description}</p>
-              </div>
+            <div className="flex items-center gap-2 mb-2">
+              <Zap className="h-5 w-5 text-yellow-500" />
+              <Badge variant="secondary">Quick Order</Badge>
             </div>
+            <CardTitle className="text-2xl">{product.name}</CardTitle>
+            <p className="text-muted-foreground">{product.description}</p>
           </CardHeader>
         </Card>
 
@@ -302,14 +330,10 @@ export function QuickProductConfigurator({
               <Label htmlFor="size">Size</Label>
               <Select disabled value="fixed">
                 <SelectTrigger id="size" className="bg-muted/50">
-                  <SelectValue>
-                    {product.fixed_width}" × {product.fixed_height}"
-                  </SelectValue>
+                  <SelectValue>{sizeDisplay}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="fixed">
-                    {product.fixed_width}" × {product.fixed_height}"
-                  </SelectItem>
+                  <SelectItem value="fixed">{sizeDisplay}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -356,28 +380,55 @@ export function QuickProductConfigurator({
                 </SelectContent>
               </Select>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* File Upload */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Upload Your Design</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <FileUploadDropzone
-              onFilesSelected={setUploadedFiles}
-              maxFiles={4}
-              acceptedFileTypes={[
-                '.jpg',
-                '.jpeg',
-                '.png',
-                '.pdf',
-                '.ai',
-                '.eps',
-                '.psd',
-              ]}
-            />
+            {/* Design Option */}
+            <div className="space-y-2">
+              <Label htmlFor="design">Design</Label>
+              <Select value={selectedDesign} onValueChange={setSelectedDesign}>
+                <SelectTrigger id="design">
+                  <SelectValue placeholder="Select design option" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DESIGN_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* File Upload - Only show when "Upload Your Image" is selected */}
+            {selectedDesign === 'upload' && (
+              <div className="space-y-2">
+                <FileUploadDropzone
+                  onFilesSelected={setUploadedFiles}
+                  maxFiles={4}
+                  acceptedFileTypes={[
+                    '.jpg',
+                    '.jpeg',
+                    '.png',
+                    '.pdf',
+                    '.ai',
+                    '.eps',
+                    '.psd',
+                  ]}
+                />
+              </div>
+            )}
+
+            {/* Design Service Info */}
+            {selectedDesign === 'design-service' && (
+              <div className="flex items-start gap-3 rounded-lg bg-purple-50 p-4 text-purple-700 dark:bg-purple-950/30 dark:text-purple-300">
+                <Palette className="h-5 w-5 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium">Design Services Selected</p>
+                  <p className="text-sm mt-1">
+                    Our design team will contact you after checkout to discuss your design requirements.
+                  </p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -394,6 +445,7 @@ export function QuickProductConfigurator({
             >
               {turnarounds.map((turnaround) => {
                 const price = turnaroundPrices[turnaround.id];
+                const displayPrice = price !== undefined ? price + designFee : undefined;
                 return (
                   <div
                     key={turnaround.id}
@@ -423,8 +475,8 @@ export function QuickProductConfigurator({
                     <div className="text-right">
                       {isCalculating ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : price !== undefined ? (
-                        <span className="font-bold">${price.toFixed(2)}</span>
+                      ) : displayPrice !== undefined ? (
+                        <span className="font-bold">${displayPrice.toFixed(2)}</span>
                       ) : (
                         <span className="text-muted-foreground">--</span>
                       )}
@@ -460,9 +512,7 @@ export function QuickProductConfigurator({
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Size</span>
-                <span>
-                  {product.fixed_width}" × {product.fixed_height}"
-                </span>
+                <span>{sizeDisplay}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Quantity</span>
@@ -480,6 +530,10 @@ export function QuickProductConfigurator({
                 <span className="text-muted-foreground">Printing</span>
                 <span>{selectedSidesOption?.label || 'Different Image Both Sides'}</span>
               </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Design</span>
+                <span>{selectedDesign === 'upload' ? 'Upload Your Image' : 'Design Services'}</span>
+              </div>
             </div>
 
             <Separator />
@@ -493,12 +547,20 @@ export function QuickProductConfigurator({
             )}
 
             {/* Files */}
-            {uploadedFiles.length > 0 && (
+            {uploadedFiles.length > 0 && selectedDesign === 'upload' && (
               <div className="flex items-center gap-2 rounded-lg bg-green-50 p-3 text-green-700 dark:bg-green-950/30 dark:text-green-300">
                 <CheckCircle className="h-4 w-4" />
                 <span className="text-sm font-medium">
                   {uploadedFiles.length} file{uploadedFiles.length !== 1 ? 's' : ''} ready to upload
                 </span>
+              </div>
+            )}
+
+            {/* Design Service */}
+            {selectedDesign === 'design-service' && (
+              <div className="flex items-center gap-2 rounded-lg bg-purple-50 p-3 text-purple-700 dark:bg-purple-950/30 dark:text-purple-300">
+                <Palette className="h-4 w-4" />
+                <span className="text-sm font-medium">Design Services: +$49.99</span>
               </div>
             )}
 
@@ -509,8 +571,8 @@ export function QuickProductConfigurator({
               <span>Total</span>
               {isCalculating ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
-              ) : calculatedPrice !== null ? (
-                <span className="text-primary">${calculatedPrice.toFixed(2)}</span>
+              ) : totalPrice !== null ? (
+                <span className="text-primary">${totalPrice.toFixed(2)}</span>
               ) : (
                 <span className="text-muted-foreground">--</span>
               )}
@@ -525,7 +587,7 @@ export function QuickProductConfigurator({
                 isCalculating ||
                 selectedQuantity < 25 ||
                 !selectedTurnaroundId ||
-                calculatedPrice === null
+                totalPrice === null
               }
               onClick={handleAddToCart}
             >
