@@ -21,30 +21,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // If authenticated and trying to access login/signup, redirect based on role
+  // If authenticated and trying to access login/signup, redirect to dashboard
+  // The dashboard layout will handle role-based redirects
   if (token && (pathname === '/login' || pathname === '/signup')) {
-    const redirectUrl = token.role === 'admin' ? '/admin' : '/dashboard';
-    return NextResponse.redirect(new URL(redirectUrl, request.url));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  // Redirect admin users from customer dashboard to admin dashboard
-  if (token?.role === 'admin' && pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/admin', request.url));
-  }
-
-  // Admin-only routes
-  if (pathname.startsWith('/admin')) {
-    if (token?.role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
-  }
-
-  // Staff and admin can access staff routes
-  if (pathname.startsWith('/staff')) {
-    if (token?.role !== 'staff' && token?.role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
-  }
+  // Note: Role-based access control is handled by the layouts (admin/layout.tsx and dashboard/layout.tsx)
+  // because getToken() in middleware doesn't run JWT callbacks to fetch the latest role from DB
 
   return NextResponse.next();
 }

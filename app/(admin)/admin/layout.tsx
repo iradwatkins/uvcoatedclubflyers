@@ -10,7 +10,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect('/login');
   }
 
-  // Note: Non-admin redirect is handled by middleware to avoid redirect loops
+  // Require admin role
+  if (session.user.role !== 'admin') {
+    redirect('/dashboard');
+  }
 
   return <AdminLayoutWrapper user={session.user}>{children}</AdminLayoutWrapper>;
 }

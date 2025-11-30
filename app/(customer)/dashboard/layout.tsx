@@ -9,7 +9,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect('/login');
   }
 
-  // Note: Admin redirect is handled by middleware to avoid redirect loops
+  // Redirect admin users to admin dashboard
+  if (session.user.role === 'admin') {
+    redirect('/admin');
+  }
 
   return <CustomerDashboardWrapper user={session.user}>{children}</CustomerDashboardWrapper>;
 }
