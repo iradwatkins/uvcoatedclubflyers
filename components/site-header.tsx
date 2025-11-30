@@ -30,10 +30,12 @@ export function SiteHeader({ user }: SiteHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
+  const dashboardHref = user?.role === 'admin' ? '/admin' : '/dashboard';
+
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/products', label: 'Products' },
-    ...(user ? [{ href: '/dashboard', label: 'Dashboard' }] : []),
+    ...(user ? [{ href: dashboardHref, label: 'Dashboard' }] : []),
   ];
 
   const isActive = (href: string) => {
@@ -120,27 +122,18 @@ export function SiteHeader({ user }: SiteHeaderProps) {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard" className="cursor-pointer">
+                      <Link href={dashboardHref} className="cursor-pointer">
                         <LayoutDashboard className="mr-2 h-4 w-4" />
                         Dashboard
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/settings" className="cursor-pointer">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Settings
-                      </Link>
-                    </DropdownMenuItem>
-                    {user.role === 'admin' && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                          <Link href="/admin" className="cursor-pointer">
-                            <Shield className="mr-2 h-4 w-4" />
-                            Admin Panel
-                          </Link>
-                        </DropdownMenuItem>
-                      </>
+                    {user.role !== 'admin' && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/dashboard/settings" className="cursor-pointer">
+                          <Settings className="mr-2 h-4 w-4" />
+                          Settings
+                        </Link>
+                      </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -210,29 +203,21 @@ export function SiteHeader({ user }: SiteHeaderProps) {
                       </div>
                     </div>
                     <Link
-                      href="/dashboard"
+                      href={dashboardHref}
                       className="flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <LayoutDashboard className="mr-2 h-4 w-4" />
                       Dashboard
                     </Link>
-                    <Link
-                      href="/dashboard/settings"
-                      className="flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Settings className="mr-2 h-4 w-4" />
-                      Settings
-                    </Link>
-                    {user.role === 'admin' && (
+                    {user.role !== 'admin' && (
                       <Link
-                        href="/admin"
+                        href="/dashboard/settings"
                         className="flex items-center text-sm font-medium text-muted-foreground hover:text-primary"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <Shield className="mr-2 h-4 w-4" />
-                        Admin Panel
+                        <Settings className="mr-2 h-4 w-4" />
+                        Settings
                       </Link>
                     )}
                     <div className="pt-2 border-t">

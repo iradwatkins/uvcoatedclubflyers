@@ -21,9 +21,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // If authenticated and trying to access login/signup, redirect to dashboard
+  // If authenticated and trying to access login/signup, redirect based on role
   if (token && (pathname === '/login' || pathname === '/signup')) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    const redirectUrl = token.role === 'admin' ? '/admin' : '/dashboard';
+    return NextResponse.redirect(new URL(redirectUrl, request.url));
+  }
+
+  // Redirect admin users from customer dashboard to admin dashboard
+  if (token?.role === 'admin' && pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/admin', request.url));
   }
 
   // Admin-only routes
