@@ -499,13 +499,34 @@ export class PricingEngine {
       return result.rows[0]?.multiplier ? parseFloat(result.rows[0].multiplier) : 1.0;
     }
 
-    // For quantities < 25, use the 25 multiplier (minimum tier)
+    // For quantities < 25, extrapolate based on the trend between 25 and 50
+    // Small quantities have HIGHER multipliers (more expensive per piece)
+    // The pattern shows ~40% decrease from 25->50, so we extrapolate upward for < 25
     if (quantity < 25) {
-      const result = await query(
-        'SELECT multiplier FROM turnaround_multipliers WHERE paper_stock_id = $1 AND quantity = $2 AND turnaround_category = $3',
-        [paperStockId, 25, category]
-      );
-      return result.rows[0]?.multiplier ? parseFloat(result.rows[0].multiplier) : 1.0;
+      const [tier25Result, tier50Result] = await Promise.all([
+        query(
+          'SELECT multiplier FROM turnaround_multipliers WHERE paper_stock_id = $1 AND quantity = $2 AND turnaround_category = $3',
+          [paperStockId, 25, category]
+        ),
+        query(
+          'SELECT multiplier FROM turnaround_multipliers WHERE paper_stock_id = $1 AND quantity = $2 AND turnaround_category = $3',
+          [paperStockId, 50, category]
+        ),
+      ]);
+
+      const mult25 = tier25Result.rows[0]?.multiplier ? parseFloat(tier25Result.rows[0].multiplier) : 1.0;
+      const mult50 = tier50Result.rows[0]?.multiplier ? parseFloat(tier50Result.rows[0].multiplier) : 1.0;
+
+      // Calculate the rate of change per quantity unit between 25 and 50
+      // As quantity decreases, multiplier increases
+      const rateOfChange = (mult25 - mult50) / (50 - 25);
+
+      // Extrapolate for quantities below 25
+      // multiplier = mult25 + rateOfChange * (25 - quantity)
+      const extrapolatedMultiplier = mult25 + rateOfChange * (25 - quantity);
+
+      // Cap at a reasonable maximum (e.g., 2x the 25 multiplier)
+      return Math.min(extrapolatedMultiplier, mult25 * 2);
     }
 
     // Find the tier that contains this quantity (use exact tier or interpolate)
