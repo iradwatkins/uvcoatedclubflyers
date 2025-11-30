@@ -417,18 +417,6 @@ export function QuickProductConfigurator({
               </div>
             )}
 
-            {/* Design Service Info */}
-            {selectedDesign === 'design-service' && (
-              <div className="flex items-start gap-3 rounded-lg bg-purple-50 p-4 text-purple-700 dark:bg-purple-950/30 dark:text-purple-300">
-                <Palette className="h-5 w-5 mt-0.5 shrink-0" />
-                <div>
-                  <p className="font-medium">Design Services Selected</p>
-                  <p className="text-sm mt-1">
-                    Our design team will contact you after checkout to discuss your design requirements.
-                  </p>
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -553,14 +541,6 @@ export function QuickProductConfigurator({
                 <span className="text-sm font-medium">
                   {uploadedFiles.length} file{uploadedFiles.length !== 1 ? 's' : ''} ready to upload
                 </span>
-              </div>
-            )}
-
-            {/* Design Service */}
-            {selectedDesign === 'design-service' && (
-              <div className="flex items-center gap-2 rounded-lg bg-purple-50 p-3 text-purple-700 dark:bg-purple-950/30 dark:text-purple-300">
-                <Palette className="h-4 w-4" />
-                <span className="text-sm font-medium">Design Services: +$49.99</span>
               </div>
             )}
 
