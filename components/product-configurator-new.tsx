@@ -1118,6 +1118,12 @@ Tips:
                         <span className="font-medium">{priceBreakdown.coating}</span>
                       </div>
                       <div className="flex justify-between">
+                        <span className="text-muted-foreground">Sides:</span>
+                        <span className="font-medium">
+                          {SIDES_OPTIONS.find((opt) => opt.value === selectedSides)?.label || 'Both Sides'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
                         <span className="text-muted-foreground">Turnaround:</span>
                         <span className="font-medium">{priceBreakdown.turnaround}</span>
                       </div>
@@ -1126,9 +1132,21 @@ Tips:
                     {/* Price Breakdown */}
                     <div className="space-y-1 text-sm border-b pb-3">
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Base Price:</span>
+                        <span className="text-muted-foreground">Base Cost:</span>
                         <span>{formatPrice(priceBreakdown.baseCost)}</span>
                       </div>
+                      {priceBreakdown.markupAmount > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Markup:</span>
+                          <span>+{formatPrice(priceBreakdown.markupAmount)}</span>
+                        </div>
+                      )}
+                      {priceBreakdown.subtotal && priceBreakdown.subtotal !== priceBreakdown.baseCost && (
+                        <div className="flex justify-between font-medium border-t pt-1 mt-1">
+                          <span className="text-muted-foreground">Subtotal:</span>
+                          <span>{formatPrice(priceBreakdown.subtotal)}</span>
+                        </div>
+                      )}
                       {priceBreakdown.addOnsCost && priceBreakdown.addOnsCost > 0 && (
                         <>
                           <div className="flex justify-between text-muted-foreground">
