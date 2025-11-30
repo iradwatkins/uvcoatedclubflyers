@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { auth } from '@/lib/auth';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
-import { Zap, Shield, Truck, Star, CheckCircle } from 'lucide-react';
+import { QuickProductsCarousel } from '@/components/quick-products-carousel';
+import { Zap, Shield, Truck, Star } from 'lucide-react';
 
 export default async function Home() {
   const session = await auth();
@@ -39,6 +40,13 @@ export default async function Home() {
                 </Link>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Quick Products Carousel */}
+        <section className="border-t bg-background py-12 md:py-16">
+          <div className="container mx-auto px-4">
+            <QuickProductsCarousel />
           </div>
         </section>
 
