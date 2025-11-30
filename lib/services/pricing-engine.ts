@@ -487,23 +487,74 @@ export class PricingEngine {
     quantity: number,
     category: string
   ): Promise<number> {
-    // For quantities > 5000, use the 5000 multiplier (per documentation)
-    const lookupQuantity = Math.min(quantity, 5000);
-
     // Standard quantity tiers
     const quantityTiers = [25, 50, 100, 250, 500, 1000, 2500, 5000];
 
-    // Find the closest quantity tier
-    const closestTier = quantityTiers.reduce((prev, curr) =>
-      Math.abs(curr - lookupQuantity) < Math.abs(prev - lookupQuantity) ? curr : prev
-    );
+    // For quantities > 5000, use the 5000 multiplier (per documentation)
+    if (quantity >= 5000) {
+      const result = await query(
+        'SELECT multiplier FROM turnaround_multipliers WHERE paper_stock_id = $1 AND quantity = $2 AND turnaround_category = $3',
+        [paperStockId, 5000, category]
+      );
+      return result.rows[0]?.multiplier ? parseFloat(result.rows[0].multiplier) : 1.0;
+    }
 
-    const result = await query(
-      'SELECT multiplier FROM turnaround_multipliers WHERE paper_stock_id = $1 AND quantity = $2 AND turnaround_category = $3',
-      [paperStockId, closestTier, category]
-    );
+    // For quantities < 25, use the 25 multiplier (minimum tier)
+    if (quantity < 25) {
+      const result = await query(
+        'SELECT multiplier FROM turnaround_multipliers WHERE paper_stock_id = $1 AND quantity = $2 AND turnaround_category = $3',
+        [paperStockId, 25, category]
+      );
+      return result.rows[0]?.multiplier ? parseFloat(result.rows[0].multiplier) : 1.0;
+    }
 
-    return result.rows[0]?.multiplier ? parseFloat(result.rows[0].multiplier) : 1.0;
+    // Find the tier that contains this quantity (use exact tier or interpolate)
+    // For custom quantities between tiers, use linear interpolation for accurate pricing
+    let lowerTier = quantityTiers[0];
+    let upperTier = quantityTiers[quantityTiers.length - 1];
+
+    for (let i = 0; i < quantityTiers.length - 1; i++) {
+      if (quantity >= quantityTiers[i] && quantity < quantityTiers[i + 1]) {
+        lowerTier = quantityTiers[i];
+        upperTier = quantityTiers[i + 1];
+        break;
+      }
+    }
+
+    // If quantity matches a tier exactly, return that multiplier
+    if (quantityTiers.includes(quantity)) {
+      const result = await query(
+        'SELECT multiplier FROM turnaround_multipliers WHERE paper_stock_id = $1 AND quantity = $2 AND turnaround_category = $3',
+        [paperStockId, quantity, category]
+      );
+      return result.rows[0]?.multiplier ? parseFloat(result.rows[0].multiplier) : 1.0;
+    }
+
+    // Get multipliers for both tiers and interpolate
+    const [lowerResult, upperResult] = await Promise.all([
+      query(
+        'SELECT multiplier FROM turnaround_multipliers WHERE paper_stock_id = $1 AND quantity = $2 AND turnaround_category = $3',
+        [paperStockId, lowerTier, category]
+      ),
+      query(
+        'SELECT multiplier FROM turnaround_multipliers WHERE paper_stock_id = $1 AND quantity = $2 AND turnaround_category = $3',
+        [paperStockId, upperTier, category]
+      ),
+    ]);
+
+    const lowerMultiplier = lowerResult.rows[0]?.multiplier
+      ? parseFloat(lowerResult.rows[0].multiplier)
+      : 1.0;
+    const upperMultiplier = upperResult.rows[0]?.multiplier
+      ? parseFloat(upperResult.rows[0].multiplier)
+      : 1.0;
+
+    // Linear interpolation between tiers
+    // As quantity increases, multiplier decreases (volume discount)
+    const ratio = (quantity - lowerTier) / (upperTier - lowerTier);
+    const interpolatedMultiplier = lowerMultiplier - ratio * (lowerMultiplier - upperMultiplier);
+
+    return interpolatedMultiplier;
   }
 }
 
