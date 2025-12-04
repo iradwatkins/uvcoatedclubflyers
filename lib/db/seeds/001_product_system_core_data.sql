@@ -7,71 +7,78 @@
 -- Note: For 12pt and 14pt, we store their ACTUAL costs but reference their pricing groups
 
 -- 9pt C2S Cardstock (base for 12pt pricing)
-INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, is_active, display_order)
+INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, markup, is_active, display_order)
 VALUES
-(1, '9pt C2S Cardstock', '9pt-c2s-cardstock', '9pt thick - Standard cardstock, coated both sides. Best for: flyers, promotional materials, budget-friendly projects. Coating: Gloss Aqueous.', 0.0010, 0.000333333333, 'CARDSTOCK', '9pt', 1.0, 1.0, NULL, NULL, true, 2)
+(1, '9pt C2S Cardstock', '9pt-c2s-cardstock', '9pt thick - Standard cardstock, coated both sides. Best for: flyers, promotional materials, budget-friendly projects. Coating: Gloss Aqueous.', 0.0010, 0.000333333333, 'CARDSTOCK', '9pt', 1.0, 1.0, NULL, NULL, 1.7, true, 2)
 ON CONFLICT (name) DO UPDATE SET
   description = EXCLUDED.description,
   base_cost_per_sq_in = EXCLUDED.base_cost_per_sq_in,
-  weight_per_sq_in = EXCLUDED.weight_per_sq_in;
+  weight_per_sq_in = EXCLUDED.weight_per_sq_in,
+  markup = EXCLUDED.markup;
 
 -- 16pt C2S Cardstock (base for 14pt pricing)
-INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, is_active, display_order)
+INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, markup, is_active, display_order)
 VALUES
-(2, '16pt C2S Cardstock', '16pt-c2s-cardstock', '16pt thick - Extra premium cardstock with luxury feel. Best for: executive business cards, VIP invitations, premium marketing. Coatings: Matte or High Gloss UV.', 0.0015, 0.000415, 'CARDSTOCK', '16pt', 1.0, 1.0, NULL, NULL, true, 6)
+(2, '16pt C2S Cardstock', '16pt-c2s-cardstock', '16pt thick - Extra premium cardstock with luxury feel. Best for: executive business cards, VIP invitations, premium marketing. Coatings: Matte or High Gloss UV.', 0.0015, 0.000415, 'CARDSTOCK', '16pt', 1.0, 1.0, NULL, NULL, 1.0, true, 6)
 ON CONFLICT (name) DO UPDATE SET
   description = EXCLUDED.description,
   base_cost_per_sq_in = EXCLUDED.base_cost_per_sq_in,
-  weight_per_sq_in = EXCLUDED.weight_per_sq_in;
+  weight_per_sq_in = EXCLUDED.weight_per_sq_in,
+  markup = EXCLUDED.markup;
 
 -- 60 lb Offset
-INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, is_active, display_order)
+INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, markup, is_active, display_order)
 VALUES
-(3, '60 lb Offset', '60lb-offset', 'Text weight - Lightweight uncoated paper, writable surface. Best for: letterhead, NCR forms, inserts, booklets. No coating available.', 0.0008, 0.000133333333, 'TEXT', 'Text weight', 1.0, 1.75, NULL, NULL, true, 1)
+(3, '60 lb Offset', '60lb-offset', 'Text weight - Lightweight uncoated paper, writable surface. Best for: letterhead, NCR forms, inserts, booklets. No coating available.', 0.0008, 0.000133333333, 'TEXT', 'Text weight', 1.0, 1.75, NULL, NULL, 1.0, true, 1)
 ON CONFLICT (name) DO UPDATE SET
   description = EXCLUDED.description,
   base_cost_per_sq_in = EXCLUDED.base_cost_per_sq_in,
-  weight_per_sq_in = EXCLUDED.weight_per_sq_in;
+  weight_per_sq_in = EXCLUDED.weight_per_sq_in,
+  markup = EXCLUDED.markup;
 
 -- 100 lb Gloss Text
-INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, is_active, display_order)
+INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, markup, is_active, display_order)
 VALUES
-(4, '100 lb Gloss Text', '100lb-gloss-text', 'Heavy text weight - Glossy coated paper, vibrant colors. Best for: brochures, catalogs, magazine inserts. Coating: Gloss Aqueous.', 0.0010, 0.000225, 'TEXT', 'Text weight (heavy)', 1.0, 1.75, NULL, NULL, true, 3)
+(4, '100 lb Gloss Text', '100lb-gloss-text', 'Heavy text weight - Glossy coated paper, vibrant colors. Best for: brochures, catalogs, magazine inserts. Coating: Gloss Aqueous.', 0.0010, 0.000225, 'TEXT', 'Text weight (heavy)', 1.0, 1.75, NULL, NULL, 1.0, true, 3)
 ON CONFLICT (name) DO UPDATE SET
   description = EXCLUDED.description,
   base_cost_per_sq_in = EXCLUDED.base_cost_per_sq_in,
-  weight_per_sq_in = EXCLUDED.weight_per_sq_in;
+  weight_per_sq_in = EXCLUDED.weight_per_sq_in,
+  markup = EXCLUDED.markup;
 
 -- 12pt C2S Cardstock (uses 9pt pricing with 2.0x markup)
-INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, is_active, display_order)
+INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, markup, is_active, display_order)
 VALUES
-(5, '12pt C2S Cardstock', '12pt-c2s-cardstock', '12pt thick - Popular medium cardstock, good rigidity. Best for: postcards, door hangers, rack cards. Coatings: Matte or High Gloss UV.', 0.0012, 0.00035, 'CARDSTOCK', '12pt', 1.0, 1.0, 2.0, 1, true, 4)
+(5, '12pt C2S Cardstock', '12pt-c2s-cardstock', '12pt thick - Popular medium cardstock, good rigidity. Best for: postcards, door hangers, rack cards. Coatings: Matte or High Gloss UV.', 0.0012, 0.00035, 'CARDSTOCK', '12pt', 1.0, 1.0, 2.0, 1, 1.0, true, 4)
 ON CONFLICT (name) DO UPDATE SET
   description = EXCLUDED.description,
   base_cost_per_sq_in = EXCLUDED.base_cost_per_sq_in,
   weight_per_sq_in = EXCLUDED.weight_per_sq_in,
   special_markup = EXCLUDED.special_markup,
-  pricing_group_id = EXCLUDED.pricing_group_id;
+  pricing_group_id = EXCLUDED.pricing_group_id,
+  markup = EXCLUDED.markup;
 
 -- 100 lb Uncoated Cover
-INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, is_active, display_order)
+INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, markup, is_active, display_order)
 VALUES
-(6, '100 lb Uncoated Cover', '100lb-uncoated-cover', 'Cover weight - Natural uncoated finish, writable surface. Best for: letterhead, presentation folders, eco-friendly materials. No coating available.', 0.0013, 0.000383333333, 'COVER', '~14pt', 1.0, 1.0, NULL, NULL, true, 5)
+(6, '100 lb Uncoated Cover', '100lb-uncoated-cover', 'Cover weight - Natural uncoated finish, writable surface. Best for: letterhead, presentation folders, eco-friendly materials. No coating available.', 0.0013, 0.000383333333, 'COVER', '~14pt', 1.0, 1.0, NULL, NULL, 1.0, true, 5)
 ON CONFLICT (name) DO UPDATE SET
   description = EXCLUDED.description,
   base_cost_per_sq_in = EXCLUDED.base_cost_per_sq_in,
-  weight_per_sq_in = EXCLUDED.weight_per_sq_in;
+  weight_per_sq_in = EXCLUDED.weight_per_sq_in,
+  markup = EXCLUDED.markup;
 
 -- 14pt C2S Cardstock (uses 16pt pricing with 2.0x markup)
-INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, is_active, display_order)
+INSERT INTO paper_stocks (id, name, slug, description, base_cost_per_sq_in, weight_per_sq_in, type, thickness, sides_multiplier_single, sides_multiplier_double, special_markup, pricing_group_id, markup, is_active, display_order)
 VALUES
-(7, '14pt C2S Cardstock', '14pt-c2s-cardstock', '14pt thick - Premium cardstock, excellent durability. Best for: business cards, postcards, hang tags. Coatings: Matte or High Gloss UV.', 0.0013, 0.000415, 'CARDSTOCK', '14pt', 1.0, 1.0, 2.0, 2, true, 7)
+(7, '14pt C2S Cardstock', '14pt-c2s-cardstock', '14pt thick - Premium cardstock, excellent durability. Best for: business cards, postcards, hang tags. Coatings: Matte or High Gloss UV.', 0.0013, 0.000415, 'CARDSTOCK', '14pt', 1.0, 1.0, 2.0, 2, 1.0, true, 7)
 ON CONFLICT (name) DO UPDATE SET
   description = EXCLUDED.description,
   base_cost_per_sq_in = EXCLUDED.base_cost_per_sq_in,
   weight_per_sq_in = EXCLUDED.weight_per_sq_in,
   special_markup = EXCLUDED.special_markup,
-  pricing_group_id = EXCLUDED.pricing_group_id;
+  pricing_group_id = EXCLUDED.pricing_group_id,
+  markup = EXCLUDED.markup;
 
 -- Reset sequence
 SELECT setval('paper_stocks_id_seq', (SELECT MAX(id) FROM paper_stocks));

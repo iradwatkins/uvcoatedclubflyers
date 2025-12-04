@@ -4,13 +4,15 @@
  *
  * Formula:
  * Step 1: baseCost = paperStockPrice × sidesMultiplier × (width × height) × quantity
- * Step 2: subtotal = baseCost × turnaroundMultiplier
- * Step 3: totalPrice = subtotal + addOnsCost
+ * Step 2: markedUpCost = baseCost × paperStockMarkup (admin configurable per paper stock)
+ * Step 3: subtotal = markedUpCost × turnaroundMultiplier
+ * Step 4: totalPrice = subtotal + addOnsCost
  *
  * Special Rules:
  * - 12pt uses 9pt pricing base
  * - 14pt uses 16pt pricing base
- * - Turnaround multiplier applied AFTER base cost calculation
+ * - Paper stock markup applied BEFORE turnaround multiplier
+ * - Turnaround multiplier applied AFTER markup
  * - Add-ons applied AFTER turnaround
  */
 
@@ -131,20 +133,25 @@ export class PricingEngine {
     // 7. Calculate base cost (Step 1: paperStockPrice × sidesMultiplier × squareInches × quantity)
     const baseCost = pricePerSqIn * sidesMultiplier * squareInches * input.quantity;
 
-    // 8. Apply turnaround multiplier (Step 2: baseCost × turnaroundMultiplier)
-    const subtotal = baseCost * turnaroundMultiplier;
+    // 8. Apply paper stock markup (Step 2: baseCost × paperStockMarkup)
+    // Admin can configure markup per paper stock (default 1.0 = no markup)
+    const paperStockMarkup = parseFloat(paperStock.markup) || 1.0;
+    const markedUpCost = baseCost * paperStockMarkup;
 
-    // 9. Calculate add-ons (Step 3: subtotal + addOnsCost)
+    // 9. Apply turnaround multiplier (Step 3: markedUpCost × turnaroundMultiplier)
+    const subtotal = markedUpCost * turnaroundMultiplier;
+
+    // 10. Calculate add-ons (Step 4: subtotal + addOnsCost)
     const { addOnsCost, addOnsDetails, discountPercentage } = await this.calculateAddOns(
       input.addOns || [],
       subtotal,
       input.quantity
     );
 
-    // 10. Apply discount if any (percentage discount on subtotal)
+    // 11. Apply discount if any (percentage discount on subtotal)
     const discountAmount = discountPercentage > 0 ? (subtotal * discountPercentage) / 100 : 0;
 
-    // 11. Calculate totals
+    // 12. Calculate totals
     const totalBeforeDiscount = subtotal + addOnsCost;
     const totalPrice = subtotal - discountAmount + addOnsCost;
     const unitPrice = totalPrice / input.quantity;
