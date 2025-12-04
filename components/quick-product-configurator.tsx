@@ -61,10 +61,11 @@ const SIDES_OPTIONS = [
   { value: 'front-only', label: 'Image One Side Only', pricingValue: 'single' },
 ];
 
-// Design options
+// Design options - pricing matches database add-ons (Standard Custom Design: $90 one side, $135 two sides)
 const DESIGN_OPTIONS = [
   { value: 'upload', label: 'Upload Your Image', price: 0 },
-  { value: 'design-service', label: 'I Need Design Services (+$49.99)', price: 49.99 },
+  { value: 'design-service-one', label: 'Design Services - One Side (+$90)', price: 90 },
+  { value: 'design-service-two', label: 'Design Services - Both Sides (+$135)', price: 135 },
 ];
 
 // Format size - remove decimals for whole numbers
@@ -204,7 +205,7 @@ export function QuickProductConfigurator({
     try {
       // Upload files if any
       let fileUrls: string[] = [];
-      if (uploadedFiles.length > 0 && selectedDesign === 'upload') {
+      if (uploadedFiles.length > 0) {
         fileUrls = await uploadFilesToServer(uploadedFiles);
       }
 
@@ -233,7 +234,7 @@ export function QuickProductConfigurator({
         price: totalPrice,
         unitPrice: totalPrice / selectedQuantity,
         uploadedFiles: fileUrls,
-        addOns: designFee > 0 ? [{ name: 'Design Services', price: designFee }] : [],
+        addOns: designFee > 0 ? [{ name: selectedDesign === 'design-service-one' ? 'Standard Custom Design (One Side)' : 'Standard Custom Design (Both Sides)', price: designFee }] : [],
       };
 
       // Add to cart via API
@@ -398,8 +399,8 @@ export function QuickProductConfigurator({
               </Select>
             </div>
 
-            {/* File Upload - Only show when "Upload Your Image" is selected */}
-            {selectedDesign === 'upload' && (
+            {/* File Upload - Show when "Upload Your Image" is selected or design service for reference */}
+            {(selectedDesign === 'upload' || selectedDesign.startsWith('design-service')) && (
               <div className="space-y-2">
                 <FileUploadDropzone
                   onFilesSelected={setUploadedFiles}
@@ -535,7 +536,7 @@ export function QuickProductConfigurator({
             )}
 
             {/* Files */}
-            {uploadedFiles.length > 0 && selectedDesign === 'upload' && (
+            {uploadedFiles.length > 0 && (
               <div className="flex items-center gap-2 rounded-lg bg-green-50 p-3 text-green-700 dark:bg-green-950/30 dark:text-green-300">
                 <CheckCircle className="h-4 w-4" />
                 <span className="text-sm font-medium">
