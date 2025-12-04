@@ -14,6 +14,7 @@ import {
   Settings,
   Home,
   Puzzle,
+  FileStack,
 } from 'lucide-react';
 
 interface AdminNavProps {
@@ -64,6 +65,11 @@ const navItems = [
     title: 'Add-Ons',
     href: '/admin/addons',
     icon: Puzzle,
+  },
+  {
+    title: 'Paper Stocks',
+    href: '/admin/paper-stocks',
+    icon: FileStack,
   },
 ];
 
