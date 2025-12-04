@@ -2,13 +2,16 @@
  * Pricing Calculation Engine
  * Square inch based pricing model for printing products
  *
- * Formula: baseCost = pricePerSqIn × sidesMultiplier × turnaroundMultiplier × (width × height) × quantity
- * retailPrice = baseCost × markupMultiplier
+ * Formula:
+ * Step 1: baseCost = paperStockPrice × sidesMultiplier × (width × height) × quantity
+ * Step 2: subtotal = baseCost × turnaroundMultiplier
+ * Step 3: totalPrice = subtotal + addOnsCost
  *
  * Special Rules:
- * - 12pt uses 9pt pricing with 2.0x markup
- * - 14pt uses 16pt pricing with 2.0x markup
- * - Discounts only apply to markup, not base cost
+ * - 12pt uses 9pt pricing base
+ * - 14pt uses 16pt pricing base
+ * - Turnaround multiplier applied AFTER base cost calculation
+ * - Add-ons applied AFTER turnaround
  */
 
 import { query } from '@/lib/db';
@@ -125,39 +128,30 @@ export class PricingEngine {
       }
     }
 
-    // 7. Calculate base cost
-    const baseCost =
-      pricePerSqIn * sidesMultiplier * turnaroundMultiplier * squareInches * input.quantity;
+    // 7. Calculate base cost (Step 1: paperStockPrice × sidesMultiplier × squareInches × quantity)
+    const baseCost = pricePerSqIn * sidesMultiplier * squareInches * input.quantity;
 
-    // 8. Get markup multiplier
-    const markupRule = await this.getMarkupRule(turnaround.category);
-    let markupMultiplier = markupRule?.multiplier ? parseFloat(markupRule.multiplier) : 2.308; // Default economy/fast markup
+    // 8. Apply turnaround multiplier (Step 2: baseCost × turnaroundMultiplier)
+    const subtotal = baseCost * turnaroundMultiplier;
 
-    // 9. Apply special markup for 12pt and 14pt
-    if (paperStock.special_markup) {
-      markupMultiplier = parseFloat(paperStock.special_markup);
-    }
-
-    // 10. Calculate markup amount
-    const markupAmount = baseCost * (markupMultiplier - 1);
-
-    // 11. Calculate subtotal before add-ons
-    const subtotal = baseCost + markupAmount;
-
-    // 12. Calculate add-ons
+    // 9. Calculate add-ons (Step 3: subtotal + addOnsCost)
     const { addOnsCost, addOnsDetails, discountPercentage } = await this.calculateAddOns(
       input.addOns || [],
       subtotal,
       input.quantity
     );
 
-    // 13. Calculate discount (only applies to markup, not base cost)
-    const discountAmount = discountPercentage > 0 ? (markupAmount * discountPercentage) / 100 : 0;
+    // 10. Apply discount if any (percentage discount on subtotal)
+    const discountAmount = discountPercentage > 0 ? (subtotal * discountPercentage) / 100 : 0;
 
-    // 14. Calculate totals
+    // 11. Calculate totals
     const totalBeforeDiscount = subtotal + addOnsCost;
-    const totalPrice = baseCost + (markupAmount - discountAmount) + addOnsCost;
+    const totalPrice = subtotal - discountAmount + addOnsCost;
     const unitPrice = totalPrice / input.quantity;
+
+    // For backward compatibility, keep markup fields but set to turnaround values
+    const markupMultiplier = turnaroundMultiplier;
+    const markupAmount = subtotal - baseCost;
 
     return {
       baseCost: parseFloat(baseCost.toFixed(2)),
