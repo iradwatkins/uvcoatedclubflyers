@@ -61,8 +61,9 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Create directory for uploaded files
-RUN mkdir -p /app/uploads && chown nextjs:nodejs /app/uploads
+# Create directories for uploaded files
+RUN mkdir -p /app/uploads /app/public/uploads/designs && \
+    chown -R nextjs:nodejs /app/uploads /app/public/uploads
 
 # Switch to non-root user
 USER nextjs
