@@ -84,15 +84,14 @@ export function QuickProductConfigurator({
   const [selectedQuantity, setSelectedQuantity] = useState(5000);
   const [selectedSides, setSelectedSides] = useState('different-both');
   const [selectedDesign, setSelectedDesign] = useState('upload');
-  const [selectedTurnaroundId, setSelectedTurnaroundId] = useState<number | null>(
-    turnarounds[0]?.id || null
-  );
+  const [selectedTurnaroundId, setSelectedTurnaroundId] = useState<number | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [calculatedPrice, setCalculatedPrice] = useState<number | null>(null);
   const [turnaroundPrices, setTurnaroundPrices] = useState<Record<number, number>>({});
   const [isCalculating, setIsCalculating] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasMounted, setHasMounted] = useState(false);
 
   // Get the pricing value for the selected sides option
   const selectedSidesOption = SIDES_OPTIONS.find((s) => s.value === selectedSides);
@@ -107,82 +106,87 @@ export function QuickProductConfigurator({
   const formattedHeight = formatSize(product.fixed_height);
   const sizeDisplay = `${formattedWidth}"×${formattedHeight}"`;
 
-  // Calculate all prices for turnarounds
-  const calculateAllPrices = useCallback(async () => {
-    if (turnarounds.length === 0) return;
+  // Set initial turnaround after mount to avoid hydration mismatch
+  useEffect(() => {
+    setHasMounted(true);
+    if (turnarounds.length > 0 && selectedTurnaroundId === null) {
+      setSelectedTurnaroundId(turnarounds[0].id);
+    }
+  }, [turnarounds, selectedTurnaroundId]);
 
-    setIsCalculating(true);
-    setError(null);
+  // Calculate prices when config changes (but NOT when turnaround selection changes)
+  useEffect(() => {
+    if (!hasMounted || turnarounds.length === 0 || selectedQuantity < 25) return;
 
-    try {
-      const width = parseFloat(product.fixed_width);
-      const height = parseFloat(product.fixed_height);
+    const calculatePrices = async () => {
+      setIsCalculating(true);
+      setError(null);
 
-      // Calculate prices for all turnarounds
-      const prices: Record<number, number> = {};
+      try {
+        const width = parseFloat(product.fixed_width);
+        const height = parseFloat(product.fixed_height);
+        const prices: Record<number, number> = {};
 
-      await Promise.all(
-        turnarounds.map(async (turnaround) => {
-          try {
-            const response = await fetch('/api/products/calculate-price', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                productId: product.id,
-                paperStockId: product.fixed_paper_stock_id,
-                coatingId: product.fixed_coating_id,
-                turnaroundId: turnaround.id,
-                quantity: selectedQuantity,
-                width,
-                height,
-                sides: sidesForPricing,
-                addOns: [],
-              }),
-            });
+        const results = await Promise.all(
+          turnarounds.map(async (turnaround) => {
+            try {
+              const response = await fetch('/api/products/calculate-price', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  productId: product.id,
+                  paperStockId: product.fixed_paper_stock_id,
+                  coatingId: product.fixed_coating_id,
+                  turnaroundId: turnaround.id,
+                  quantity: selectedQuantity,
+                  width,
+                  height,
+                  sides: sidesForPricing,
+                  addOns: [],
+                }),
+              });
 
-            if (response.ok) {
-              const result = await response.json();
-              const data = result.data || result;
-              prices[turnaround.id] = data.totalPrice || data.total || 0;
-            } else {
-              console.error(`Failed to get price for turnaround ${turnaround.id}`);
+              if (response.ok) {
+                const result = await response.json();
+                const data = result.data || result;
+                return { id: turnaround.id, price: data.totalPrice || data.total || 0 };
+              }
+              return { id: turnaround.id, price: null };
+            } catch (err) {
+              console.error(`Error calculating price for turnaround ${turnaround.id}:`, err);
+              return { id: turnaround.id, price: null };
             }
-          } catch (err) {
-            console.error(`Error calculating price for turnaround ${turnaround.id}:`, err);
+          })
+        );
+
+        // Populate prices object
+        results.forEach((r) => {
+          if (r.price !== null) {
+            prices[r.id] = r.price;
           }
-        })
-      );
+        });
 
-      setTurnaroundPrices(prices);
-
-      // Set the selected turnaround price immediately
-      if (selectedTurnaroundId && prices[selectedTurnaroundId] !== undefined) {
-        setCalculatedPrice(prices[selectedTurnaroundId]);
-      } else if (turnarounds.length > 0 && prices[turnarounds[0].id] !== undefined) {
-        // Fallback to first turnaround if selected one doesn't have price
-        setCalculatedPrice(prices[turnarounds[0].id]);
+        setTurnaroundPrices(prices);
+      } catch (err) {
+        console.error('Failed to calculate prices:', err);
+        setError('Failed to calculate prices. Please refresh the page.');
+      } finally {
+        setIsCalculating(false);
       }
-    } catch (error) {
-      console.error('Failed to calculate prices:', error);
-      setError('Failed to calculate prices. Please refresh the page.');
-    } finally {
-      setIsCalculating(false);
-    }
-  }, [product.id, product.fixed_width, product.fixed_height, product.fixed_paper_stock_id, product.fixed_coating_id, selectedQuantity, sidesForPricing, turnarounds, selectedTurnaroundId]);
+    };
 
-  // Calculate price when configuration changes
-  useEffect(() => {
-    if (selectedQuantity >= 25 && turnarounds.length > 0) {
-      calculateAllPrices();
-    }
-  }, [calculateAllPrices, selectedQuantity, turnarounds.length]);
+    calculatePrices();
+  }, [hasMounted, product.id, product.fixed_width, product.fixed_height, product.fixed_paper_stock_id, product.fixed_coating_id, selectedQuantity, sidesForPricing, turnarounds]);
 
-  // Update selected price when turnaround changes
+  // Update calculated price when turnaround selection or prices change
   useEffect(() => {
-    if (selectedTurnaroundId && turnaroundPrices[selectedTurnaroundId]) {
+    if (selectedTurnaroundId !== null && turnaroundPrices[selectedTurnaroundId] !== undefined) {
       setCalculatedPrice(turnaroundPrices[selectedTurnaroundId]);
+    } else if (turnarounds.length > 0 && turnaroundPrices[turnarounds[0].id] !== undefined) {
+      // Fallback to first turnaround price
+      setCalculatedPrice(turnaroundPrices[turnarounds[0].id]);
     }
-  }, [selectedTurnaroundId, turnaroundPrices]);
+  }, [selectedTurnaroundId, turnaroundPrices, turnarounds]);
 
   // Total price including design fee
   const totalPrice = calculatedPrice !== null ? calculatedPrice + designFee : null;
