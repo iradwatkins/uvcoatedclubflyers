@@ -2,10 +2,10 @@
  * Weight calculation parameters
  */
 interface WeightCalculationParams {
-  paperStockWeight: number;
-  width: number;
-  height: number;
-  quantity: number;
+  paperStockWeight: number
+  width: number
+  height: number
+  quantity: number
 }
 
 /**
@@ -13,24 +13,24 @@ interface WeightCalculationParams {
  * Formula: Paper Stock Weight × Size (sq inches) × Quantity = Weight (lbs)
  */
 export function calculateWeight(params: WeightCalculationParams): number {
-  const { paperStockWeight, width, height, quantity } = params;
+  const { paperStockWeight, width, height, quantity } = params
 
   // Calculate area in square inches
-  const areaInSquareInches = width * height;
+  const areaInSquareInches = width * height
 
   // Calculate total weight
   // paperStockWeight is already in units per square inch
-  const totalWeight = paperStockWeight * areaInSquareInches * quantity;
+  const totalWeight = paperStockWeight * areaInSquareInches * quantity
 
   // Convert to pounds if needed (assuming paperStockWeight is already in pounds per sq inch)
-  return totalWeight;
+  return totalWeight
 }
 
 /**
  * Calculate weight for multiple items
  */
 export function calculateTotalWeight(items: WeightCalculationParams[]): number {
-  return items.reduce((total, item) => total + calculateWeight(item), 0);
+  return items.reduce((total, item) => total + calculateWeight(item), 0)
 }
 
 /**
@@ -40,21 +40,21 @@ export function calculatePackageWeight(
   itemWeight: number,
   packagingWeight: number = 0.5 // default 0.5 lbs for packaging
 ): number {
-  return itemWeight + packagingWeight;
+  return itemWeight + packagingWeight
 }
 
 /**
  * Round weight to specified decimal places (shipping carriers typically use 1 decimal)
  */
 export function roundWeight(weight: number, decimals: number = 1): number {
-  return Math.round(weight * Math.pow(10, decimals)) / Math.pow(10, decimals);
+  return Math.round(weight * Math.pow(10, decimals)) / Math.pow(10, decimals)
 }
 
 /**
  * Ensure minimum weight (most carriers have a minimum billable weight)
  */
 export function ensureMinimumWeight(weight: number, minimum: number = 1.0): number {
-  return Math.max(weight, minimum);
+  return Math.max(weight, minimum)
 }
 
 /**
@@ -66,7 +66,7 @@ export function calculateDimensionalWeight(
   height: number,
   divisor: number = 139 // Standard divisor for domestic shipments
 ): number {
-  return (length * width * height) / divisor;
+  return (length * width * height) / divisor
 }
 
 /**
@@ -80,9 +80,9 @@ export function getBillableWeight(
   useDimensionalWeight: boolean = true
 ): number {
   if (!useDimensionalWeight || !length || !width || !height) {
-    return actualWeight;
+    return actualWeight
   }
 
-  const dimWeight = calculateDimensionalWeight(length, width, height);
-  return Math.max(actualWeight, dimWeight);
+  const dimWeight = calculateDimensionalWeight(length, width, height)
+  return Math.max(actualWeight, dimWeight)
 }
