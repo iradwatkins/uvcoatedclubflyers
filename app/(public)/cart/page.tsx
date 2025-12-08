@@ -92,11 +92,11 @@ export default function CartPage() {
     }
   };
 
-  const formatPrice = (cents: number) => {
+  const formatPrice = (dollars: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-    }).format(cents / 100);
+    }).format(dollars);
   };
 
   if (isLoading) {

@@ -45,10 +45,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate total with shipping and tax
-    const subtotal = cart.total;
-    const shippingCost = shipping ? Math.round(shipping.cost * 100) : 0;
-    const taxAmount = Math.round((subtotal + shippingCost) * 0.0875);
-    const totalAmount = providedTotal || subtotal + shippingCost + taxAmount;
+    // Cart prices are in dollars, convert to cents for database storage
+    const subtotalCents = Math.round(cart.total * 100);
+    const shippingCostCents = shipping ? Math.round(shipping.cost * 100) : 0;
+    const taxAmountCents = Math.round((subtotalCents + shippingCostCents) * 0.0875);
+    const totalAmountCents = providedTotal || subtotalCents + shippingCostCents + taxAmountCents;
 
     // Create order in database
     const order = await prisma.order.create({
@@ -56,9 +57,9 @@ export async function POST(request: NextRequest) {
         orderNumber,
         userId: session?.user?.id,
         status: paymentMethod === 'cash' ? 'PENDING_PAYMENT' : 'PENDING',
-        subtotal,
-        taxAmount,
-        totalAmount,
+        subtotal: subtotalCents,
+        taxAmount: taxAmountCents,
+        totalAmount: totalAmountCents,
         paymentId: paymentId || null,
         paymentMethod,
         paymentStatus,
@@ -66,14 +67,14 @@ export async function POST(request: NextRequest) {
         shippingAddress: shippingAddress || null,
         shippingCarrier: shipping?.carrier || null,
         shippingService: shipping?.service || null,
-        shippingRateAmount: shippingCost || null,
+        shippingRateAmount: shippingCostCents || null,
         pickupAirportId: airportId || null,
         orderItems: {
           create: cart.items.map((item) => ({
             productId: item.productId,
             quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            totalPrice: item.price,
+            unitPrice: Math.round(item.unitPrice * 100),
+            totalPrice: Math.round(item.price * 100),
             options: item.options as any,
           })),
         },
@@ -121,14 +122,14 @@ export async function POST(request: NextRequest) {
           items: cart.items.map((item) => ({
             productName: item.productName || 'Product',
             quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            totalPrice: item.price,
+            unitPrice: Math.round(item.unitPrice * 100),
+            totalPrice: Math.round(item.price * 100),
             configuration: item.options,
           })),
-          subtotal,
-          tax: taxAmount,
-          shippingCost,
-          total: totalAmount,
+          subtotal: subtotalCents,
+          tax: taxAmountCents,
+          shippingCost: shippingCostCents,
+          total: totalAmountCents,
           shippingAddress: shippingAddress || { address: '', city: '', state: '', zipCode: '' },
           orderUrl: `${baseUrl}/dashboard/orders/${order.id}`,
         });
@@ -146,7 +147,7 @@ export async function POST(request: NextRequest) {
         customerName: session?.user?.name || 'Guest',
         customerEmail: session?.user?.email || 'N/A',
         itemCount: cart.items.length,
-        total: totalAmount,
+        total: totalAmountCents,
         paymentMethod,
         orderUrl: `${baseUrl}/admin/orders/${order.id}`,
       });

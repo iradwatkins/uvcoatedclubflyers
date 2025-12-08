@@ -142,11 +142,11 @@ export default function CheckoutPage() {
     }
   };
 
-  const formatPrice = (cents: number) => {
+  const formatPrice = (dollars: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-    }).format(cents / 100);
+    }).format(dollars);
   };
 
   if (isLoading || !cart) {
@@ -245,10 +245,7 @@ export default function CheckoutPage() {
                     <span className="text-muted-foreground">Tax (8.75%)</span>
                     <span className="font-medium">
                       {formatPrice(
-                        Math.round(
-                          (cart.total + (selectedShipping ? selectedShipping.cost * 100 : 0)) *
-                            0.0875
-                        )
+                        (cart.total + (selectedShipping ? selectedShipping.cost : 0)) * 0.0875
                       )}
                     </span>
                   </div>
@@ -256,10 +253,7 @@ export default function CheckoutPage() {
                     <span className="text-lg font-semibold">Total</span>
                     <span className="text-2xl font-bold text-primary">
                       {formatPrice(
-                        Math.round(
-                          (cart.total + (selectedShipping ? selectedShipping.cost * 100 : 0)) *
-                            1.0875
-                        )
+                        (cart.total + (selectedShipping ? selectedShipping.cost : 0)) * 1.0875
                       )}
                     </span>
                   </div>
@@ -427,7 +421,7 @@ export default function CheckoutPage() {
                     <SquareCardPayment
                       applicationId={applicationId}
                       locationId={locationId}
-                      total={Math.round((cart.total + selectedShipping.cost * 100) * 1.0875)}
+                      total={Math.round((cart.total + selectedShipping.cost) * 1.0875 * 100)}
                       environment={environment}
                       savedPaymentMethod={
                         selectedSavedPayment
@@ -449,14 +443,14 @@ export default function CheckoutPage() {
                   )
                 ) : paymentMethod === 'cashapp' ? (
                   <CashAppQRPayment
-                    total={Math.round((cart.total + selectedShipping.cost * 100) * 1.0875) / 100}
+                    total={(cart.total + selectedShipping.cost) * 1.0875}
                     onPaymentSuccess={handlePaymentSuccess}
                     onPaymentError={handlePaymentError}
                     onBack={handlePaymentBack}
                   />
                 ) : (
                   <PayPalPayment
-                    total={Math.round((cart.total + selectedShipping.cost * 100) * 1.0875)}
+                    total={Math.round((cart.total + selectedShipping.cost) * 1.0875 * 100)}
                     orderNumber={orderNumber}
                     onPaymentSuccess={handlePaymentSuccess}
                     onPaymentError={handlePaymentError}

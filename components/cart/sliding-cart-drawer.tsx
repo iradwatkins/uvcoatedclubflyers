@@ -98,8 +98,8 @@ export function SlidingCartDrawer({
     }
   };
 
-  const formatPrice = (cents: number) => {
-    return `$${(cents / 100).toFixed(2)}`;
+  const formatPrice = (dollars: number) => {
+    return `$${dollars.toFixed(2)}`;
   };
 
   return (
