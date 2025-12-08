@@ -136,13 +136,15 @@ export async function trackRevenue(options: {
         utm_source,
         utm_medium,
         utm_campaign,
-        revenue
+        order_revenue,
+        attributed_revenue
       ) VALUES (
         ${orderId},
         ${sessionId},
         ${source || 'direct'},
         ${medium || 'none'},
         ${campaign || null},
+        ${revenue},
         ${revenue}
       )
     `;
@@ -236,10 +238,10 @@ export async function getRevenueBySource(startDate: Date, endDate: Date) {
       COALESCE(utm_source, 'direct') as source,
       COALESCE(utm_medium, 'none') as medium,
       COUNT(DISTINCT order_id) as orders,
-      SUM(revenue) as revenue,
-      AVG(revenue) as avg_order_value
+      SUM(order_revenue) as revenue,
+      AVG(order_revenue) as avg_order_value
     FROM revenue_attribution
-    WHERE created_at >= ${startDate} AND created_at <= ${endDate}
+    WHERE conversion_at >= ${startDate} AND conversion_at <= ${endDate}
     GROUP BY utm_source, utm_medium
     ORDER BY revenue DESC
     LIMIT 20
