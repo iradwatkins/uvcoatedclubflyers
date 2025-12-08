@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     const cartItemCount = cart.itemCount;
 
     // Fetch active order bumps with their products
-    const bumps = await sql<OrderBump[]>`
+    const bumps = (await sql`
       SELECT
         ob.id,
         ob.name,
@@ -81,15 +81,15 @@ export async function GET(request: NextRequest) {
       LEFT JOIN products p ON ob.product_id = p.id
       WHERE ob.is_active = true
       ORDER BY ob.priority DESC
-    `;
+    `) as OrderBump[];
 
     // Fetch all rules for these bumps
     const bumpIds = bumps.map((b) => b.id);
-    const rules = await sql<BumpRule[]>`
+    const rules = (await sql`
       SELECT bump_id, rule_type, rule_value, operator
       FROM order_bump_rules
       WHERE bump_id = ANY(${bumpIds})
-    `;
+    `) as BumpRule[];
 
     // Group rules by bump_id
     const rulesByBump = new Map<number, BumpRule[]>();

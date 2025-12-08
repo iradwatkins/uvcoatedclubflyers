@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     const normalizedCode = code.toUpperCase().trim();
 
     // Find the coupon
-    const [coupon] = await sql<Coupon[]>`
+    const [coupon] = (await sql`
       SELECT
         id, code, name, description, discount_type, discount_value,
         min_order_amount, max_discount_amount, usage_limit, usage_count,
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         starts_at, expires_at, can_combine, exclude_sale_items, is_active
       FROM coupons
       WHERE UPPER(code) = ${normalizedCode}
-    `;
+    `) as Coupon[];
 
     if (!coupon) {
       return NextResponse.json({ error: 'Invalid coupon code' }, { status: 400 });

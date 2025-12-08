@@ -24,8 +24,8 @@ interface OrderBump {
   revenue: number;
 }
 
-async function getOrderBumps() {
-  const bumps = await sql<OrderBump[]>`
+async function getOrderBumps(): Promise<OrderBump[]> {
+  const bumps = await sql`
     SELECT
       ob.id,
       ob.name,
@@ -48,7 +48,7 @@ async function getOrderBumps() {
     LEFT JOIN products p ON ob.product_id = p.id
     ORDER BY ob.priority DESC, ob.created_at DESC
   `;
-  return bumps;
+  return bumps as OrderBump[];
 }
 
 export default async function AdminOrderBumpsPage() {

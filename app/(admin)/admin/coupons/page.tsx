@@ -20,8 +20,8 @@ interface Coupon {
   created_at: Date;
 }
 
-async function getCoupons() {
-  const coupons = await sql<Coupon[]>`
+async function getCoupons(): Promise<Coupon[]> {
+  const coupons = await sql`
     SELECT
       id, code, name, description, discount_type, discount_value,
       min_order_amount, usage_limit, usage_count, starts_at, expires_at,
@@ -29,7 +29,7 @@ async function getCoupons() {
     FROM coupons
     ORDER BY created_at DESC
   `;
-  return coupons;
+  return coupons as Coupon[];
 }
 
 function getDiscountIcon(type: string) {
