@@ -15,11 +15,15 @@ export async function POST(request: NextRequest) {
     let sessionId = cookieStore.get('session_id')?.value;
 
     // Generate session ID if not exists
+    // Note: secure should only be true when using HTTPS
+    const isHttps = request.headers.get('x-forwarded-proto') === 'https' ||
+                    request.url.startsWith('https://');
+
     if (!sessionId) {
       sessionId = randomBytes(32).toString('hex');
       cookieStore.set('session_id', sessionId, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: isHttps,
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7, // 7 days
       });

@@ -35,9 +35,14 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({ success: true, cart });
 
     // Set cart session cookie
+    // Note: secure should only be true when using HTTPS
+    // Check if request is over HTTPS by looking at x-forwarded-proto or protocol
+    const isHttps = request.headers.get('x-forwarded-proto') === 'https' ||
+                    request.url.startsWith('https://');
+
     response.cookies.set('cart_session', sessionId, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isHttps,
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
