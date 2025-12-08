@@ -817,77 +817,6 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
               )}
             </div>
 
-            {/* Template Download Section */}
-            {selectedSizeId && selectedSizeId > 0 && (
-              <div className="rounded-lg border bg-blue-50 dark:bg-blue-950/20 p-4">
-                <div className="flex items-start gap-3">
-                  <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
-                  <div className="flex-1 space-y-2">
-                    <div>
-                      <h4 className="font-medium text-sm">Download Template</h4>
-                      <p className="text-xs text-muted-foreground">
-                        Use our template to ensure your artwork is print-ready
-                      </p>
-                    </div>
-                    <div className="text-xs text-muted-foreground space-y-1">
-                      <p><strong>Specifications:</strong></p>
-                      <ul className="list-disc list-inside space-y-0.5 pl-2">
-                        <li>Resolution: 300dpi</li>
-                        <li>Bleed: 1/8" (0.125")</li>
-                        <li>Color Mode: CMYK</li>
-                        <li>File Format: PDF, AI, PSD, JPG</li>
-                      </ul>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-2"
-                      onClick={() => {
-                        const selectedSize = options.sizes.find(s => s.id === selectedSizeId);
-                        if (selectedSize) {
-                          // Create a simple template info download (placeholder)
-                          const templateInfo = `UV Coated Club Flyers - Template Specifications
-
-Size: ${selectedSize.name} (${selectedSize.width}" x ${selectedSize.height}")
-
-Document Setup:
-- Width: ${selectedSize.width + 0.25}" (includes 0.125" bleed on each side)
-- Height: ${selectedSize.height + 0.25}" (includes 0.125" bleed on each side)
-- Resolution: 300 DPI
-- Color Mode: CMYK
-- Bleed: 0.125" on all sides
-- Safety Margin: 0.125" from trim line
-
-File Formats Accepted:
-- PDF (preferred)
-- Adobe Illustrator (.ai)
-- Adobe Photoshop (.psd)
-- High-resolution JPG (300dpi minimum)
-
-Tips:
-- Extend background images/colors to the bleed line
-- Keep important text/logos within the safety margin
-- Convert all fonts to outlines
-- Embed all linked images
-`;
-                          const blob = new Blob([templateInfo], { type: 'text/plain' });
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = `template-${selectedSize.width}x${selectedSize.height}.txt`;
-                          a.click();
-                          URL.revokeObjectURL(url);
-                        }
-                      }}
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download Template Guide
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* 3. Paper Stock */}
             <div className="space-y-2">
               <Label htmlFor="paperStock">Paper Stock</Label>
@@ -1334,6 +1263,78 @@ Tips:
             </Button>
           </CardFooter>
         </Card>
+
+        {/* Template Download Section - Separate from Configure Your Order */}
+        {selectedSizeId && selectedSizeId > 0 && (
+          <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                <div className="flex-1 space-y-2">
+                  <div>
+                    <h4 className="font-medium">Download Template</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Use our template to ensure your artwork is print-ready
+                    </p>
+                  </div>
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p><strong>Specifications:</strong></p>
+                    <ul className="list-disc list-inside space-y-0.5 pl-2">
+                      <li>Resolution: 300dpi</li>
+                      <li>Bleed: 1/8" (0.125")</li>
+                      <li>Color Mode: CMYK</li>
+                      <li>File Format: PDF, AI, PSD, JPG</li>
+                    </ul>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    onClick={() => {
+                      const selectedSize = options?.sizes.find(s => s.id === selectedSizeId);
+                      if (selectedSize) {
+                        const templateInfo = `UV Coated Club Flyers - Template Specifications
+
+Size: ${selectedSize.name} (${selectedSize.width}" x ${selectedSize.height}")
+
+Document Setup:
+- Width: ${selectedSize.width + 0.25}" (includes 0.125" bleed on each side)
+- Height: ${selectedSize.height + 0.25}" (includes 0.125" bleed on each side)
+- Resolution: 300 DPI
+- Color Mode: CMYK
+- Bleed: 0.125" on all sides
+- Safety Margin: 0.125" from trim line
+
+File Formats Accepted:
+- PDF (preferred)
+- Adobe Illustrator (.ai)
+- Adobe Photoshop (.psd)
+- High-resolution JPG (300dpi minimum)
+
+Tips:
+- Extend background images/colors to the bleed line
+- Keep important text/logos within the safety margin
+- Convert all fonts to outlines
+- Embed all linked images
+`;
+                        const blob = new Blob([templateInfo], { type: 'text/plain' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `template-${selectedSize.width}x${selectedSize.height}.txt`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      }
+                    }}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download Template Guide
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
