@@ -94,6 +94,20 @@ export default function CheckoutPage() {
 
   const handlePaymentSuccess = async (result: Record<string, unknown>) => {
     try {
+      // Build billing info from shipping address (for now, billing = shipping)
+      const billingInfo = shippingAddress ? {
+        firstName: shippingAddress.firstName,
+        lastName: shippingAddress.lastName,
+        email: shippingAddress.email,
+        phone: shippingAddress.phone,
+        address: shippingAddress.street,
+        address2: shippingAddress.street2 || '',
+        city: shippingAddress.city,
+        state: shippingAddress.state,
+        zipCode: shippingAddress.zipCode,
+        country: shippingAddress.country,
+      } : null;
+
       // Save order to database
       const response = await fetch('/api/orders/create', {
         method: 'POST',
@@ -103,6 +117,7 @@ export default function CheckoutPage() {
           paymentId: result.paymentId,
           paymentMethod: result.paymentMethod || 'card',
           cart,
+          billingInfo,
           shippingAddress,
           shipping: selectedShipping,
           airportId: selectedAirportId || null,

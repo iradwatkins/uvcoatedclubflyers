@@ -51,20 +51,31 @@ export async function POST(request: NextRequest) {
     const taxAmountCents = Math.round((subtotalCents + shippingCostCents) * 0.0875);
     const totalAmountCents = providedTotal || subtotalCents + shippingCostCents + taxAmountCents;
 
-    // Create order in database
+    // Create order in database - pass data in format expected by prisma layer
     const order = await prisma.order.create({
       data: {
         orderNumber,
         userId: session?.user?.id,
-        status: paymentMethod === 'cash' ? 'PENDING_PAYMENT' : 'PENDING',
+        status: paymentMethod === 'cash' ? 'pending_payment' : 'pending',
         subtotal: subtotalCents,
         taxAmount: taxAmountCents,
         totalAmount: totalAmountCents,
-        paymentId: paymentId || null,
+        transactionId: paymentId || null,
         paymentMethod,
-        paymentStatus,
+        paymentStatus: paymentStatus === 'COMPLETED' ? 'paid' : 'unpaid',
+        // Pass billing and shipping info as objects for prisma layer to process
         billingInfo: billingInfo || null,
-        shippingAddress: shippingAddress || null,
+        shippingAddress: shippingAddress ? {
+          firstName: shippingAddress.firstName,
+          lastName: shippingAddress.lastName,
+          address: shippingAddress.street,
+          address2: shippingAddress.street2 || '',
+          city: shippingAddress.city,
+          state: shippingAddress.state,
+          zipCode: shippingAddress.zipCode,
+          country: shippingAddress.country || 'US',
+        } : null,
+        // Shipping method
         shippingCarrier: shipping?.carrier || null,
         shippingService: shipping?.service || null,
         shippingRateAmount: shippingCostCents || null,
@@ -72,6 +83,7 @@ export async function POST(request: NextRequest) {
         orderItems: {
           create: cart.items.map((item) => ({
             productId: item.productId,
+            productName: item.productName || 'Product',
             quantity: item.quantity,
             unitPrice: Math.round(item.unitPrice * 100),
             totalPrice: Math.round(item.price * 100),
@@ -111,14 +123,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Send confirmation email to customer
-    if (session?.user?.email) {
+    // Send confirmation email to customer (use billing email, fallback to session email)
+    const customerEmail = billingInfo?.email || session?.user?.email;
+    const customerName = billingInfo?.firstName
+      ? `${billingInfo.firstName} ${billingInfo.lastName || ''}`.trim()
+      : session?.user?.name || 'Customer';
+
+    if (customerEmail) {
       try {
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
         await sendOrderConfirmation({
-          to: session.user.email,
+          to: customerEmail,
           orderNumber: order.orderNumber,
-          customerName: session.user.name || 'Customer',
+          customerName,
           items: cart.items.map((item) => ({
             productName: item.productName || 'Product',
             quantity: item.quantity,
@@ -130,7 +147,12 @@ export async function POST(request: NextRequest) {
           tax: taxAmountCents,
           shippingCost: shippingCostCents,
           total: totalAmountCents,
-          shippingAddress: shippingAddress || { address: '', city: '', state: '', zipCode: '' },
+          shippingAddress: shippingAddress ? {
+            address: shippingAddress.street,
+            city: shippingAddress.city,
+            state: shippingAddress.state,
+            zipCode: shippingAddress.zipCode,
+          } : { address: '', city: '', state: '', zipCode: '' },
           orderUrl: `${baseUrl}/dashboard/orders/${order.id}`,
         });
       } catch (emailError) {
@@ -144,8 +166,8 @@ export async function POST(request: NextRequest) {
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
       await sendAdminOrderNotification({
         orderNumber: order.orderNumber,
-        customerName: session?.user?.name || 'Guest',
-        customerEmail: session?.user?.email || 'N/A',
+        customerName,
+        customerEmail: customerEmail || 'N/A',
         itemCount: cart.items.length,
         total: totalAmountCents,
         paymentMethod,
