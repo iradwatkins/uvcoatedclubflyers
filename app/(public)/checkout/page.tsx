@@ -350,7 +350,6 @@ export default function CheckoutPage() {
             {/* Step 2: Airport Selection */}
             {currentStep === 'airport-selection' && shippingAddress && (
               <AirportSelector
-                state={shippingAddress.state}
                 onSelect={handleAirportSelect}
                 onBack={handleStepBack}
                 onSkip={handleSkipAirport}

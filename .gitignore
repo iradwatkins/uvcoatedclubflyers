@@ -74,3 +74,4 @@ vaultwarden-data/
 # Qwen Code
 .qwen/commands/
 .qwen/bmad-source
+.vercel
