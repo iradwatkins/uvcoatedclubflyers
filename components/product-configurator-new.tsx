@@ -597,8 +597,8 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
         },
         uploadedFiles: uploadedFileIds, // Include uploaded file IDs
         addOns: addOnsPayload, // Include selected add-ons with sub-options
-        price: Math.round(priceBreakdown.totalPrice * 100), // Convert to cents
-        unitPrice: Math.round(priceBreakdown.unitPrice * 100), // Convert to cents
+        price: priceBreakdown.totalPrice,
+        unitPrice: priceBreakdown.unitPrice,
       };
 
       const response = await fetch('/api/cart/add', {
