@@ -78,11 +78,11 @@ export async function POST(request: NextRequest) {
 
     // Check per-user limit if email provided
     if (email && coupon.usage_limit_per_user !== null) {
-      const [usage] = await sql<{ count: number }[]>`
+      const [usage] = (await sql`
         SELECT COUNT(*)::int as count
         FROM coupon_usage
         WHERE coupon_id = ${coupon.id} AND email = ${email}
-      `;
+      `) as { count: number }[];
 
       if (usage && usage.count >= coupon.usage_limit_per_user) {
         return NextResponse.json({
