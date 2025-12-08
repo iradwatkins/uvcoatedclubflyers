@@ -17,7 +17,7 @@ const calculateRequestSchema = z.object({
   items: z.array(
     z.object({
       quantity: z.number().positive(),
-      weightLbs: z.number().positive(), // Weight per item in pounds
+      weightLbs: z.number().positive(), // Total weight for this line item in pounds (quantity already factored in)
     })
   ),
   selectedAirportId: z.string().optional(), // For Southwest Cargo airport selection
@@ -50,9 +50,10 @@ export async function POST(request: NextRequest) {
     };
 
     // Calculate total weight from cart items
+    // Note: weightLbs already represents total weight for this line item (quantity already factored in)
     let totalWeight = 0;
     for (const item of items) {
-      totalWeight += item.weightLbs * item.quantity;
+      totalWeight += item.weightLbs;
     }
 
     // Split into boxes using standard box dimensions and 36lb max weight
