@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { addToCart } from '@/lib/cart';
 import { randomUUID } from 'crypto';
+import { trackCartActivity } from '@/lib/abandoned-cart';
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,6 +32,11 @@ export async function POST(request: NextRequest) {
       uploadedFiles: uploadedFiles || [],
       addOns: addOns || [],
     });
+
+    // Track cart activity for abandoned cart detection
+    trackCartActivity(sessionId, cart).catch((err) =>
+      console.error('[Cart] Track activity error:', err)
+    );
 
     const response = NextResponse.json({ success: true, cart });
 

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import type { Cart } from '@/lib/cart';
 import { sendOrderConfirmation, sendAdminOrderNotification } from '@/lib/email/send';
+import { markCartRecovered } from '@/lib/abandoned-cart';
 
 export async function POST(request: NextRequest) {
   try {
@@ -176,6 +178,18 @@ export async function POST(request: NextRequest) {
     } catch (emailError) {
       console.error('Failed to send admin notification email:', emailError);
       // Don't fail the order if email fails
+    }
+
+    // Mark abandoned cart as recovered
+    try {
+      const cookieStore = await cookies();
+      const sessionId = cookieStore.get('cart_session')?.value;
+      if (sessionId) {
+        await markCartRecovered(sessionId, order.id);
+      }
+    } catch (recoveryError) {
+      console.error('Failed to mark cart as recovered:', recoveryError);
+      // Don't fail the order if this fails
     }
 
     return NextResponse.json({

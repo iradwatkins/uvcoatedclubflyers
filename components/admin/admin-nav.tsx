@@ -17,6 +17,7 @@ import {
   FileStack,
   Gift,
   Tag,
+  ShoppingCartIcon,
 } from 'lucide-react';
 
 interface AdminNavProps {
@@ -82,6 +83,11 @@ const navItems = [
     title: 'Coupons',
     href: '/admin/coupons',
     icon: Tag,
+  },
+  {
+    title: 'Abandoned Carts',
+    href: '/admin/abandoned-carts',
+    icon: ShoppingCartIcon,
   },
 ];
 
