@@ -23,12 +23,24 @@ export interface ShippingAddress {
   isResidential: boolean;
 }
 
+export interface BillingAddress {
+  firstName: string;
+  lastName: string;
+  street: string;
+  street2?: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}
+
 interface ShippingAddressFormProps {
-  onSubmit: (address: ShippingAddress) => void;
+  onSubmit: (address: ShippingAddress, billingAddress?: BillingAddress) => void;
   onBack?: () => void;
 }
 
 export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormProps) {
+  // Contact & Shipping fields
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -39,11 +51,23 @@ export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormPro
   const [state, setState] = useState('');
   const [zipCode, setZipCode] = useState('');
   const [isResidential, setIsResidential] = useState(false);
+
+  // Billing address fields
+  const [billingDifferent, setBillingDifferent] = useState(false);
+  const [billingFirstName, setBillingFirstName] = useState('');
+  const [billingLastName, setBillingLastName] = useState('');
+  const [billingStreet, setBillingStreet] = useState('');
+  const [billingStreet2, setBillingStreet2] = useState('');
+  const [billingCity, setBillingCity] = useState('');
+  const [billingState, setBillingState] = useState('');
+  const [billingZipCode, setBillingZipCode] = useState('');
+
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
+    // Contact info validation
     if (!firstName.trim()) {
       newErrors.firstName = 'First name is required';
     }
@@ -64,6 +88,7 @@ export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormPro
       newErrors.phone = 'Invalid phone number';
     }
 
+    // Shipping address validation
     if (!street.trim()) {
       newErrors.street = 'Street address is required';
     }
@@ -82,6 +107,37 @@ export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormPro
       newErrors.zipCode = 'ZIP code is required';
     } else if (!/^\d{5}(-\d{4})?$/.test(zipCode)) {
       newErrors.zipCode = 'Invalid ZIP code format';
+    }
+
+    // Billing address validation (only if different from shipping)
+    if (billingDifferent) {
+      if (!billingFirstName.trim()) {
+        newErrors.billingFirstName = 'Billing first name is required';
+      }
+
+      if (!billingLastName.trim()) {
+        newErrors.billingLastName = 'Billing last name is required';
+      }
+
+      if (!billingStreet.trim()) {
+        newErrors.billingStreet = 'Billing street address is required';
+      }
+
+      if (!billingCity.trim()) {
+        newErrors.billingCity = 'Billing city is required';
+      }
+
+      if (!billingState.trim()) {
+        newErrors.billingState = 'Billing state is required';
+      } else if (billingState.length !== 2) {
+        newErrors.billingState = 'State must be 2 letter code (e.g., CA)';
+      }
+
+      if (!billingZipCode.trim()) {
+        newErrors.billingZipCode = 'Billing ZIP code is required';
+      } else if (!/^\d{5}(-\d{4})?$/.test(billingZipCode)) {
+        newErrors.billingZipCode = 'Invalid ZIP code format';
+      }
     }
 
     setErrors(newErrors);
@@ -109,7 +165,21 @@ export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormPro
       isResidential,
     };
 
-    onSubmit(address);
+    // Build billing address if different from shipping
+    const billing: BillingAddress | undefined = billingDifferent
+      ? {
+          firstName: billingFirstName.trim(),
+          lastName: billingLastName.trim(),
+          street: billingStreet.trim(),
+          street2: billingStreet2.trim() || undefined,
+          city: billingCity.trim(),
+          state: billingState.trim().toUpperCase(),
+          zipCode: billingZipCode.trim(),
+          country: 'US',
+        }
+      : undefined;
+
+    onSubmit(address, billing);
   };
 
   return (
@@ -273,6 +343,118 @@ export function ShippingAddressForm({ onSubmit, onBack }: ShippingAddressFormPro
                   Delivery)
                 </AlertDescription>
               </Alert>
+            )}
+          </div>
+
+          {/* Billing Address Section */}
+          <div className="space-y-4 border-t pt-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="billingDifferent"
+                checked={billingDifferent}
+                onCheckedChange={(checked) => setBillingDifferent(checked as boolean)}
+              />
+              <Label htmlFor="billingDifferent" className="cursor-pointer text-sm font-normal">
+                Billing address is different from shipping address
+              </Label>
+            </div>
+
+            {billingDifferent && (
+              <div className="space-y-4 rounded-lg border bg-muted/30 p-4">
+                <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Billing Address</h3>
+
+                {/* Billing Name */}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="billingFirstName">First Name *</Label>
+                    <Input
+                      id="billingFirstName"
+                      value={billingFirstName}
+                      onChange={(e) => setBillingFirstName(e.target.value)}
+                      placeholder="John"
+                      className={errors.billingFirstName ? 'border-destructive' : ''}
+                    />
+                    {errors.billingFirstName && <p className="text-sm text-destructive">{errors.billingFirstName}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="billingLastName">Last Name *</Label>
+                    <Input
+                      id="billingLastName"
+                      value={billingLastName}
+                      onChange={(e) => setBillingLastName(e.target.value)}
+                      placeholder="Smith"
+                      className={errors.billingLastName ? 'border-destructive' : ''}
+                    />
+                    {errors.billingLastName && <p className="text-sm text-destructive">{errors.billingLastName}</p>}
+                  </div>
+                </div>
+
+                {/* Billing Street */}
+                <div className="space-y-2">
+                  <Label htmlFor="billingStreet">Street Address *</Label>
+                  <Input
+                    id="billingStreet"
+                    value={billingStreet}
+                    onChange={(e) => setBillingStreet(e.target.value)}
+                    placeholder="1234 Main St"
+                    className={errors.billingStreet ? 'border-destructive' : ''}
+                  />
+                  {errors.billingStreet && <p className="text-sm text-destructive">{errors.billingStreet}</p>}
+                </div>
+
+                {/* Billing Street 2 */}
+                <div className="space-y-2">
+                  <Label htmlFor="billingStreet2">Apartment, suite, etc. (optional)</Label>
+                  <Input
+                    id="billingStreet2"
+                    value={billingStreet2}
+                    onChange={(e) => setBillingStreet2(e.target.value)}
+                    placeholder="Apt 5B"
+                  />
+                </div>
+
+                {/* Billing City */}
+                <div className="space-y-2">
+                  <Label htmlFor="billingCity">City *</Label>
+                  <Input
+                    id="billingCity"
+                    value={billingCity}
+                    onChange={(e) => setBillingCity(e.target.value)}
+                    placeholder="Los Angeles"
+                    className={errors.billingCity ? 'border-destructive' : ''}
+                  />
+                  {errors.billingCity && <p className="text-sm text-destructive">{errors.billingCity}</p>}
+                </div>
+
+                {/* Billing State & ZIP */}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="billingState">State *</Label>
+                    <Input
+                      id="billingState"
+                      value={billingState}
+                      onChange={(e) => setBillingState(e.target.value.toUpperCase())}
+                      placeholder="CA"
+                      maxLength={2}
+                      className={errors.billingState ? 'border-destructive' : ''}
+                    />
+                    {errors.billingState && <p className="text-sm text-destructive">{errors.billingState}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="billingZipCode">ZIP Code *</Label>
+                    <Input
+                      id="billingZipCode"
+                      value={billingZipCode}
+                      onChange={(e) => setBillingZipCode(e.target.value)}
+                      placeholder="90001"
+                      className={errors.billingZipCode ? 'border-destructive' : ''}
+                    />
+                    {errors.billingZipCode && <p className="text-sm text-destructive">{errors.billingZipCode}</p>}
+                  </div>
+                </div>
+              </div>
             )}
           </div>
 

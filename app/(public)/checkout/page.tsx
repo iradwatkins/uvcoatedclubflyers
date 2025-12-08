@@ -13,6 +13,7 @@ import { PayPalPayment } from '@/components/checkout/paypal-payment';
 import {
   ShippingAddressForm,
   type ShippingAddress,
+  type BillingAddress,
 } from '@/components/checkout/shipping-address-form';
 import { AirportSelector } from '@/components/checkout/airport-selector';
 import { ShippingMethodSelector } from '@/components/checkout/shipping-method-selector';
@@ -37,6 +38,7 @@ export default function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('shipping-address');
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress | null>(null);
+  const [billingAddress, setBillingAddress] = useState<BillingAddress | null>(null);
   const [selectedAirportId, setSelectedAirportId] = useState<string>('');
   const [selectedShipping, setSelectedShipping] = useState<ShippingRate | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'cashapp' | 'paypal' | null>(null);
@@ -72,8 +74,9 @@ export default function CheckoutPage() {
     setOrderNumber(number);
   };
 
-  const handleShippingAddressSubmit = (address: ShippingAddress) => {
+  const handleShippingAddressSubmit = (address: ShippingAddress, billing?: BillingAddress) => {
     setShippingAddress(address);
+    setBillingAddress(billing || null);
     setCurrentStep('airport-selection');
   };
 
@@ -94,19 +97,34 @@ export default function CheckoutPage() {
 
   const handlePaymentSuccess = async (result: Record<string, unknown>) => {
     try {
-      // Build billing info from shipping address (for now, billing = shipping)
-      const billingInfo = shippingAddress ? {
-        firstName: shippingAddress.firstName,
-        lastName: shippingAddress.lastName,
-        email: shippingAddress.email,
-        phone: shippingAddress.phone,
-        address: shippingAddress.street,
-        address2: shippingAddress.street2 || '',
-        city: shippingAddress.city,
-        state: shippingAddress.state,
-        zipCode: shippingAddress.zipCode,
-        country: shippingAddress.country,
-      } : null;
+      // Build billing info - use separate billing address if provided, otherwise use shipping address
+      const billingInfo = billingAddress
+        ? {
+            firstName: billingAddress.firstName,
+            lastName: billingAddress.lastName,
+            email: shippingAddress?.email || '', // Email comes from contact info (shipping form)
+            phone: shippingAddress?.phone || '', // Phone comes from contact info (shipping form)
+            address: billingAddress.street,
+            address2: billingAddress.street2 || '',
+            city: billingAddress.city,
+            state: billingAddress.state,
+            zipCode: billingAddress.zipCode,
+            country: billingAddress.country || 'US',
+          }
+        : shippingAddress
+          ? {
+              firstName: shippingAddress.firstName,
+              lastName: shippingAddress.lastName,
+              email: shippingAddress.email,
+              phone: shippingAddress.phone,
+              address: shippingAddress.street,
+              address2: shippingAddress.street2 || '',
+              city: shippingAddress.city,
+              state: shippingAddress.state,
+              zipCode: shippingAddress.zipCode,
+              country: shippingAddress.country,
+            }
+          : null;
 
       // Save order to database
       const response = await fetch('/api/orders/create', {
