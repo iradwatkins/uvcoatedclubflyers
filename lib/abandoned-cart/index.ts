@@ -7,15 +7,17 @@ export interface AbandonedCart {
   userId: number | null;
   email: string | null;
   firstName: string | null;
-  lastName: string | null;
   cartData: unknown;
   cartTotal: number;
   itemCount: number;
-  recoveryStatus: string;
-  emailsSent: number;
-  lastActivityAt: Date;
-  abandonmentDetectedAt: Date | null;
+  status: string;
+  abandonedAt: Date | null;
   recoveryToken: string | null;
+  recoveryCouponCode: string | null;
+  emailsSent: number;
+  firstEmailSentAt: Date | null;
+  secondEmailSentAt: Date | null;
+  thirdEmailSentAt: Date | null;
 }
 
 export interface CartItem {
@@ -30,13 +32,12 @@ export interface CartItem {
 
 /**
  * Track or update cart activity for abandoned cart detection
+ * Uses existing schema: total_value (cents), status, abandoned_at
  */
 export async function trackCartActivity(
   sessionId: string,
   cart: { items: CartItem[]; total: number; itemCount: number },
-  email?: string,
-  firstName?: string,
-  lastName?: string
+  email?: string
 ): Promise<void> {
   try {
     // Skip if cart is empty
@@ -49,42 +50,44 @@ export async function trackCartActivity(
       return;
     }
 
+    // Convert total from dollars to cents for storage
+    const totalCents = Math.round(cart.total * 100);
+
+    // Extract product names for email display
+    const productNames = cart.items.map((item) => item.productName);
+
     await sql`
       INSERT INTO abandoned_carts (
         session_id,
         email,
-        first_name,
-        last_name,
         cart_data,
-        cart_total,
+        total_value,
         item_count,
-        last_activity_at,
-        recovery_status
+        product_names,
+        status,
+        abandoned_at
       ) VALUES (
         ${sessionId},
         ${email || null},
-        ${firstName || null},
-        ${lastName || null},
         ${JSON.stringify(cart)}::jsonb,
-        ${cart.total},
+        ${totalCents},
         ${cart.itemCount},
-        NOW(),
-        'active'
+        ${JSON.stringify(productNames)}::jsonb,
+        'active',
+        NOW()
       )
       ON CONFLICT (session_id) DO UPDATE SET
         email = COALESCE(EXCLUDED.email, abandoned_carts.email),
-        first_name = COALESCE(EXCLUDED.first_name, abandoned_carts.first_name),
-        last_name = COALESCE(EXCLUDED.last_name, abandoned_carts.last_name),
         cart_data = EXCLUDED.cart_data,
-        cart_total = EXCLUDED.cart_total,
+        total_value = EXCLUDED.total_value,
         item_count = EXCLUDED.item_count,
-        last_activity_at = NOW(),
-        recovery_status = CASE
-          WHEN abandoned_carts.recovery_status IN ('recovered', 'unsubscribed')
-          THEN abandoned_carts.recovery_status
+        product_names = EXCLUDED.product_names,
+        status = CASE
+          WHEN abandoned_carts.status IN ('recovered', 'converted')
+          THEN abandoned_carts.status
           ELSE 'active'
         END,
-        abandonment_detected_at = NULL,
+        abandoned_at = NOW(),
         updated_at = NOW()
     `;
   } catch (error) {
@@ -103,12 +106,12 @@ export async function markCartRecovered(
     await sql`
       UPDATE abandoned_carts
       SET
-        recovery_status = 'recovered',
+        status = 'recovered',
         recovered_at = NOW(),
         recovered_order_id = ${orderId},
         updated_at = NOW()
       WHERE session_id = ${sessionId}
-        AND recovery_status NOT IN ('recovered', 'expired')
+        AND status NOT IN ('recovered', 'converted', 'expired')
     `;
   } catch (error) {
     console.error('[AbandonedCart] Mark recovered error:', error);
@@ -122,11 +125,13 @@ export async function generateRecoveryToken(
   abandonedCartId: number
 ): Promise<string> {
   const token = nanoid(32);
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
   await sql`
     UPDATE abandoned_carts
     SET
       recovery_token = ${token},
+      recovery_token_expires_at = ${expiresAt},
       updated_at = NOW()
     WHERE id = ${abandonedCartId}
   `;
@@ -147,19 +152,26 @@ export async function getCartByRecoveryToken(
       user_id as "userId",
       email,
       first_name as "firstName",
-      last_name as "lastName",
       cart_data as "cartData",
-      cart_total as "cartTotal",
+      total_value as "cartTotal",
       item_count as "itemCount",
-      recovery_status as "recoveryStatus",
-      emails_sent as "emailsSent",
-      last_activity_at as "lastActivityAt",
-      abandonment_detected_at as "abandonmentDetectedAt",
+      status,
+      abandoned_at as "abandonedAt",
       recovery_token as "recoveryToken",
-      recovery_coupon_code as "recoveryCouponCode"
+      recovery_discount_code as "recoveryCouponCode",
+      first_email_sent_at as "firstEmailSentAt",
+      second_email_sent_at as "secondEmailSentAt",
+      third_email_sent_at as "thirdEmailSentAt",
+      CASE
+        WHEN third_email_sent_at IS NOT NULL THEN 3
+        WHEN second_email_sent_at IS NOT NULL THEN 2
+        WHEN first_email_sent_at IS NOT NULL THEN 1
+        ELSE 0
+      END as "emailsSent"
     FROM abandoned_carts
     WHERE recovery_token = ${token}
-      AND recovery_status NOT IN ('recovered', 'expired', 'unsubscribed')
+      AND status NOT IN ('recovered', 'converted', 'expired')
+      AND (recovery_token_expires_at IS NULL OR recovery_token_expires_at > NOW())
   `) as AbandonedCart[];
 
   return cart || null;
@@ -176,15 +188,14 @@ export async function detectAbandonedCarts(
     const result = await sql`
       UPDATE abandoned_carts
       SET
-        abandonment_detected_at = NOW(),
-        recovery_status = 'email_scheduled',
+        status = 'abandoned',
         recovery_token = encode(gen_random_bytes(24), 'hex'),
+        recovery_token_expires_at = NOW() + INTERVAL '7 days',
         updated_at = NOW()
-      WHERE recovery_status = 'active'
+      WHERE status = 'active'
         AND email IS NOT NULL
-        AND last_activity_at < NOW() - INTERVAL '${inactiveMinutes} minutes'
-        AND abandonment_detected_at IS NULL
-        AND cart_total > 0
+        AND abandoned_at < NOW() - make_interval(mins => ${inactiveMinutes})
+        AND total_value > 0
       RETURNING id
     `;
 
@@ -206,27 +217,27 @@ export async function getCartsNeedingEmails(): Promise<AbandonedCart[]> {
       ac.user_id as "userId",
       ac.email,
       ac.first_name as "firstName",
-      ac.last_name as "lastName",
       ac.cart_data as "cartData",
-      ac.cart_total as "cartTotal",
+      ac.total_value as "cartTotal",
       ac.item_count as "itemCount",
-      ac.recovery_status as "recoveryStatus",
-      ac.emails_sent as "emailsSent",
-      ac.last_activity_at as "lastActivityAt",
-      ac.abandonment_detected_at as "abandonmentDetectedAt",
-      ac.recovery_token as "recoveryToken"
+      ac.status,
+      ac.abandoned_at as "abandonedAt",
+      ac.recovery_token as "recoveryToken",
+      ac.recovery_discount_code as "recoveryCouponCode",
+      ac.first_email_sent_at as "firstEmailSentAt",
+      ac.second_email_sent_at as "secondEmailSentAt",
+      ac.third_email_sent_at as "thirdEmailSentAt",
+      CASE
+        WHEN ac.third_email_sent_at IS NOT NULL THEN 3
+        WHEN ac.second_email_sent_at IS NOT NULL THEN 2
+        WHEN ac.first_email_sent_at IS NOT NULL THEN 1
+        ELSE 0
+      END as "emailsSent"
     FROM abandoned_carts ac
-    WHERE ac.recovery_status = 'email_scheduled'
+    WHERE ac.status = 'abandoned'
       AND ac.email IS NOT NULL
-      AND ac.abandonment_detected_at IS NOT NULL
-      AND ac.emails_sent < ac.max_emails
-      AND EXISTS (
-        SELECT 1 FROM abandoned_cart_email_templates t
-        WHERE t.email_number = ac.emails_sent + 1
-          AND t.is_active = true
-          AND ac.abandonment_detected_at + (t.delay_hours || ' hours')::interval <= NOW()
-      )
-    ORDER BY ac.abandonment_detected_at ASC
+      AND ac.first_email_sent_at IS NULL
+    ORDER BY ac.abandoned_at ASC
     LIMIT 100
   `) as AbandonedCart[];
 
@@ -309,18 +320,38 @@ export async function recordEmailSent(
     )
   `;
 
-  // Update the cart's email count
-  await sql`
-    UPDATE abandoned_carts
-    SET
-      emails_sent = emails_sent + 1,
-      last_email_sent_at = NOW(),
-      first_email_sent_at = COALESCE(first_email_sent_at, NOW()),
-      recovery_status = 'email_sent',
-      recovery_coupon_code = COALESCE(${couponCode || null}, recovery_coupon_code),
-      updated_at = NOW()
-    WHERE id = ${abandonedCartId}
-  `;
+  // Update the cart based on email number
+  if (emailNumber === 1) {
+    await sql`
+      UPDATE abandoned_carts
+      SET
+        first_email_sent_at = NOW(),
+        recovery_discount_code = COALESCE(${couponCode || null}, recovery_discount_code),
+        recovery_discount_percent = COALESCE(${discountValue ? Math.round(discountValue) : null}, recovery_discount_percent),
+        updated_at = NOW()
+      WHERE id = ${abandonedCartId}
+    `;
+  } else if (emailNumber === 2) {
+    await sql`
+      UPDATE abandoned_carts
+      SET
+        second_email_sent_at = NOW(),
+        recovery_discount_code = COALESCE(${couponCode || null}, recovery_discount_code),
+        recovery_discount_percent = COALESCE(${discountValue ? Math.round(discountValue) : null}, recovery_discount_percent),
+        updated_at = NOW()
+      WHERE id = ${abandonedCartId}
+    `;
+  } else {
+    await sql`
+      UPDATE abandoned_carts
+      SET
+        third_email_sent_at = NOW(),
+        recovery_discount_code = COALESCE(${couponCode || null}, recovery_discount_code),
+        recovery_discount_percent = COALESCE(${discountValue ? Math.round(discountValue) : null}, recovery_discount_percent),
+        updated_at = NOW()
+      WHERE id = ${abandonedCartId}
+    `;
+  }
 }
 
 /**
@@ -337,6 +368,15 @@ export async function trackEmailOpen(
       status = 'opened'
     WHERE abandoned_cart_id = ${abandonedCartId}
       AND email_number = ${emailNumber}
+  `;
+
+  await sql`
+    UPDATE abandoned_carts
+    SET
+      email_open_count = email_open_count + 1,
+      last_email_opened_at = NOW(),
+      updated_at = NOW()
+    WHERE id = ${abandonedCartId}
   `;
 }
 
@@ -356,6 +396,15 @@ export async function trackEmailClick(
     WHERE abandoned_cart_id = ${abandonedCartId}
       AND email_number = ${emailNumber}
   `;
+
+  await sql`
+    UPDATE abandoned_carts
+    SET
+      email_click_count = email_click_count + 1,
+      last_email_clicked_at = NOW(),
+      updated_at = NOW()
+    WHERE id = ${abandonedCartId}
+  `;
 }
 
 /**
@@ -366,10 +415,11 @@ export async function expireOldCarts(days: number = 30): Promise<number> {
     const result = await sql`
       UPDATE abandoned_carts
       SET
-        recovery_status = 'expired',
+        status = 'expired',
+        expired_at = NOW(),
         updated_at = NOW()
-      WHERE recovery_status IN ('active', 'email_scheduled', 'email_sent')
-        AND last_activity_at < NOW() - INTERVAL '${days} days'
+      WHERE status IN ('active', 'abandoned')
+        AND abandoned_at < NOW() - make_interval(days => ${days})
       RETURNING id
     `;
 
@@ -386,14 +436,14 @@ export async function expireOldCarts(days: number = 30): Promise<number> {
 export async function getRecoveryStats(startDate: Date, endDate: Date) {
   const stats = await sql`
     SELECT
-      COUNT(*) FILTER (WHERE abandonment_detected_at IS NOT NULL) as total_abandoned,
-      COUNT(*) FILTER (WHERE recovery_status = 'recovered') as total_recovered,
-      SUM(cart_total) FILTER (WHERE abandonment_detected_at IS NOT NULL) as abandoned_value,
-      SUM(cart_total) FILTER (WHERE recovery_status = 'recovered') as recovered_value,
-      SUM(emails_sent) as total_emails_sent,
+      COUNT(*) FILTER (WHERE status IN ('abandoned', 'recovered', 'expired')) as total_abandoned,
+      COUNT(*) FILTER (WHERE status = 'recovered') as total_recovered,
+      COALESCE(SUM(total_value) FILTER (WHERE status IN ('abandoned', 'recovered', 'expired')), 0) as abandoned_value,
+      COALESCE(SUM(total_value) FILTER (WHERE status = 'recovered'), 0) as recovered_value,
+      COALESCE(SUM(recovered_revenue), 0) as total_recovered_revenue,
       ROUND(
-        (COUNT(*) FILTER (WHERE recovery_status = 'recovered')::numeric /
-         NULLIF(COUNT(*) FILTER (WHERE abandonment_detected_at IS NOT NULL), 0) * 100),
+        (COUNT(*) FILTER (WHERE status = 'recovered')::numeric /
+         NULLIF(COUNT(*) FILTER (WHERE status IN ('abandoned', 'recovered', 'expired')), 0) * 100),
         2
       ) as recovery_rate
     FROM abandoned_carts
@@ -405,7 +455,7 @@ export async function getRecoveryStats(startDate: Date, endDate: Date) {
     total_recovered: 0,
     abandoned_value: 0,
     recovered_value: 0,
-    total_emails_sent: 0,
+    total_recovered_revenue: 0,
     recovery_rate: 0,
   };
 }

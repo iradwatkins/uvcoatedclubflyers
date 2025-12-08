@@ -7,22 +7,21 @@ interface AbandonedCart {
   id: number;
   session_id: string;
   email: string | null;
-  first_name: string | null;
-  cart_total: number;
+  total_value: number; // in cents
   item_count: number;
-  recovery_status: string;
-  emails_sent: number;
-  last_activity_at: Date;
-  abandonment_detected_at: Date | null;
+  status: string;
+  abandoned_at: Date | null;
+  first_email_sent_at: Date | null;
+  second_email_sent_at: Date | null;
+  third_email_sent_at: Date | null;
   recovered_at: Date | null;
 }
 
 interface AbandonedCartStats {
   total_abandoned: number;
   total_recovered: number;
-  abandoned_value: number;
-  recovered_value: number;
-  total_emails_sent: number;
+  abandoned_value: number; // in cents
+  recovered_value: number; // in cents
   recovery_rate: number;
 }
 
@@ -32,17 +31,17 @@ async function getAbandonedCarts(): Promise<AbandonedCart[]> {
       id,
       session_id,
       email,
-      first_name,
-      cart_total,
+      total_value,
       item_count,
-      recovery_status,
-      emails_sent,
-      last_activity_at,
-      abandonment_detected_at,
+      status,
+      abandoned_at,
+      first_email_sent_at,
+      second_email_sent_at,
+      third_email_sent_at,
       recovered_at
     FROM abandoned_carts
-    WHERE abandonment_detected_at IS NOT NULL
-    ORDER BY abandonment_detected_at DESC
+    WHERE status IN ('abandoned', 'recovered', 'expired')
+    ORDER BY abandoned_at DESC
     LIMIT 100
   `;
   return carts as AbandonedCart[];
@@ -51,16 +50,15 @@ async function getAbandonedCarts(): Promise<AbandonedCart[]> {
 async function getStats(): Promise<AbandonedCartStats> {
   const [stats] = (await sql`
     SELECT
-      COUNT(*) FILTER (WHERE abandonment_detected_at IS NOT NULL)::int as total_abandoned,
-      COUNT(*) FILTER (WHERE recovery_status = 'recovered')::int as total_recovered,
-      COALESCE(SUM(cart_total) FILTER (WHERE abandonment_detected_at IS NOT NULL), 0) as abandoned_value,
-      COALESCE(SUM(cart_total) FILTER (WHERE recovery_status = 'recovered'), 0) as recovered_value,
-      COALESCE(SUM(emails_sent), 0)::int as total_emails_sent,
+      COUNT(*) FILTER (WHERE status IN ('abandoned', 'recovered', 'expired'))::int as total_abandoned,
+      COUNT(*) FILTER (WHERE status = 'recovered')::int as total_recovered,
+      COALESCE(SUM(total_value) FILTER (WHERE status IN ('abandoned', 'recovered', 'expired')), 0) as abandoned_value,
+      COALESCE(SUM(total_value) FILTER (WHERE status = 'recovered'), 0) as recovered_value,
       CASE
-        WHEN COUNT(*) FILTER (WHERE abandonment_detected_at IS NOT NULL) > 0
+        WHEN COUNT(*) FILTER (WHERE status IN ('abandoned', 'recovered', 'expired')) > 0
         THEN ROUND(
-          (COUNT(*) FILTER (WHERE recovery_status = 'recovered')::numeric /
-           COUNT(*) FILTER (WHERE abandonment_detected_at IS NOT NULL) * 100), 1
+          (COUNT(*) FILTER (WHERE status = 'recovered')::numeric /
+           COUNT(*) FILTER (WHERE status IN ('abandoned', 'recovered', 'expired')) * 100), 1
         )
         ELSE 0
       END as recovery_rate
@@ -73,7 +71,6 @@ async function getStats(): Promise<AbandonedCartStats> {
     total_recovered: 0,
     abandoned_value: 0,
     recovered_value: 0,
-    total_emails_sent: 0,
     recovery_rate: 0,
   };
 }
@@ -82,21 +79,33 @@ function getStatusBadge(status: string) {
   switch (status) {
     case 'recovered':
       return <Badge className="bg-green-100 text-green-700">Recovered</Badge>;
-    case 'email_sent':
-      return <Badge className="bg-blue-100 text-blue-700">Email Sent</Badge>;
-    case 'email_scheduled':
-      return <Badge className="bg-yellow-100 text-yellow-700">Scheduled</Badge>;
+    case 'abandoned':
+      return <Badge className="bg-yellow-100 text-yellow-700">Abandoned</Badge>;
+    case 'active':
+      return <Badge className="bg-blue-100 text-blue-700">Active</Badge>;
     case 'expired':
       return <Badge variant="secondary">Expired</Badge>;
-    case 'unsubscribed':
-      return <Badge variant="destructive">Unsubscribed</Badge>;
+    case 'converted':
+      return <Badge className="bg-green-100 text-green-700">Converted</Badge>;
     default:
       return <Badge variant="outline">{status}</Badge>;
   }
 }
 
+function getEmailsSentCount(cart: AbandonedCart): number {
+  let count = 0;
+  if (cart.first_email_sent_at) count++;
+  if (cart.second_email_sent_at) count++;
+  if (cart.third_email_sent_at) count++;
+  return count;
+}
+
 export default async function AdminAbandonedCartsPage() {
   const [carts, stats] = await Promise.all([getAbandonedCarts(), getStats()]);
+
+  // Convert values from cents to dollars for display
+  const abandonedValueDollars = Number(stats.abandoned_value || 0) / 100;
+  const recoveredValueDollars = Number(stats.recovered_value || 0) / 100;
 
   return (
     <div className="space-y-6">
@@ -118,7 +127,7 @@ export default async function AdminAbandonedCartsPage() {
           <CardContent>
             <div className="text-2xl font-bold">{stats.total_abandoned}</div>
             <p className="text-xs text-muted-foreground">
-              ${Number(stats.abandoned_value || 0).toFixed(2)} total value
+              ${abandonedValueDollars.toFixed(2)} total value
             </p>
           </CardContent>
         </Card>
@@ -131,7 +140,7 @@ export default async function AdminAbandonedCartsPage() {
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{stats.total_recovered}</div>
             <p className="text-xs text-muted-foreground">
-              ${Number(stats.recovered_value || 0).toFixed(2)} recovered
+              ${recoveredValueDollars.toFixed(2)} recovered
             </p>
           </CardContent>
         </Card>
@@ -152,7 +161,9 @@ export default async function AdminAbandonedCartsPage() {
             <Mail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total_emails_sent}</div>
+            <div className="text-2xl font-bold">
+              {carts.reduce((sum, cart) => sum + getEmailsSentCount(cart), 0)}
+            </div>
           </CardContent>
         </Card>
 
@@ -163,7 +174,7 @@ export default async function AdminAbandonedCartsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
-              ${(Number(stats.abandoned_value || 0) - Number(stats.recovered_value || 0)).toFixed(2)}
+              ${(abandonedValueDollars - recoveredValueDollars).toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">still recoverable</p>
           </CardContent>
@@ -201,28 +212,23 @@ export default async function AdminAbandonedCartsPage() {
                   {carts.map((cart) => (
                     <tr key={cart.id} className="border-b last:border-0 hover:bg-muted/30">
                       <td className="px-4 py-3">
-                        <div>
-                          {cart.first_name && (
-                            <p className="font-medium">{cart.first_name}</p>
-                          )}
-                          <p className={`text-sm ${cart.first_name ? 'text-muted-foreground' : ''}`}>
-                            {cart.email || 'No email'}
-                          </p>
-                        </div>
+                        <p className="text-sm">
+                          {cart.email || 'No email'}
+                        </p>
                       </td>
                       <td className="px-4 py-3 text-right font-medium">
-                        ${Number(cart.cart_total).toFixed(2)}
+                        ${(Number(cart.total_value) / 100).toFixed(2)}
                       </td>
                       <td className="px-4 py-3 text-center">{cart.item_count}</td>
                       <td className="px-4 py-3 text-center">
-                        <Badge variant="outline">{cart.emails_sent} / 3</Badge>
+                        <Badge variant="outline">{getEmailsSentCount(cart)} / 3</Badge>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        {getStatusBadge(cart.recovery_status)}
+                        {getStatusBadge(cart.status)}
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">
-                        {cart.abandonment_detected_at
-                          ? new Date(cart.abandonment_detected_at).toLocaleString()
+                        {cart.abandoned_at
+                          ? new Date(cart.abandoned_at).toLocaleString()
                           : '-'}
                       </td>
                     </tr>
