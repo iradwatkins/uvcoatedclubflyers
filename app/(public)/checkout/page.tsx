@@ -19,6 +19,8 @@ import { DeliveryMethodSelector } from '@/components/checkout/delivery-method-se
 import { SavedPaymentSelector } from '@/components/checkout/saved-payment-selector';
 import { ProductImage } from '@/components/product-image';
 import { OrderFilesDisplay } from '@/components/order-files-display';
+import { OrderBumpsContainer } from '@/components/checkout/order-bumps-container';
+import { CouponInput } from '@/components/checkout/coupon-input';
 import type { Cart } from '@/lib/cart';
 import { calculateItemWeight } from '@/lib/cart/weight-calculator';
 
@@ -44,6 +46,8 @@ export default function CheckoutPage() {
   const [selectedSavedPayment, setSelectedSavedPayment] = useState<any | null>(null);
   const [showNewCardForm, setShowNewCardForm] = useState(false);
   const [orderNumber, setOrderNumber] = useState<string>('');
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; name: string | null } | null>(null);
 
   useEffect(() => {
     fetchCart();
@@ -257,6 +261,20 @@ export default function CheckoutPage() {
             {/* Step 3: Payment */}
             {currentStep === 'payment' && selectedShipping && (
               <>
+                {/* Order Bumps - Before Payment */}
+                {!paymentMethod && (
+                  <div className="mb-6">
+                    <OrderBumpsContainer
+                      position="before_payment"
+                      onBumpAccepted={(updatedCart) => {
+                        if (updatedCart && typeof updatedCart === 'object' && 'total' in updatedCart) {
+                          setCart(updatedCart as Cart);
+                        }
+                      }}
+                    />
+                  </div>
+                )}
+
                 {!paymentMethod ? (
                   <Card>
                     <CardHeader>
@@ -337,7 +355,7 @@ export default function CheckoutPage() {
                     <SquareCardPayment
                       applicationId={applicationId}
                       locationId={locationId}
-                      total={Math.round((cart.total + selectedShipping.cost) * 1.0875 * 100)}
+                      total={Math.round((cart.total - couponDiscount + selectedShipping.cost) * 1.0875 * 100)}
                       environment={environment}
                       savedPaymentMethod={
                         selectedSavedPayment
@@ -359,14 +377,14 @@ export default function CheckoutPage() {
                   )
                 ) : paymentMethod === 'cashapp' ? (
                   <CashAppQRPayment
-                    total={(cart.total + selectedShipping.cost) * 1.0875}
+                    total={(cart.total - couponDiscount + selectedShipping.cost) * 1.0875}
                     onPaymentSuccess={handlePaymentSuccess}
                     onPaymentError={handlePaymentError}
                     onBack={handlePaymentBack}
                   />
                 ) : (
                   <PayPalPayment
-                    total={Math.round((cart.total + selectedShipping.cost) * 1.0875 * 100)}
+                    total={Math.round((cart.total - couponDiscount + selectedShipping.cost) * 1.0875 * 100)}
                     orderNumber={orderNumber}
                     onPaymentSuccess={handlePaymentSuccess}
                     onPaymentError={handlePaymentError}
@@ -420,12 +438,33 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
+                {/* Coupon Input */}
+                <div className="border-b pb-4">
+                  <CouponInput
+                    email={shippingAddress?.email}
+                    onCouponApplied={(discount, coupon) => {
+                      setCouponDiscount(discount);
+                      setAppliedCoupon({ code: coupon.code, name: coupon.name });
+                    }}
+                    onCouponRemoved={() => {
+                      setCouponDiscount(0);
+                      setAppliedCoupon(null);
+                    }}
+                  />
+                </div>
+
                 {/* Totals */}
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
                     <span className="font-medium">{formatPrice(cart.total)}</span>
                   </div>
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount {appliedCoupon && `(${appliedCoupon.code})`}</span>
+                      <span className="font-medium">-{formatPrice(couponDiscount)}</span>
+                    </div>
+                  )}
                   {selectedShipping && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>
@@ -436,7 +475,7 @@ export default function CheckoutPage() {
                     <span className="text-muted-foreground">Tax (8.75%)</span>
                     <span className="font-medium">
                       {formatPrice(
-                        (cart.total + (selectedShipping ? selectedShipping.cost : 0)) * 0.0875
+                        (cart.total - couponDiscount + (selectedShipping ? selectedShipping.cost : 0)) * 0.0875
                       )}
                     </span>
                   </div>
@@ -444,7 +483,7 @@ export default function CheckoutPage() {
                     <span className="text-lg font-semibold">Total</span>
                     <span className="text-2xl font-bold text-primary">
                       {formatPrice(
-                        (cart.total + (selectedShipping ? selectedShipping.cost : 0)) * 1.0875
+                        (cart.total - couponDiscount + (selectedShipping ? selectedShipping.cost : 0)) * 1.0875
                       )}
                     </span>
                   </div>

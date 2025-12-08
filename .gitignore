@@ -25,6 +25,9 @@ dist/
 .DS_Store
 Thumbs.db
 
+# Reference code (not for deployment)
+1111111Printing/
+
 # Testing
 coverage/
 .nyc_output/

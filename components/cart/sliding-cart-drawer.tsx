@@ -6,6 +6,7 @@ import { X, ShoppingCart, Trash2, Plus, Minus, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { CouponInput } from '@/components/checkout/coupon-input';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -291,6 +292,9 @@ export function SlidingCartDrawer({
             {/* Footer - Checkout */}
             {cart.items.length > 0 && (
               <div className="border-t p-6 space-y-4 bg-muted/30">
+                {/* Coupon Input */}
+                <CouponInput compact className="pb-2" />
+
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
