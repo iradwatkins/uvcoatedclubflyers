@@ -15,15 +15,14 @@ import {
   type ShippingAddress,
   type BillingAddress,
 } from '@/components/checkout/shipping-address-form';
-import { AirportSelector } from '@/components/checkout/airport-selector';
-import { ShippingMethodSelector } from '@/components/checkout/shipping-method-selector';
+import { DeliveryMethodSelector } from '@/components/checkout/delivery-method-selector';
 import { SavedPaymentSelector } from '@/components/checkout/saved-payment-selector';
 import { ProductImage } from '@/components/product-image';
 import { OrderFilesDisplay } from '@/components/order-files-display';
 import type { Cart } from '@/lib/cart';
 import { calculateItemWeight } from '@/lib/cart/weight-calculator';
 
-type CheckoutStep = 'shipping-address' | 'airport-selection' | 'shipping-method' | 'payment';
+type CheckoutStep = 'shipping-address' | 'delivery-method' | 'payment';
 
 interface ShippingRate {
   carrier: string;
@@ -77,21 +76,12 @@ export default function CheckoutPage() {
   const handleShippingAddressSubmit = (address: ShippingAddress, billing?: BillingAddress) => {
     setShippingAddress(address);
     setBillingAddress(billing || null);
-    setCurrentStep('airport-selection');
+    setCurrentStep('delivery-method');
   };
 
-  const handleAirportSelect = (airportId: string) => {
-    setSelectedAirportId(airportId);
-    setCurrentStep('shipping-method');
-  };
-
-  const handleSkipAirport = () => {
-    setSelectedAirportId('');
-    setCurrentStep('shipping-method');
-  };
-
-  const handleShippingMethodSelect = (rate: ShippingRate) => {
+  const handleDeliveryMethodSelect = (rate: ShippingRate, airportId?: string) => {
     setSelectedShipping(rate);
+    setSelectedAirportId(airportId || '');
     setCurrentStep('payment');
   };
 
@@ -164,14 +154,12 @@ export default function CheckoutPage() {
 
   const handlePaymentBack = () => {
     setPaymentMethod(null);
-    setCurrentStep('shipping-method');
+    setCurrentStep('delivery-method');
   };
 
   const handleStepBack = () => {
-    if (currentStep === 'airport-selection') {
+    if (currentStep === 'delivery-method') {
       setCurrentStep('shipping-address');
-    } else if (currentStep === 'shipping-method') {
-      setCurrentStep('airport-selection');
     }
   };
 
@@ -309,31 +297,18 @@ export default function CheckoutPage() {
               <div className="h-px flex-1 bg-border mx-2" />
               <div className="flex items-center gap-2">
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'airport-selection' ? 'bg-primary text-primary-foreground' : currentStep === 'shipping-method' || currentStep === 'payment' ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}
+                  className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'delivery-method' ? 'bg-primary text-primary-foreground' : selectedShipping ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}
                 >
-                  {currentStep === 'shipping-method' || currentStep === 'payment' ? (
-                    <Check className="h-5 w-5" />
-                  ) : (
-                    '2'
-                  )}
+                  {selectedShipping ? <Check className="h-5 w-5" /> : '2'}
                 </div>
-                <span className="text-sm font-medium">Airport</span>
-              </div>
-              <div className="h-px flex-1 bg-border mx-2" />
-              <div className="flex items-center gap-2">
-                <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'shipping-method' ? 'bg-primary text-primary-foreground' : selectedShipping ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'}`}
-                >
-                  {selectedShipping ? <Check className="h-5 w-5" /> : '3'}
-                </div>
-                <span className="text-sm font-medium">Shipping</span>
+                <span className="text-sm font-medium">Delivery</span>
               </div>
               <div className="h-px flex-1 bg-border mx-2" />
               <div className="flex items-center gap-2">
                 <div
                   className={`flex h-8 w-8 items-center justify-center rounded-full ${currentStep === 'payment' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
                 >
-                  4
+                  3
                 </div>
                 <span className="text-sm font-medium">Payment</span>
               </div>
@@ -347,30 +322,20 @@ export default function CheckoutPage() {
               />
             )}
 
-            {/* Step 2: Airport Selection */}
-            {currentStep === 'airport-selection' && shippingAddress && (
-              <AirportSelector
-                onSelect={handleAirportSelect}
-                onBack={handleStepBack}
-                onSkip={handleSkipAirport}
-              />
-            )}
-
-            {/* Step 3: Shipping Method */}
-            {currentStep === 'shipping-method' && shippingAddress && (
-              <ShippingMethodSelector
+            {/* Step 2: Delivery Method (Airport + Shipping combined) */}
+            {currentStep === 'delivery-method' && shippingAddress && (
+              <DeliveryMethodSelector
                 toAddress={shippingAddress}
                 cartItems={cart.items.map((item) => ({
                   quantity: item.quantity,
                   weightLbs: calculateItemWeight(item, item.productName),
                 }))}
-                selectedAirportId={selectedAirportId}
-                onSelect={handleShippingMethodSelect}
+                onSelect={handleDeliveryMethodSelect}
                 onBack={handleStepBack}
               />
             )}
 
-            {/* Step 4: Payment */}
+            {/* Step 3: Payment */}
             {currentStep === 'payment' && selectedShipping && (
               <>
                 {!paymentMethod ? (
@@ -430,10 +395,10 @@ export default function CheckoutPage() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => setCurrentStep('shipping-method')}
+                          onClick={() => setCurrentStep('delivery-method')}
                           className="w-full"
                         >
-                          Back to Shipping Method
+                          Back to Delivery Method
                         </Button>
                       </div>
                     </CardContent>
