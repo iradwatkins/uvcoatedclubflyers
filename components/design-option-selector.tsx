@@ -21,8 +21,7 @@ export interface DesignOption {
   pricing_model: string;
   base_price: string;
   per_unit_price: string;
-  requires_upload: boolean;
-  requires_sides_selection: boolean;
+  ui_component?: string;
   display_order: number;
 }
 
@@ -99,6 +98,13 @@ export function DesignOptionSelector({
     }
   }, [sortedOptions, selectedOptionId, onOptionChange]);
 
+  // Derive requirements from slug
+  const requiresSidesSelection = selectedOption?.slug === 'standard-custom-design' ||
+    selectedOption?.slug === 'rush-custom-design';
+  const requiresUpload = selectedOption?.slug === 'upload-my-artwork' ||
+    selectedOption?.slug === 'design-changes-minor' ||
+    selectedOption?.slug === 'design-changes-major';
+
   // Validate when selection changes
   useEffect(() => {
     if (!selectedOption) {
@@ -107,19 +113,19 @@ export function DesignOptionSelector({
     }
 
     // Check if sides selection is required but missing
-    if (selectedOption.requires_sides_selection && !selectedSides) {
+    if (requiresSidesSelection && !selectedSides) {
       setValidationError('Please select the number of sides for your custom design.');
       return;
     }
 
     // Check if file upload is required but missing
-    if (selectedOption.requires_upload && uploadedFiles.length === 0) {
+    if (requiresUpload && uploadedFiles.length === 0) {
       setValidationError('Please upload your artwork files.');
       return;
     }
 
     setValidationError('');
-  }, [selectedOption, selectedSides, uploadedFiles]);
+  }, [selectedOption, selectedSides, uploadedFiles, requiresSidesSelection, requiresUpload]);
 
   const handleOptionChange = (value: string) => {
     const optionId = parseInt(value);
@@ -139,9 +145,16 @@ export function DesignOptionSelector({
     }
   };
 
-  // Determine if file uploader should show
+  // Determine if file uploader should show based on slug
   // Show for: upload-my-artwork, design-changes-minor, design-changes-major
-  const showFileUploader = selectedOption?.requires_upload === true;
+  const showFileUploader = selectedOption?.slug === 'upload-my-artwork' ||
+    selectedOption?.slug === 'design-changes-minor' ||
+    selectedOption?.slug === 'design-changes-major';
+
+  // Determine if sides selection should show based on slug
+  // Show for: standard-custom-design, rush-custom-design
+  const showSidesSelection = selectedOption?.slug === 'standard-custom-design' ||
+    selectedOption?.slug === 'rush-custom-design';
 
   return (
     <div className={className}>
@@ -174,7 +187,7 @@ export function DesignOptionSelector({
         </div>
 
         {/* Conditional: Sides Selection for Custom Design */}
-        {selectedOption?.requires_sides_selection && (
+        {showSidesSelection && (
           <div className="space-y-2">
             <Label htmlFor="design-sides" className="text-sm font-medium">
               How many sides?
