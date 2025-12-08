@@ -1008,10 +1008,12 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
                 designOptions={options.addOns.above_upload as any}
                 selectedOptionId={selectedDesignOptionId}
                 onOptionChange={(optionId) => {
-                  setSelectedDesignOptionId(optionId);
-                  // Reset dependent states when changing design option
-                  setDesignOptionSides('');
-                  setDesignOptionFiles([]);
+                  // Only reset dependent states when ACTUALLY changing to a different option
+                  if (optionId !== selectedDesignOptionId) {
+                    setSelectedDesignOptionId(optionId);
+                    setDesignOptionSides('');
+                    setDesignOptionFiles([]);
+                  }
                 }}
                 selectedSides={designOptionSides}
                 onSidesChange={setDesignOptionSides}

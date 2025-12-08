@@ -87,8 +87,9 @@ export function DesignOptionSelector({
   const selectedOption = sortedOptions.find((opt) => opt.id === selectedOptionId);
 
   // Auto-select "Upload My Artwork" (first option) if nothing is selected
+  // Only runs once when options are loaded and no option is selected
   useEffect(() => {
-    if (!selectedOptionId && sortedOptions.length > 0) {
+    if (selectedOptionId === null && sortedOptions.length > 0) {
       const uploadOption = sortedOptions.find(opt => opt.slug === 'upload-my-artwork');
       if (uploadOption) {
         onOptionChange(uploadOption.id);
@@ -96,7 +97,8 @@ export function DesignOptionSelector({
         onOptionChange(sortedOptions[0].id);
       }
     }
-  }, [sortedOptions, selectedOptionId, onOptionChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortedOptions.length]); // Only depend on options being loaded
 
   // Derive requirements from slug
   const requiresSidesSelection = selectedOption?.slug === 'standard-custom-design' ||
