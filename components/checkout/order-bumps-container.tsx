@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { OrderBump } from './order-bump';
+import { useAnalytics } from '@/lib/analytics/use-analytics';
 
 interface OrderBumpData {
   id: number;
@@ -33,6 +34,7 @@ export function OrderBumpsContainer({
   position = 'before_payment',
   onBumpAccepted,
 }: OrderBumpsContainerProps) {
+  const analytics = useAnalytics();
   const [bumps, setBumps] = useState<OrderBumpData[]>([]);
   const [loadingBumpId, setLoadingBumpId] = useState<number | null>(null);
   const [acceptedBumpIds, setAcceptedBumpIds] = useState<Set<number>>(new Set());
@@ -49,6 +51,13 @@ export function OrderBumpsContainer({
 
       const data = await response.json();
       setBumps(data.bumps || []);
+
+      // Track impressions for all fetched bumps
+      if (data.bumps && data.bumps.length > 0) {
+        data.bumps.forEach((bump: OrderBumpData) => {
+          analytics.trackOrderBumpView(bump.id, bump.name);
+        });
+      }
     } catch (error) {
       console.error('[OrderBumps] Fetch error:', error);
       setBumps([]);
@@ -83,6 +92,9 @@ export function OrderBumpsContainer({
 
       // Mark as accepted
       setAcceptedBumpIds((prev) => new Set(prev).add(bumpId));
+
+      // Track bump acceptance
+      analytics.trackOrderBumpAccept(bump.id, bump.name, bump.finalPrice);
 
       // Notify parent of cart update
       if (onBumpAccepted && data.cart) {

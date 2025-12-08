@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tag, X, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAnalytics } from '@/lib/analytics/use-analytics';
 
 interface AppliedCoupon {
   code: string;
@@ -30,6 +31,7 @@ export function CouponInput({
   className,
   compact = false,
 }: CouponInputProps) {
+  const analytics = useAnalytics();
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -97,6 +99,9 @@ export function CouponInput({
       setDiscount(applyData.discount);
       setCode('');
 
+      // Track coupon application
+      analytics.trackCouponApply(applyData.coupon.code, applyData.discount);
+
       if (onCouponApplied) {
         onCouponApplied(applyData.discount, applyData.coupon);
       }
@@ -109,6 +114,7 @@ export function CouponInput({
 
   const handleRemoveCoupon = async () => {
     setIsLoading(true);
+    const couponCode = appliedCoupon?.code || '';
 
     try {
       await fetch('/api/coupons/remove', { method: 'DELETE' });
@@ -116,6 +122,11 @@ export function CouponInput({
       setAppliedCoupon(null);
       setDiscount(0);
       setError(null);
+
+      // Track coupon removal
+      if (couponCode) {
+        analytics.trackCouponRemove(couponCode);
+      }
 
       if (onCouponRemoved) {
         onCouponRemoved();

@@ -21,6 +21,7 @@ import { ProductImage } from '@/components/product-image';
 import { OrderFilesDisplay } from '@/components/order-files-display';
 import { OrderBumpsContainer } from '@/components/checkout/order-bumps-container';
 import { CouponInput } from '@/components/checkout/coupon-input';
+import { useAnalytics } from '@/lib/analytics/use-analytics';
 import type { Cart } from '@/lib/cart';
 import { calculateItemWeight } from '@/lib/cart/weight-calculator';
 
@@ -35,6 +36,7 @@ interface ShippingRate {
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const analytics = useAnalytics();
   const [cart, setCart] = useState<Cart | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('shipping-address');
@@ -52,6 +54,8 @@ export default function CheckoutPage() {
   useEffect(() => {
     fetchCart();
     generateOrderNumber();
+    // Track checkout start
+    analytics.trackCheckoutStart(0, 0); // Will be updated when cart loads
   }, []);
 
   const fetchCart = async () => {
@@ -81,12 +85,14 @@ export default function CheckoutPage() {
     setShippingAddress(address);
     setBillingAddress(billing || null);
     setCurrentStep('delivery-method');
+    analytics.trackCheckoutStep(1, 'shipping-address');
   };
 
   const handleDeliveryMethodSelect = (rate: ShippingRate, airportId?: string) => {
     setSelectedShipping(rate);
     setSelectedAirportId(airportId || '');
     setCurrentStep('payment');
+    analytics.trackCheckoutStep(2, 'delivery-method');
   };
 
   const handlePaymentSuccess = async (result: Record<string, unknown>) => {
@@ -139,6 +145,14 @@ export default function CheckoutPage() {
       if (!response.ok) throw new Error('Failed to create order');
 
       const data = await response.json();
+
+      // Track checkout completion
+      if (cart && selectedShipping) {
+        analytics.trackCheckoutComplete(
+          data.orderId.toString(),
+          (cart.total - couponDiscount + selectedShipping.cost) * 1.0875
+        );
+      }
 
       // Clear cart
       await fetch('/api/cart/clear', { method: 'POST' });
