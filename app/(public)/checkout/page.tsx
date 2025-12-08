@@ -202,87 +202,6 @@ export default function CheckoutPage() {
         <h1 className="mb-8">Checkout</h1>
 
         <div className="grid gap-8 lg:grid-cols-3">
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <Card className="sticky top-4">
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-                <CardDescription>Order #{orderNumber}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Items */}
-                <div className="space-y-3 border-b pb-4">
-                  {cart.items.map((item) => (
-                    <div key={item.id} className="space-y-2">
-                      <div className="flex gap-3 text-sm">
-                        <ProductImage
-                          imageUrl={null}
-                          productName={item.productName}
-                          variant="mini"
-                          className="shrink-0"
-                        />
-                        <div className="flex flex-1 justify-between">
-                          <div className="flex-1">
-                            <p className="font-medium">{item.productName}</p>
-                            <p className="text-muted-foreground">
-                              Qty: {item.quantity} × {formatPrice(item.unitPrice)}
-                            </p>
-                          </div>
-                          <p className="font-medium">{formatPrice(item.price)}</p>
-                        </div>
-                      </div>
-                      {/* Uploaded Files */}
-                      {item.uploadedFiles && item.uploadedFiles.length > 0 && (
-                        <div className="ml-14">
-                          <OrderFilesDisplay
-                            fileIds={item.uploadedFiles}
-                            variant="compact"
-                            showDownload={false}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Totals */}
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span className="font-medium">{formatPrice(cart.total)}</span>
-                  </div>
-                  {selectedShipping && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Shipping</span>
-                      <span className="font-medium">
-                        {new Intl.NumberFormat('en-US', {
-                          style: 'currency',
-                          currency: 'USD',
-                        }).format(selectedShipping.cost)}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tax (8.75%)</span>
-                    <span className="font-medium">
-                      {formatPrice(
-                        (cart.total + (selectedShipping ? selectedShipping.cost : 0)) * 0.0875
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-between border-t pt-2">
-                    <span className="text-lg font-semibold">Total</span>
-                    <span className="text-2xl font-bold text-primary">
-                      {formatPrice(
-                        (cart.total + (selectedShipping ? selectedShipping.cost : 0)) * 1.0875
-                      )}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
           {/* Checkout Steps */}
           <div className="lg:col-span-2">
             <div className="mb-6 flex items-center justify-between">
@@ -456,6 +375,82 @@ export default function CheckoutPage() {
                 )}
               </>
             )}
+          </div>
+
+          {/* Order Summary */}
+          <div className="lg:col-span-1">
+            <Card className="sticky top-4">
+              <CardHeader>
+                <CardTitle>Order Summary</CardTitle>
+                <CardDescription>Order #{orderNumber}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Items */}
+                <div className="space-y-3 border-b pb-4">
+                  {cart.items.map((item) => (
+                    <div key={item.id} className="space-y-2">
+                      <div className="flex gap-3 text-sm">
+                        <ProductImage
+                          imageUrl={null}
+                          productName={item.productName}
+                          variant="mini"
+                          className="shrink-0"
+                        />
+                        <div className="flex flex-1 justify-between">
+                          <div className="flex-1">
+                            <p className="font-medium">{item.productName}</p>
+                            <p className="text-muted-foreground">
+                              Qty: {item.quantity} × {formatPrice(item.unitPrice)}
+                            </p>
+                          </div>
+                          <p className="font-medium">{formatPrice(item.price)}</p>
+                        </div>
+                      </div>
+                      {/* Uploaded Files */}
+                      {item.uploadedFiles && item.uploadedFiles.length > 0 && (
+                        <div className="ml-14">
+                          <OrderFilesDisplay
+                            fileIds={item.uploadedFiles}
+                            variant="compact"
+                            showDownload={false}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Totals */}
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="font-medium">{formatPrice(cart.total)}</span>
+                  </div>
+                  {selectedShipping && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Shipping</span>
+                      <span className="font-medium">{formatPrice(selectedShipping.cost)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Tax (8.75%)</span>
+                    <span className="font-medium">
+                      {formatPrice(
+                        (cart.total + (selectedShipping ? selectedShipping.cost : 0)) * 0.0875
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex justify-between border-t pt-2">
+                    <span className="text-lg font-semibold">Total</span>
+                    <span className="text-2xl font-bold text-primary">
+                      {formatPrice(
+                        (cart.total + (selectedShipping ? selectedShipping.cost : 0)) * 1.0875
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
