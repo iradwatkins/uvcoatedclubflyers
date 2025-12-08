@@ -103,8 +103,9 @@ export function DesignOptionSelector({
   // Derive requirements from slug
   const requiresSidesSelection = selectedOption?.slug === 'standard-custom-design' ||
     selectedOption?.slug === 'rush-custom-design';
-  const requiresUpload = selectedOption?.slug === 'upload-my-artwork' ||
-    selectedOption?.slug === 'design-changes-minor' ||
+  // Note: "upload-my-artwork" is OPTIONAL - users can upload files later
+  // Only design changes require files because they need existing artwork to modify
+  const requiresUpload = selectedOption?.slug === 'design-changes-minor' ||
     selectedOption?.slug === 'design-changes-major';
 
   // Validate when selection changes

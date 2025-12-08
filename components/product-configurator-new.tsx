@@ -493,8 +493,9 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
           }
 
           // Check if file upload is required
+          // Note: "upload-my-artwork" is OPTIONAL - users can upload files later
+          // Only design changes require files because they need existing artwork to modify
           const requiresUpload =
-            selectedDesignOption.slug === 'upload-my-artwork' ||
             selectedDesignOption.slug === 'design-changes-minor' ||
             selectedDesignOption.slug === 'design-changes-major';
 
