@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 
 interface FileUploadDropzoneProps {
   onFilesSelected?: (files: File[]) => void;
+  files?: File[]; // Controlled mode - parent manages files
   maxFiles?: number;
   acceptedFileTypes?: string[];
   className?: string;
@@ -13,11 +14,14 @@ interface FileUploadDropzoneProps {
 
 export function FileUploadDropzone({
   onFilesSelected,
+  files: controlledFiles,
   maxFiles = 10,
   acceptedFileTypes = ['.pdf', '.jpg', '.jpeg', '.png', '.eps', '.ai'],
   className,
 }: FileUploadDropzoneProps) {
-  const [files, setFiles] = useState<File[]>([]);
+  // Use controlled files from parent if provided, otherwise use internal state
+  const [internalFiles, setInternalFiles] = useState<File[]>([]);
+  const files = controlledFiles ?? internalFiles;
   const [isDragging, setIsDragging] = useState(false);
 
   const handleFiles = useCallback(
@@ -26,10 +30,14 @@ export function FileUploadDropzone({
 
       const fileArray = Array.from(newFiles).slice(0, maxFiles - files.length);
       const updatedFiles = [...files, ...fileArray];
-      setFiles(updatedFiles);
+
+      // Update internal state only if not controlled
+      if (controlledFiles === undefined) {
+        setInternalFiles(updatedFiles);
+      }
       onFilesSelected?.(updatedFiles);
     },
-    [files, maxFiles, onFilesSelected]
+    [files, maxFiles, onFilesSelected, controlledFiles]
   );
 
   const handleDrop = useCallback(
@@ -52,7 +60,11 @@ export function FileUploadDropzone({
 
   const removeFile = (index: number) => {
     const updatedFiles = files.filter((_, i) => i !== index);
-    setFiles(updatedFiles);
+
+    // Update internal state only if not controlled
+    if (controlledFiles === undefined) {
+      setInternalFiles(updatedFiles);
+    }
     onFilesSelected?.(updatedFiles);
   };
 

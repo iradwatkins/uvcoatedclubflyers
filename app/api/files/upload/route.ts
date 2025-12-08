@@ -7,11 +7,9 @@ import { existsSync } from 'fs';
 
 export async function POST(request: NextRequest) {
   try {
+    // Allow both authenticated and guest uploads
     const session = await auth();
-
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const userId = session?.user?.id ? parseInt(session.user.id) : null;
 
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -20,17 +18,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Validate file type
+    // Validate file type - expanded list for design files
     const allowedTypes = [
       'image/png',
       'image/jpeg',
       'image/jpg',
+      'image/gif',
+      'image/bmp',
+      'image/tiff',
+      'image/webp',
       'application/pdf',
       'image/vnd.adobe.photoshop',
       'application/postscript',
+      'application/illustrator',
+      'application/x-photoshop',
+      'application/octet-stream', // For .ai, .eps, .psd files
     ];
 
-    if (!allowedTypes.includes(file.type)) {
+    // Also check by extension for files browsers report as octet-stream
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'webp', 'pdf', 'ai', 'eps', 'psd'];
+    const extension = file.name.split('.').pop()?.toLowerCase() || '';
+
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(extension)) {
       return NextResponse.json({ error: 'File type not supported' }, { status: 400 });
     }
 
@@ -49,7 +58,6 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const timestamp = Date.now();
     const randomStr = Math.random().toString(36).substring(7);
-    const extension = file.name.split('.').pop();
     const filename = `${timestamp}-${randomStr}.${extension}`;
     const filepath = join(uploadsDir, filename);
 
@@ -58,13 +66,13 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
     await writeFile(filepath, buffer);
 
-    // Save to database
+    // Save to database (user_id can be NULL for guest uploads)
     const result = await prisma.$queryRaw`
       INSERT INTO design_files (
         user_id, filename, original_filename, file_size,
         mime_type, storage_path, created_at, updated_at
       ) VALUES (
-        ${parseInt(session.user.id)},
+        ${userId},
         ${filename},
         ${file.name},
         ${file.size},
@@ -74,7 +82,7 @@ export async function POST(request: NextRequest) {
         NOW()
       )
       RETURNING id
-    `;
+    ` as { id: number }[];
 
     const fileId = result[0]?.id;
 

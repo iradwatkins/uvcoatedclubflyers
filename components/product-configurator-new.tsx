@@ -1019,7 +1019,7 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
                 onFilesChange={async (files) => {
                   setDesignOptionFiles(files);
 
-                  // Upload files to backend
+                  // Upload files to backend (optional - files tracked locally for validation)
                   const uploadedIds: number[] = [];
                   for (const file of files) {
                     try {
@@ -1033,11 +1033,14 @@ export function ProductConfiguratorNew({ productId }: ProductConfiguratorNewProp
 
                       if (response.ok) {
                         const result = await response.json();
-                        if (result.data?.id) {
-                          uploadedIds.push(result.data.id);
+                        // Handle both response formats: result.id or result.data?.id
+                        const fileId = result.id || result.data?.id;
+                        if (fileId) {
+                          uploadedIds.push(fileId);
                         }
                       }
                     } catch (error) {
+                      // Upload failed but files are still tracked locally
                       console.error('File upload error:', error);
                     }
                   }

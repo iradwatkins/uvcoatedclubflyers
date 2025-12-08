@@ -221,15 +221,11 @@ export function DesignOptionSelector({
               <span className="text-red-500 ml-1">*</span>
             </Label>
             <FileUploadDropzone
+              files={uploadedFiles}
               onFilesSelected={handleFilesChange}
               maxFiles={maxFiles}
               acceptedFileTypes={['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp', '.pdf', '.ai', '.eps', '.psd']}
             />
-            {uploadedFiles.length > 0 && (
-              <p className="text-xs text-muted-foreground">
-                {uploadedFiles.length} file{uploadedFiles.length !== 1 ? 's' : ''} uploaded
-              </p>
-            )}
           </div>
         )}
 
