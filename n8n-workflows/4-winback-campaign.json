@@ -1,0 +1,186 @@
+{
+  "name": "UV Coated - Customer Win-back",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 10 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Daily at 10 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/marketing/customers/inactive",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "minDays",
+              "value": "60"
+            },
+            {
+              "name": "maxDays",
+              "value": "90"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch Inactive Customers",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Split Into Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/marketing/coupons/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "type",
+              "value": "PERCENTAGE"
+            },
+            {
+              "name": "value",
+              "value": "20"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "campaign",
+              "value": "winback"
+            },
+            {
+              "name": "expiresInDays",
+              "value": "7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Generate 20% Coupon",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/marketing/emails/render",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template",
+              "value": "winback"
+            },
+            {
+              "name": "to",
+              "value": "={{ $node['Fetch Inactive Customers'].json.customers[$node['Split Into Batches'].json.index].userEmail }}"
+            },
+            {
+              "name": "subject",
+              "value": "We Miss You! Come Back for 20% OFF 💙"
+            },
+            {
+              "name": "data",
+              "value": "={{ JSON.stringify({\n  customerName: $node['Fetch Inactive Customers'].json.customers[$node['Split Into Batches'].json.index].userName,\n  lastOrderDate: $node['Fetch Inactive Customers'].json.customers[$node['Split Into Batches'].json.index].lastOrderDate,\n  lastOrderNumber: $node['Fetch Inactive Customers'].json.customers[$node['Split Into Batches'].json.index].lastOrderNumber,\n  daysSinceLastOrder: $node['Fetch Inactive Customers'].json.customers[$node['Split Into Batches'].json.index].daysSinceLastOrder,\n  couponCode: $node['Generate 20% Coupon'].json.coupon.code,\n  couponValue: 20\n}) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Send Winback Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1130, 300]
+    }
+  ],
+  "connections": {
+    "Daily at 10 AM": {
+      "main": [
+        [
+          {
+            "node": "Fetch Inactive Customers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Inactive Customers": {
+      "main": [
+        [
+          {
+            "node": "Split Into Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Into Batches": {
+      "main": [
+        [
+          {
+            "node": "Generate 20% Coupon",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate 20% Coupon": {
+      "main": [
+        [
+          {
+            "node": "Send Winback Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Winback Email": {
+      "main": [
+        [
+          {
+            "node": "Split Into Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "America/Chicago"
+  },
+  "tags": []
+}

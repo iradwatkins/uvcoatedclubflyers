@@ -1,0 +1,70 @@
+{
+  "name": "VPS - Website Downtime Alert",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vps-downtime-alert",
+        "options": {}
+      },
+      "name": "Webhook - Downtime Detected",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "vps-downtime-alert"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst timestamp = new Date().toISOString();\nconst serviceName = data.service || 'Unknown Service';\nconst errorType = data.error || 'Unknown Error';\nconst httpCode = data.httpCode || 'N/A';\nconst url = data.url || 'N/A';\nconst message = data.message || 'No details provided';\n\nconst severity = \n  httpCode === '502' || httpCode === '504' || httpCode === '000'\n  ? '🔴 CRITICAL'\n  : httpCode.startsWith('5')\n  ? '🟡 WARNING'\n  : '🔵 INFO';\n\nconst htmlBody = `\n<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n    .alert { background: #dc3545; color: white; padding: 30px; border-radius: 10px; margin-bottom: 20px; }\n    .details { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 15px; }\n    .detail-row { margin: 10px 0; }\n    .label { font-weight: bold; color: #667eea; }\n    .value { color: #333; }\n    .critical { color: #dc3545; font-weight: bold; }\n    .footer { background: #e9ecef; padding: 15px; border-radius: 8px; font-size: 14px; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"alert\">\n      <h1>🚨 Website Downtime Alert</h1>\n      <p><strong>Severity:</strong> ${severity}</p>\n      <p>${timestamp}</p>\n    </div>\n\n    <div class=\"details\">\n      <h2>🔍 Incident Details</h2>\n      <div class=\"detail-row\">\n        <span class=\"label\">Service:</span>\n        <span class=\"value critical\">${serviceName}</span>\n      </div>\n      <div class=\"detail-row\">\n        <span class=\"label\">URL:</span>\n        <span class=\"value\">${url}</span>\n      </div>\n      <div class=\"detail-row\">\n        <span class=\"label\">Error Type:</span>\n        <span class=\"value\">${errorType}</span>\n      </div>\n      <div class=\"detail-row\">\n        <span class=\"label\">HTTP Status Code:</span>\n        <span class=\"value critical\">${httpCode}</span>\n      </div>\n      <div class=\"detail-row\">\n        <span class=\"label\">Message:</span>\n        <span class=\"value\">${message}</span>\n      </div>\n    </div>\n\n    <div class=\"details\">\n      <h2>🔧 Automated Actions Taken</h2>\n      <ul>\n        <li>Service monitor running every 5 minutes</li>\n        <li>Automatic restart attempted if service is down</li>\n        <li>Docker container health check active</li>\n      </ul>\n    </div>\n\n    <div class=\"details\">\n      <h2>📋 Recommended Actions</h2>\n      <ol>\n        <li>Check service monitor logs: <code>/var/log/service-monitor.log</code></li>\n        <li>Verify Docker container status: <code>docker ps</code></li>\n        <li>Check application logs: <code>docker logs uvcoatedclubflyers_app</code></li>\n        <li>Monitor recovery in next 5-10 minutes</li>\n      </ol>\n    </div>\n\n    <div class=\"footer\">\n      <p><strong>Next Steps:</strong></p>\n      <p>This is an automated alert. The system is attempting auto-recovery. If the issue persists for more than 10 minutes, manual intervention may be required.</p>\n      <p>VPS: 72.60.28.175 | Monitor: https://n8n.agistaffers.com</p>\n    </div>\n  </div>\n</body>\n</html>\n`;\n\nreturn {\n  subject: `🚨 DOWNTIME ALERT: ${serviceName} - ${errorType} (${httpCode})`,\n  html: htmlBody,\n  to: 'appvillagellc@gmail.com',\n  incident: data\n};"
+      },
+      "name": "Format Alert Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/admin/monitoring/email",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  to: $json.to,\n  subject: $json.subject,\n  html: $json.html\n}) }}",
+        "options": {}
+      },
+      "name": "Send Alert Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [690, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - Downtime Detected": {
+      "main": [
+        [
+          {
+            "node": "Format Alert Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Alert Email": {
+      "main": [
+        [
+          {
+            "node": "Send Alert Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "America/Chicago"
+  },
+  "tags": []
+}

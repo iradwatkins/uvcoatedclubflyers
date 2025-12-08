@@ -1,0 +1,138 @@
+{
+  "name": "UV Coated - Order Anniversaries",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Daily at 9 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/marketing/customers/anniversaries",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "type",
+              "value": "any_purchase"
+            },
+            {
+              "name": "daysAgo",
+              "value": "365"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch Anniversaries",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Split Into Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/marketing/emails/render",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template",
+              "value": "anniversary"
+            },
+            {
+              "name": "to",
+              "value": "={{ $node['Fetch Anniversaries'].json.customers[$node['Split Into Batches'].json.index].userEmail }}"
+            },
+            {
+              "name": "subject",
+              "value": "🎉 Happy {{ $node['Fetch Anniversaries'].json.customers[$node['Split Into Batches'].json.index].yearsAgo }}-Year Anniversary!"
+            },
+            {
+              "name": "data",
+              "value": "={{ JSON.stringify({\n  customerName: $node['Fetch Anniversaries'].json.customers[$node['Split Into Batches'].json.index].userName,\n  orderDate: $node['Fetch Anniversaries'].json.customers[$node['Split Into Batches'].json.index].orderDate,\n  orderNumber: $node['Fetch Anniversaries'].json.customers[$node['Split Into Batches'].json.index].orderNumber,\n  yearsAgo: $node['Fetch Anniversaries'].json.customers[$node['Split Into Batches'].json.index].yearsAgo\n}) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Send Anniversary Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [910, 300]
+    }
+  ],
+  "connections": {
+    "Daily at 9 AM": {
+      "main": [
+        [
+          {
+            "node": "Fetch Anniversaries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Anniversaries": {
+      "main": [
+        [
+          {
+            "node": "Split Into Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Into Batches": {
+      "main": [
+        [
+          {
+            "node": "Send Anniversary Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Anniversary Email": {
+      "main": [
+        [
+          {
+            "node": "Split Into Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "America/Chicago"
+  },
+  "tags": []
+}

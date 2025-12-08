@@ -122,9 +122,9 @@ services:
     environment:
       # Public environment variables (non-sensitive)
       NODE_ENV: production
-      NEXT_PUBLIC_SQUARE_APPLICATION_ID: "sandbox-sq0idb-k_i3kMBVVK_7m0jtLPZWdw"
-      NEXT_PUBLIC_SQUARE_LOCATION_ID: "LLAA4E8NME90R"
-      NEXT_PUBLIC_SQUARE_ENVIRONMENT: "sandbox"
+      NEXT_PUBLIC_SQUARE_APPLICATION_ID: "sq0idp-AJF8fI5VayKCq9veQRAw5g"
+      NEXT_PUBLIC_SQUARE_LOCATION_ID: "LWMA9R9E2ENXP"
+      NEXT_PUBLIC_SQUARE_ENVIRONMENT: "production"
       NEXT_PUBLIC_PAYPAL_ENVIRONMENT: "sandbox"
       NEXTAUTH_URL: "https://uvcoatedclubflyers.com"
       AUTH_TRUST_HOST: "true"

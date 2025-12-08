@@ -1,0 +1,186 @@
+{
+  "name": "UV Coated - Abandoned Cart (24hr)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 * * * *"
+            }
+          ]
+        }
+      },
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/marketing/carts/abandoned",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "minHours",
+              "value": "24"
+            },
+            {
+              "name": "maxHours",
+              "value": "25"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch 24hr Abandoned Carts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Split Into Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/marketing/coupons/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "type",
+              "value": "PERCENTAGE"
+            },
+            {
+              "name": "value",
+              "value": "10"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "campaign",
+              "value": "abandoned_cart"
+            },
+            {
+              "name": "expiresInDays",
+              "value": "7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Generate 10% Coupon",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/marketing/emails/render",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template",
+              "value": "abandoned_cart"
+            },
+            {
+              "name": "to",
+              "value": "={{ $node['Fetch 24hr Abandoned Carts'].json.carts[$node['Split Into Batches'].json.index].email }}"
+            },
+            {
+              "name": "subject",
+              "value": "Still Thinking It Over? Here's 10% OFF! 💭"
+            },
+            {
+              "name": "data",
+              "value": "={{ JSON.stringify({\n  customerName: $node['Fetch 24hr Abandoned Carts'].json.carts[$node['Split Into Batches'].json.index].User?.name || 'Valued Customer',\n  items: $node['Fetch 24hr Abandoned Carts'].json.carts[$node['Split Into Batches'].json.index].items,\n  subtotal: $node['Fetch 24hr Abandoned Carts'].json.carts[$node['Split Into Batches'].json.index].subtotal,\n  total: $node['Fetch 24hr Abandoned Carts'].json.carts[$node['Split Into Batches'].json.index].total,\n  cartUrl: 'https://uvcoatedclubflyers.com/checkout?session=' + $node['Fetch 24hr Abandoned Carts'].json.carts[$node['Split Into Batches'].json.index].sessionId,\n  couponCode: $node['Generate 10% Coupon'].json.coupon.code,\n  couponValue: 10,\n  hoursSinceAbandonment: 24\n}) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Send Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1130, 300]
+    }
+  ],
+  "connections": {
+    "Every Hour": {
+      "main": [
+        [
+          {
+            "node": "Fetch 24hr Abandoned Carts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch 24hr Abandoned Carts": {
+      "main": [
+        [
+          {
+            "node": "Split Into Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Into Batches": {
+      "main": [
+        [
+          {
+            "node": "Generate 10% Coupon",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate 10% Coupon": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Split Into Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "America/Chicago"
+  },
+  "tags": []
+}

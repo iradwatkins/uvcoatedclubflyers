@@ -1,0 +1,68 @@
+{
+  "name": "UV Coated - Post-Purchase Thank You",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gangrun-order-created",
+        "options": {}
+      },
+      "name": "Webhook - Order Created",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "gangrun-order-created"
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/marketing/emails/render",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template",
+              "value": "thank_you"
+            },
+            {
+              "name": "to",
+              "value": "={{ $json.data.User.email }}"
+            },
+            {
+              "name": "subject",
+              "value": "Thank You for Your Order! 🎉"
+            },
+            {
+              "name": "data",
+              "value": "={{ JSON.stringify({\n  customerName: $json.data.User.name,\n  orderNumber: $json.data.orderNumber,\n  orderTotal: $json.data.total,\n  trackingUrl: 'https://uvcoatedclubflyers.com/orders/' + $json.data.id + '/track'\n}) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Send Thank You Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - Order Created": {
+      "main": [
+        [
+          {
+            "node": "Send Thank You Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "America/Chicago"
+  },
+  "tags": []
+}

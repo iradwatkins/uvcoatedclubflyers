@@ -1,0 +1,68 @@
+{
+  "name": "UV Coated - Order Delivered Review Request",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gangrun-order-delivered",
+        "options": {}
+      },
+      "name": "Webhook - Order Delivered",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "gangrun-order-delivered"
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/marketing/emails/render",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template",
+              "value": "review_request"
+            },
+            {
+              "name": "to",
+              "value": "={{ $json.data.User.email }}"
+            },
+            {
+              "name": "subject",
+              "value": "How Did We Do? Leave a Review ⭐"
+            },
+            {
+              "name": "data",
+              "value": "={{ JSON.stringify({\n  customerName: $json.data.User.name,\n  orderNumber: $json.data.orderNumber,\n  orderDate: $json.data.createdAt,\n  reviewUrl: 'https://uvcoatedclubflyers.com/reviews/new?order=' + $json.data.id\n}) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Send Review Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - Order Delivered": {
+      "main": [
+        [
+          {
+            "node": "Send Review Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "America/Chicago"
+  },
+  "tags": []
+}

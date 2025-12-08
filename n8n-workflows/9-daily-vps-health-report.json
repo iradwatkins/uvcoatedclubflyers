@@ -1,0 +1,134 @@
+{
+  "name": "VPS - Daily Health Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Daily at 8 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "command": "echo '{\"timestamp\":\"'$(date -Iseconds)'\",\"hostname\":\"'$(hostname)'\",\"uptime\":\"'$(uptime -p)'\",\"cpu_usage\":\"'$(top -bn1 | grep 'Cpu(s)' | awk '{print $2}' | cut -d'%' -f1)'\",\"memory_used\":\"'$(free -m | awk 'NR==2{printf \"%s\", $3}')'\",\"memory_total\":\"'$(free -m | awk 'NR==2{printf \"%s\", $2}')'\",\"memory_percent\":\"'$(free | grep Mem | awk '{printf \"%.1f\", $3/$2 * 100}')'\",\"disk_used\":\"'$(df -h / | awk 'NR==2{print $3}')'\",\"disk_total\":\"'$(df -h / | awk 'NR==2{print $2}')'\",\"disk_percent\":\"'$(df -h / | awk 'NR==2{print $5}')'\",\"load_average\":\"'$(uptime | awk -F'load average:' '{print $2}' | xargs)'\"}'"
+      },
+      "name": "Collect VPS Metrics",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "command": "echo '{\"uvcoatedclubflyers\":{\"status\":\"'$(curl -s -o /dev/null -w \"%{http_code}\" --connect-timeout 5 https://uvcoatedclubflyers.com)'\",\"response_time\":\"'$(curl -s -o /dev/null -w \"%{time_total}\" --connect-timeout 5 https://uvcoatedclubflyers.com)'\"},\"stepperslife\":{\"status\":\"'$(curl -s -o /dev/null -w \"%{http_code}\" --connect-timeout 5 https://stepperslife.com)'\",\"response_time\":\"'$(curl -s -o /dev/null -w \"%{time_total}\" --connect-timeout 5 https://stepperslife.com)'\"},\"uvcoatedclubflyer\":{\"status\":\"'$(curl -s -o /dev/null -w \"%{http_code}\" --connect-timeout 5 https://uvcoatedclubflyer.com)'\",\"response_time\":\"'$(curl -s -o /dev/null -w \"%{time_total}\" --connect-timeout 5 https://uvcoatedclubflyer.com)'\"},\"n8n\":{\"status\":\"'$(curl -s -o /dev/null -w \"%{http_code}\" --connect-timeout 5 https://n8n.agistaffers.com)'\",\"response_time\":\"'$(curl -s -o /dev/null -w \"%{time_total}\" --connect-timeout 5 https://n8n.agistaffers.com)'\"}}'"
+      },
+      "name": "Check Website Status",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "command": "echo '{\"uvcoatedclubflyers_app\":\"'$(docker ps --filter name=uvcoatedclubflyers_app --format '{{.Status}}' | head -c 2)'\",\"uvcoatedclubflyers_postgres\":\"'$(docker ps --filter name=uvcoatedclubflyers-postgres --format '{{.Status}}' | head -c 2)'\",\"uvcoatedclubflyers_redis\":\"'$(docker ps --filter name=uvcoatedclubflyers-redis --format '{{.Status}}' | head -c 2)'\",\"uvcoatedclubflyers_minio\":\"'$(docker ps --filter name=uvcoatedclubflyers-minio --format '{{.Status}}' | head -c 2)'\",\"n8n\":\"'$(docker ps --filter name=RT-002-N8N-container --format '{{.Status}}' | head -c 2)'\"}'"
+      },
+      "name": "Check Docker Containers",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const vpsMetrics = JSON.parse($input.first().json.stdout);\nconst websiteStatus = JSON.parse($input.all()[1].json.stdout);\nconst dockerStatus = JSON.parse($input.all()[2].json.stdout);\n\nconst memoryPercent = parseFloat(vpsMetrics.memory_percent);\nconst cpuUsage = parseFloat(vpsMetrics.cpu_usage);\nconst diskPercent = parseFloat(vpsMetrics.disk_percent);\n\nconst healthStatus = (\n  memoryPercent < 80 && cpuUsage < 80 && diskPercent < 80 \n  ? '🟢 Healthy' \n  : memoryPercent > 90 || cpuUsage > 90 || diskPercent > 90\n  ? '🔴 Critical'\n  : '🟡 Warning'\n);\n\nconst websiteList = Object.entries(websiteStatus).map(([name, data]) => {\n  const status = data.status === '200' ? '✅' : '❌';\n  const responseTime = (parseFloat(data.response_time) * 1000).toFixed(0);\n  return `${status} ${name}: ${data.status} (${responseTime}ms)`;\n}).join('\\n');\n\nconst dockerList = Object.entries(dockerStatus).map(([name, status]) => {\n  const icon = status === 'Up' ? '✅' : '❌';\n  return `${icon} ${name}: ${status}`;\n}).join('\\n');\n\nconst htmlBody = `\n<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 800px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; margin-bottom: 30px; }\n    .section { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }\n    .metric { display: inline-block; margin: 10px 20px 10px 0; }\n    .metric-label { font-size: 12px; color: #666; text-transform: uppercase; }\n    .metric-value { font-size: 24px; font-weight: bold; color: #667eea; }\n    .status-good { color: #28a745; }\n    .status-warning { color: #ffc107; }\n    .status-critical { color: #dc3545; }\n    h2 { color: #667eea; margin-top: 0; }\n    pre { background: white; padding: 15px; border-radius: 5px; overflow-x: auto; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>🖥️ Daily VPS Health Report</h1>\n      <p>${vpsMetrics.timestamp}</p>\n      <p><strong>Overall Status:</strong> ${healthStatus}</p>\n    </div>\n\n    <div class=\"section\">\n      <h2>📊 System Resources</h2>\n      <div class=\"metric\">\n        <div class=\"metric-label\">CPU Usage</div>\n        <div class=\"metric-value\">${cpuUsage.toFixed(1)}%</div>\n      </div>\n      <div class=\"metric\">\n        <div class=\"metric-label\">Memory</div>\n        <div class=\"metric-value\">${memoryPercent.toFixed(1)}%</div>\n        <div class=\"metric-label\">${vpsMetrics.memory_used}MB / ${vpsMetrics.memory_total}MB</div>\n      </div>\n      <div class=\"metric\">\n        <div class=\"metric-label\">Disk</div>\n        <div class=\"metric-value\">${diskPercent.toFixed(0)}%</div>\n        <div class=\"metric-label\">${vpsMetrics.disk_used} / ${vpsMetrics.disk_total}</div>\n      </div>\n      <div class=\"metric\">\n        <div class=\"metric-label\">Uptime</div>\n        <div class=\"metric-value\">${vpsMetrics.uptime}</div>\n      </div>\n      <div class=\"metric\">\n        <div class=\"metric-label\">Load Average</div>\n        <div class=\"metric-value\">${vpsMetrics.load_average}</div>\n      </div>\n    </div>\n\n    <div class=\"section\">\n      <h2>🌐 Website Status</h2>\n      <pre>${websiteList}</pre>\n    </div>\n\n    <div class=\"section\">\n      <h2>🐳 Docker Containers</h2>\n      <pre>${dockerList}</pre>\n    </div>\n\n    <div class=\"section\">\n      <h2>📝 Log Files</h2>\n      <p>Service Monitor Log: /var/log/service-monitor.log</p>\n      <p>Last check: See cron logs for details</p>\n    </div>\n  </div>\n</body>\n</html>\n`;\n\nreturn {\n  subject: `VPS Health Report - ${healthStatus} - ${vpsMetrics.timestamp.split('T')[0]}`,\n  html: htmlBody,\n  metrics: vpsMetrics,\n  websites: websiteStatus,\n  docker: dockerStatus\n};"
+      },
+      "name": "Format Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1130, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/admin/monitoring/email",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  to: 'appvillagellc@gmail.com',\n  subject: $json.subject,\n  html: $json.html\n}) }}",
+        "options": {}
+      },
+      "name": "Send Email via Resend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1350, 300]
+    }
+  ],
+  "connections": {
+    "Daily at 8 AM": {
+      "main": [
+        [
+          {
+            "node": "Collect VPS Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect VPS Metrics": {
+      "main": [
+        [
+          {
+            "node": "Check Website Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Website Status": {
+      "main": [
+        [
+          {
+            "node": "Check Docker Containers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Docker Containers": {
+      "main": [
+        [
+          {
+            "node": "Format Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Report": {
+      "main": [
+        [
+          {
+            "node": "Send Email via Resend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "America/Chicago"
+  },
+  "tags": []
+}

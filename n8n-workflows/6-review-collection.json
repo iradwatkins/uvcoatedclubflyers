@@ -1,0 +1,134 @@
+{
+  "name": "UV Coated - Review Collection",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 14 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Daily at 2 PM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/orders/delivered",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "daysAgo",
+              "value": "3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch Delivered Orders (3 days ago)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Split Into Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/marketing/emails/render",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template",
+              "value": "review_request"
+            },
+            {
+              "name": "to",
+              "value": "={{ $node['Fetch Delivered Orders (3 days ago)'].json.orders[$node['Split Into Batches'].json.index].userEmail }}"
+            },
+            {
+              "name": "subject",
+              "value": "How Did We Do? Leave a Review ⭐"
+            },
+            {
+              "name": "data",
+              "value": "={{ JSON.stringify({\n  customerName: $node['Fetch Delivered Orders (3 days ago)'].json.orders[$node['Split Into Batches'].json.index].userName,\n  orderNumber: $node['Fetch Delivered Orders (3 days ago)'].json.orders[$node['Split Into Batches'].json.index].orderNumber,\n  orderDate: $node['Fetch Delivered Orders (3 days ago)'].json.orders[$node['Split Into Batches'].json.index].createdAt,\n  reviewUrl: 'https://uvcoatedclubflyers.com/reviews/new?order=' + $node['Fetch Delivered Orders (3 days ago)'].json.orders[$node['Split Into Batches'].json.index].id\n}) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Send Review Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [910, 300]
+    }
+  ],
+  "connections": {
+    "Daily at 2 PM": {
+      "main": [
+        [
+          {
+            "node": "Fetch Delivered Orders (3 days ago)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Delivered Orders (3 days ago)": {
+      "main": [
+        [
+          {
+            "node": "Split Into Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Into Batches": {
+      "main": [
+        [
+          {
+            "node": "Send Review Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Review Request": {
+      "main": [
+        [
+          {
+            "node": "Split Into Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "America/Chicago"
+  },
+  "tags": []
+}

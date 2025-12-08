@@ -1,0 +1,94 @@
+{
+  "name": "VPS - Weekly Summary Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 0"
+            }
+          ]
+        }
+      },
+      "name": "Every Sunday at 9 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "command": "echo '{\"week_start\":\"'$(date -d 'last Sunday' '+%Y-%m-%d')'\",\"week_end\":\"'$(date '+%Y-%m-%d')'\",\"total_checks\":\"'$(grep -c 'Monitor check completed' /var/log/service-monitor.log 2>/dev/null || echo 0)'\",\"total_alerts\":\"'$(grep -c 'WARNING\\|ERROR' /var/log/service-monitor.log 2>/dev/null || echo 0)'\",\"total_restarts\":\"'$(grep -c 'Attempting restart' /var/log/service-monitor.log 2>/dev/null || echo 0)'\"}'"
+      },
+      "name": "Collect Weekly Stats",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const stats = JSON.parse($input.first().json.stdout);\n\nconst totalChecks = parseInt(stats.total_checks) || 0;\nconst totalAlerts = parseInt(stats.total_alerts) || 0;\nconst totalRestarts = parseInt(stats.total_restarts) || 0;\n\nconst uptimePercent = totalChecks > 0 \n  ? ((totalChecks - totalAlerts) / totalChecks * 100).toFixed(2)\n  : 100;\n\nconst healthGrade = \n  uptimePercent >= 99.9 ? 'A+ Excellent' :\n  uptimePercent >= 99.5 ? 'A Good' :\n  uptimePercent >= 99.0 ? 'B Fair' :\n  uptimePercent >= 95.0 ? 'C Poor' : 'F Critical';\n\nconst htmlBody = `\n<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 800px; margin: 0 auto; padding: 20px; }\n    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 10px; margin-bottom: 30px; text-align: center; }\n    .grade { font-size: 72px; font-weight: bold; margin: 20px 0; }\n    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }\n    .stat-card { background: #f8f9fa; padding: 25px; border-radius: 8px; text-align: center; }\n    .stat-value { font-size: 36px; font-weight: bold; color: #667eea; }\n    .stat-label { font-size: 14px; color: #666; text-transform: uppercase; margin-top: 10px; }\n    .section { background: white; padding: 25px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }\n    h2 { color: #667eea; margin-top: 0; }\n    .footer { background: #e9ecef; padding: 20px; border-radius: 8px; text-align: center; font-size: 14px; }\n    .highlight { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>📊 Weekly VPS Performance Summary</h1>\n      <p>${stats.week_start} to ${stats.week_end}</p>\n      <div class=\"grade\">${healthGrade}</div>\n      <p>Uptime: ${uptimePercent}%</p>\n    </div>\n\n    <div class=\"stats-grid\">\n      <div class=\"stat-card\">\n        <div class=\"stat-value\">${totalChecks}</div>\n        <div class=\"stat-label\">Total Health Checks</div>\n      </div>\n      <div class=\"stat-card\">\n        <div class=\"stat-value\">${totalAlerts}</div>\n        <div class=\"stat-label\">Alerts Triggered</div>\n      </div>\n      <div class=\"stat-card\">\n        <div class=\"stat-value\">${totalRestarts}</div>\n        <div class=\"stat-label\">Service Restarts</div>\n      </div>\n      <div class=\"stat-card\">\n        <div class=\"stat-value\">${uptimePercent}%</div>\n        <div class=\"stat-label\">Uptime</div>\n      </div>\n    </div>\n\n    <div class=\"section\">\n      <h2>🎯 Performance Summary</h2>\n      <p>This week, your VPS completed <strong>${totalChecks}</strong> automated health checks with <strong>${uptimePercent}% uptime</strong>.</p>\n      ${totalAlerts > 0 ? `<div class=\"highlight\">⚠️ <strong>${totalAlerts}</strong> alerts were triggered this week. Review logs for details.</div>` : '<p>✅ No alerts this week - excellent performance!</p>'}\n      ${totalRestarts > 0 ? `<div class=\"highlight\">🔄 <strong>${totalRestarts}</strong> service restarts were performed automatically.</div>` : '<p>✅ No service restarts needed this week.</p>'}\n    </div>\n\n    <div class=\"section\">\n      <h2>🌐 Monitored Services</h2>\n      <ul>\n        <li>uvcoatedclubflyers.com (Docker)</li>\n        <li>stepperslife.com</li>\n        <li>uvcoatedclubflyer.com</li>\n        <li>n8n.agistaffers.com</li>\n        <li>chatwoot.agistaffers.com</li>\n        <li>webui.agistaffers.com</li>\n      </ul>\n    </div>\n\n    <div class=\"section\">\n      <h2>🔧 Automation Active</h2>\n      <ul>\n        <li>✅ Service Monitor: Every 5 minutes</li>\n        <li>✅ Daily Health Reports: 8 AM daily</li>\n        <li>✅ Downtime Alerts: Real-time via N8N</li>\n        <li>✅ Weekly Summary: Sundays 9 AM</li>\n      </ul>\n    </div>\n\n    <div class=\"footer\">\n      <p><strong>Next Report:</strong> ${new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>\n      <p>VPS: 72.60.28.175 | Monitor Dashboard: https://n8n.agistaffers.com</p>\n      <p>For detailed logs: <code>tail -f /var/log/service-monitor.log</code></p>\n    </div>\n  </div>\n</body>\n</html>\n`;\n\nreturn {\n  subject: `📊 Weekly VPS Summary - ${healthGrade} (${uptimePercent}% Uptime)`,\n  html: htmlBody,\n  to: 'appvillagellc@gmail.com',\n  stats: stats\n};"
+      },
+      "name": "Format Weekly Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://uvcoatedclubflyers.com/api/admin/monitoring/email",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  to: $json.to,\n  subject: $json.subject,\n  html: $json.html\n}) }}",
+        "options": {}
+      },
+      "name": "Send Weekly Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [910, 300]
+    }
+  ],
+  "connections": {
+    "Every Sunday at 9 AM": {
+      "main": [
+        [
+          {
+            "node": "Collect Weekly Stats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Weekly Stats": {
+      "main": [
+        [
+          {
+            "node": "Format Weekly Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Weekly Report": {
+      "main": [
+        [
+          {
+            "node": "Send Weekly Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "America/Chicago"
+  },
+  "tags": []
+}

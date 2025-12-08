@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { CartProvider } from '@/components/cart/cart-provider';
+import { ChatwootWidget } from '@/components/chatwoot/chatwoot-widget';
 
 export const metadata: Metadata = {
   title: 'UV Coated Club Flyers',
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head></head>
       <body className="min-h-screen bg-background font-sans antialiased">
         <CartProvider>{children}</CartProvider>
+        <ChatwootWidget />
       </body>
     </html>
   );
