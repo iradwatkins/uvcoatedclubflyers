@@ -66,11 +66,16 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    // Verify cron secret (via header or URL param)
+    // Verify cron secret (via header, URL param, or Vercel cron header)
     const authHeader = request.headers.get('authorization');
     const urlSecret = request.nextUrl.searchParams.get('secret');
+    const vercelCronHeader = request.headers.get('x-vercel-cron');
 
-    if (authHeader !== `Bearer ${CRON_SECRET}` && urlSecret !== CRON_SECRET) {
+    // Vercel cron jobs include x-vercel-cron header when CRON_SECRET matches
+    const isVercelCron = vercelCronHeader === '1';
+    const isAuthorized = authHeader === `Bearer ${CRON_SECRET}` || urlSecret === CRON_SECRET || isVercelCron;
+
+    if (!isAuthorized) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
