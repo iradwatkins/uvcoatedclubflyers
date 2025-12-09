@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { render } from '@react-email/components';
 import {
   detectAbandonedCarts,
   getCartsNeedingEmails,
@@ -7,6 +8,8 @@ import {
   expireOldCarts,
 } from '@/lib/abandoned-cart';
 import { sql } from '@/lib/db';
+import { transporter, FROM_EMAIL, REPLY_TO_EMAIL } from '@/lib/email/nodemailer';
+import { AbandonedCartEmail } from '@/lib/email/templates/marketing/abandoned-cart';
 
 // This endpoint should be called by a cron job (e.g., every 15 minutes)
 // Protect with a secret key in production
@@ -14,14 +17,60 @@ import { sql } from '@/lib/db';
 const CRON_SECRET = process.env.CRON_SECRET || 'development-secret';
 
 /**
+ * GET /api/abandoned-cart/process
+ * Health check endpoint - returns status of abandoned cart processing
+ */
+export async function GET(request: NextRequest) {
+  // Verify cron secret
+  const authHeader = request.headers.get('authorization');
+  const urlSecret = request.nextUrl.searchParams.get('secret');
+
+  if (authHeader !== `Bearer ${CRON_SECRET}` && urlSecret !== CRON_SECRET) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    // Get pending stats
+    const [stats] = (await sql`
+      SELECT
+        COUNT(*) FILTER (WHERE status = 'active') as active_carts,
+        COUNT(*) FILTER (WHERE status = 'abandoned' AND first_email_sent_at IS NULL) as pending_emails,
+        COUNT(*) FILTER (WHERE status = 'abandoned') as total_abandoned,
+        COUNT(*) FILTER (WHERE status = 'recovered') as total_recovered
+      FROM abandoned_carts
+      WHERE created_at >= NOW() - INTERVAL '7 days'
+    `) as { active_carts: number; pending_emails: number; total_abandoned: number; total_recovered: number }[];
+
+    return NextResponse.json({
+      status: 'ok',
+      stats: stats || { active_carts: 0, pending_emails: 0, total_abandoned: 0, total_recovered: 0 },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    return NextResponse.json({
+      status: 'error',
+      message: (error as Error).message,
+    }, { status: 500 });
+  }
+}
+
+/**
  * POST /api/abandoned-cart/process
  * Process abandoned carts - detect abandoned, send emails, expire old
+ *
+ * Call this endpoint every 15 minutes via external cron service:
+ * - cron-job.org (free)
+ * - EasyCron
+ * - UptimeRobot (free)
+ * - Server cron: curl -X POST -H "Authorization: Bearer YOUR_SECRET" https://uvcoatedclubflyers.com/api/abandoned-cart/process
  */
 export async function POST(request: NextRequest) {
   try {
-    // Verify cron secret
+    // Verify cron secret (via header or URL param)
     const authHeader = request.headers.get('authorization');
-    if (authHeader !== `Bearer ${CRON_SECRET}`) {
+    const urlSecret = request.nextUrl.searchParams.get('secret');
+
+    if (authHeader !== `Bearer ${CRON_SECRET}` && urlSecret !== CRON_SECRET) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -70,11 +119,12 @@ export async function POST(request: NextRequest) {
             }>;
             total: number;
           },
-          recoveryUrl: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/abandoned-cart/recover?token=${cart.recoveryToken}&email=${nextEmailNumber}`,
+          recoveryUrl: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://uvcoatedclubflyers.com'}/api/abandoned-cart/recover?token=${cart.recoveryToken}&email=${nextEmailNumber}`,
           couponCode,
           discountValue: template.discountValue,
           discountType: template.discountType,
-          trackingPixelUrl: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/abandoned-cart/track-open?cid=${cart.id}&en=${nextEmailNumber}`,
+          trackingPixelUrl: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://uvcoatedclubflyers.com'}/api/abandoned-cart/track-open?cid=${cart.id}&en=${nextEmailNumber}`,
+          abandonedAt: cart.abandonedAt || undefined,
         };
 
         // Send the email (implement your email sending logic here)
@@ -154,7 +204,7 @@ async function generateRecoveryCoupon(
 }
 
 /**
- * Send abandoned cart email (placeholder - implement with your email service)
+ * Send abandoned cart email using nodemailer
  */
 async function sendAbandonedCartEmail(
   emailData: {
@@ -176,21 +226,58 @@ async function sendAbandonedCartEmail(
     discountValue?: number | null;
     discountType?: string | null;
     trackingPixelUrl: string;
+    abandonedAt?: Date;
   },
   templateKey: string
 ): Promise<boolean> {
-  // TODO: Implement with your email service (SendGrid, AWS SES, etc.)
-  // For now, just log the email that would be sent
-  console.log('[Email] Would send abandoned cart email:', {
-    to: emailData.to,
-    subject: emailData.subject,
-    template: templateKey,
-    recoveryUrl: emailData.recoveryUrl,
-    couponCode: emailData.couponCode,
-    itemCount: emailData.cart.items.length,
-    cartTotal: emailData.cart.total,
-  });
+  try {
+    // Calculate hours since abandonment
+    const hoursSinceAbandonment = emailData.abandonedAt
+      ? Math.round((Date.now() - new Date(emailData.abandonedAt).getTime()) / (1000 * 60 * 60))
+      : 1;
 
-  // Return true to mark as sent (in production, only return true if actually sent)
-  return true;
+    // Render the email template
+    const emailHtml = await render(
+      AbandonedCartEmail({
+        customerName: emailData.firstName !== 'there' ? emailData.firstName : undefined,
+        items: emailData.cart.items.map((item) => ({
+          productName: item.productName,
+          quantity: item.quantity,
+          price: Math.round(item.price * 100), // Convert to cents for template
+        })),
+        subtotal: Math.round(emailData.cart.total * 100),
+        total: Math.round(emailData.cart.total * 100),
+        cartUrl: emailData.recoveryUrl,
+        couponCode: emailData.couponCode,
+        couponValue: emailData.discountValue || undefined,
+        hoursSinceAbandonment,
+      })
+    );
+
+    // Add tracking pixel to the email
+    const emailWithTracking = emailHtml.replace(
+      '</body>',
+      `<img src="${emailData.trackingPixelUrl}" width="1" height="1" alt="" style="display:none" /></body>`
+    );
+
+    // Send the email
+    const info = await transporter.sendMail({
+      from: `"UV Coated Club Flyers" <${FROM_EMAIL}>`,
+      replyTo: REPLY_TO_EMAIL,
+      to: emailData.to,
+      subject: emailData.subject,
+      html: emailWithTracking,
+    });
+
+    console.log('[Email] Abandoned cart email sent:', {
+      to: emailData.to,
+      messageId: info.messageId,
+      template: templateKey,
+    });
+
+    return true;
+  } catch (error) {
+    console.error('[Email] Failed to send abandoned cart email:', error);
+    return false;
+  }
 }
