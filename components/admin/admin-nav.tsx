@@ -15,6 +15,8 @@ import {
   Gift,
   Tag,
   ShoppingCartIcon,
+  Contact,
+  Zap,
 } from 'lucide-react';
 
 interface AdminNavProps {
@@ -42,9 +44,14 @@ const navItems = [
     icon: BarChart3,
   },
   {
-    title: 'Customers',
-    href: '/admin/customers',
-    icon: Users,
+    title: 'Contacts',
+    href: '/admin/contacts',
+    icon: Contact,
+  },
+  {
+    title: 'Automations',
+    href: '/admin/automations',
+    icon: Zap,
   },
   {
     title: 'Products',

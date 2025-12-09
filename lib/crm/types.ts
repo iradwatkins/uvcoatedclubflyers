@@ -38,7 +38,7 @@ export interface Contact {
   tags?: ContactTag[];
 }
 
-export type ContactStatus = 'active' | 'unsubscribed' | 'bounced' | 'spam_complaint';
+export type ContactStatus = 'active' | 'lead' | 'inactive' | 'unsubscribed' | 'bounced' | 'spam_complaint';
 
 export interface ContactTag {
   id: number;
