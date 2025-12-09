@@ -8,10 +8,7 @@ import {
   ShoppingBag,
   Users,
   Package,
-  Printer,
-  Kanban,
   BarChart3,
-  Settings,
   Home,
   Puzzle,
   FileStack,
@@ -35,19 +32,9 @@ const navItems = [
     icon: LayoutDashboard,
   },
   {
-    title: 'Orders',
+    title: 'Order Center',
     href: '/admin/orders',
     icon: ShoppingBag,
-  },
-  {
-    title: 'Print Queue',
-    href: '/admin/print-queue',
-    icon: Printer,
-  },
-  {
-    title: 'Production Board',
-    href: '/admin/print-queue/kanban',
-    icon: Kanban,
   },
   {
     title: 'Analytics',
