@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import type { Cart } from '@/lib/cart';
 import { sendOrderConfirmation, sendAdminOrderNotification } from '@/lib/email/send';
 import { markCartRecovered } from '@/lib/abandoned-cart';
+import { syncContactFromOrder, triggerAutomation } from '@/lib/crm';
 
 export async function POST(request: NextRequest) {
   try {
@@ -190,6 +191,30 @@ export async function POST(request: NextRequest) {
     } catch (recoveryError) {
       console.error('Failed to mark cart as recovered:', recoveryError);
       // Don't fail the order if this fails
+    }
+
+    // Sync contact to CRM and trigger automations
+    if (customerEmail) {
+      try {
+        await syncContactFromOrder(
+          order.id,
+          customerEmail,
+          billingInfo?.firstName,
+          billingInfo?.lastName,
+          billingInfo?.phone
+        );
+
+        // Trigger order_created automation
+        await triggerAutomation('order_created', customerEmail, {
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          totalAmount: totalAmountCents / 100,
+          itemCount: cart.items.length,
+        });
+      } catch (crmError) {
+        console.error('Failed to sync contact to CRM:', crmError);
+        // Don't fail the order if CRM sync fails
+      }
     }
 
     return NextResponse.json({
