@@ -20,7 +20,7 @@ export async function getAutomationEvents(): Promise<AutomationEvent[]> {
       last_triggered_at as "lastTriggeredAt",
       created_at as "createdAt",
       updated_at as "updatedAt"
-    FROM automation_events
+    FROM automation_rules
     ORDER BY name
   `;
 
@@ -41,7 +41,7 @@ export async function getActiveEventsForType(eventType: string): Promise<Automat
       last_triggered_at as "lastTriggeredAt",
       created_at as "createdAt",
       updated_at as "updatedAt"
-    FROM automation_events
+    FROM automation_rules
     WHERE event_type = ${eventType}
       AND is_active = true
   `;
@@ -90,7 +90,7 @@ export async function updateAutomationEvent(
   values.push(id);
 
   const updateQuery = `
-    UPDATE automation_events
+    UPDATE automation_rules
     SET ${updates.join(', ')}
     WHERE id = $${paramIndex}
   `;
@@ -151,7 +151,7 @@ export async function triggerAutomation(
 
     // Update event stats
     await sql`
-      UPDATE automation_events
+      UPDATE automation_rules
       SET
         times_triggered = times_triggered + 1,
         last_triggered_at = NOW()
@@ -415,7 +415,7 @@ export async function checkScheduledAutomations(): Promise<void> {
   // Check "days_after_order" events
   const daysAfterOrderEvents = await sql`
     SELECT id, conditions, actions
-    FROM automation_events
+    FROM automation_rules
     WHERE event_type = 'days_after_order'
       AND is_active = true
   ` as { id: number; conditions: Record<string, unknown>; actions: AutomationAction[] }[];
@@ -450,7 +450,7 @@ export async function checkScheduledAutomations(): Promise<void> {
   // Check "days_since_last_order" events (win-back)
   const winbackEvents = await sql`
     SELECT id, conditions, actions
-    FROM automation_events
+    FROM automation_rules
     WHERE event_type = 'days_since_last_order'
       AND is_active = true
   ` as { id: number; conditions: Record<string, unknown>; actions: AutomationAction[] }[];
