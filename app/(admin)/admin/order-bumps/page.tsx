@@ -186,7 +186,7 @@ export default async function AdminOrderBumpsPage() {
                               <div>
                                 <p className="text-sm">{bump.product_name}</p>
                                 <p className="text-xs text-muted-foreground">
-                                  ${bump.product_base_price?.toFixed(2)}
+                                  ${Number(bump.product_base_price || 0).toFixed(2)}
                                 </p>
                               </div>
                             ) : (
@@ -199,7 +199,7 @@ export default async function AdminOrderBumpsPage() {
                             ) : bump.discount_type === 'percentage' ? (
                               <Badge variant="secondary">{bump.discount_value}% off</Badge>
                             ) : (
-                              <Badge variant="secondary">${bump.discount_value.toFixed(2)} off</Badge>
+                              <Badge variant="secondary">${Number(bump.discount_value || 0).toFixed(2)} off</Badge>
                             )}
                           </td>
                           <td className="px-4 py-3 text-center">{bump.impressions.toLocaleString()}</td>
