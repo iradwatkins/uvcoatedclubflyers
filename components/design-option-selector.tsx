@@ -13,6 +13,236 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
 import { FileUploadDropzone } from '@/components/file-upload-dropzone';
 
+// ========================================
+// NEW CHOICE-BASED INTERFACE
+// ========================================
+
+export interface DesignChoice {
+  id: number;
+  addOnId: number;
+  value: string;
+  label: string;
+  description: string | null;
+  priceType: string;
+  basePrice: string;
+  perUnitPrice: string;
+  percentage: string;
+  requiresFileUpload: boolean;
+  requiresSidesSelection: boolean;
+  sidesPricing: { one: number; two: number } | null;
+  displayOrder: number;
+  isDefault: boolean;
+  isActive: boolean;
+}
+
+export interface DesignAddOn {
+  id: number;
+  name: string;
+  slug: string;
+  description: string | null;
+  tooltip_text?: string;
+  ui_component: string;
+  choices: DesignChoice[];
+}
+
+export interface DesignOptionSelectorNewProps {
+  designAddOn: DesignAddOn;
+  selectedChoiceValue: string | null;
+  onChoiceChange: (choiceValue: string, addOnId: number) => void;
+  selectedSides?: string;
+  onSidesChange?: (sides: string) => void;
+  uploadedFiles?: File[];
+  onFilesChange?: (files: File[]) => void;
+  maxFiles?: number;
+  className?: string;
+}
+
+/**
+ * Format price display for a choice
+ */
+const formatChoicePrice = (choice: DesignChoice): string => {
+  const basePrice = parseFloat(choice.basePrice || '0');
+  const perUnit = parseFloat(choice.perUnitPrice || '0');
+
+  if (basePrice === 0 && perUnit === 0 && choice.priceType !== 'custom') {
+    return '';
+  }
+
+  if (choice.priceType === 'custom' && choice.sidesPricing) {
+    const onePrice = choice.sidesPricing.one || 0;
+    return ` (from $${onePrice})`;
+  }
+
+  if (basePrice > 0) {
+    return ` (+$${basePrice.toFixed(basePrice % 1 === 0 ? 0 : 2)})`;
+  }
+
+  if (perUnit > 0) {
+    return ` (+$${perUnit.toFixed(4)}/pc)`;
+  }
+
+  return '';
+};
+
+/**
+ * New Choice-Based Design Option Selector
+ */
+export function DesignOptionSelectorNew({
+  designAddOn,
+  selectedChoiceValue,
+  onChoiceChange,
+  selectedSides,
+  onSidesChange,
+  uploadedFiles = [],
+  onFilesChange,
+  maxFiles = 10,
+  className,
+}: DesignOptionSelectorNewProps) {
+  const [validationError, setValidationError] = useState<string>('');
+
+  const sortedChoices = [...(designAddOn.choices || [])].sort(
+    (a, b) => a.displayOrder - b.displayOrder
+  );
+
+  const selectedChoice = sortedChoices.find((c) => c.value === selectedChoiceValue);
+
+  // Auto-select default choice
+  useEffect(() => {
+    if (!selectedChoiceValue && sortedChoices.length > 0) {
+      const defaultChoice = sortedChoices.find((c) => c.isDefault) || sortedChoices[0];
+      onChoiceChange(defaultChoice.value, designAddOn.id);
+    }
+  }, [sortedChoices.length]);
+
+  const requiresSidesSelection = selectedChoice?.requiresSidesSelection || false;
+
+  const showFileUploader =
+    selectedChoice?.value === 'upload-my-artwork' ||
+    selectedChoice?.value === 'design-changes-minor' ||
+    selectedChoice?.value === 'design-changes-major';
+
+  useEffect(() => {
+    if (!selectedChoice) {
+      setValidationError('');
+      return;
+    }
+
+    if (requiresSidesSelection && !selectedSides) {
+      setValidationError('Please select the number of sides for your custom design.');
+      return;
+    }
+
+    if (
+      (selectedChoice.value === 'design-changes-minor' ||
+        selectedChoice.value === 'design-changes-major') &&
+      uploadedFiles.length === 0
+    ) {
+      setValidationError('Please upload your artwork files for design changes.');
+      return;
+    }
+
+    setValidationError('');
+  }, [selectedChoice, selectedSides, uploadedFiles, requiresSidesSelection]);
+
+  const handleChoiceChange = (value: string) => {
+    onChoiceChange(value, designAddOn.id);
+    setValidationError('');
+  };
+
+  const getSidesPrice = (sides: 'one' | 'two'): string => {
+    if (!selectedChoice?.sidesPricing) return '';
+    return `$${selectedChoice.sidesPricing[sides]}`;
+  };
+
+  return (
+    <div className={className}>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="design-service" className="text-base font-semibold">
+            Design
+            <span className="text-red-500 ml-1">*</span>
+          </Label>
+          <Select value={selectedChoiceValue || ''} onValueChange={handleChoiceChange}>
+            <SelectTrigger id="design-service" className="w-full">
+              <SelectValue placeholder="Select design option" />
+            </SelectTrigger>
+            <SelectContent>
+              {sortedChoices.map((choice) => (
+                <SelectItem key={choice.id} value={choice.value}>
+                  {choice.label}
+                  {formatChoicePrice(choice)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {selectedChoice?.description && (
+            <p className="text-sm text-muted-foreground">{selectedChoice.description}</p>
+          )}
+        </div>
+
+        {requiresSidesSelection && (
+          <div className="space-y-2">
+            <Label htmlFor="design-sides" className="text-sm font-medium">
+              How many sides need design?
+              <span className="text-red-500 ml-1">*</span>
+            </Label>
+            <Select value={selectedSides || ''} onValueChange={onSidesChange}>
+              <SelectTrigger id="design-sides" className="w-full">
+                <SelectValue placeholder="Select number of sides" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="one">One Side - {getSidesPrice('one')}</SelectItem>
+                <SelectItem value="two">Two Sides - {getSidesPrice('two')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {showFileUploader && (
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">
+              Upload Your Artwork
+              {(selectedChoice?.value === 'design-changes-minor' ||
+                selectedChoice?.value === 'design-changes-major') && (
+                <span className="text-red-500 ml-1">*</span>
+              )}
+            </Label>
+            <FileUploadDropzone
+              files={uploadedFiles}
+              onFilesSelected={onFilesChange || (() => {})}
+              maxFiles={maxFiles}
+              acceptedFileTypes={[
+                '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp',
+                '.pdf', '.ai', '.eps', '.psd',
+              ]}
+            />
+          </div>
+        )}
+
+        {selectedChoice?.value === 'will-upload-later' && (
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              You can upload your files later from your dashboard after placing the order. Your
+              order will not be processed until files are received.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {validationError && (
+          <Alert variant="destructive">
+            <AlertDescription>{validationError}</AlertDescription>
+          </Alert>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ========================================
+// LEGACY INTERFACE (for backward compatibility)
+// ========================================
+
 export interface DesignOption {
   id: number;
   name: string;
@@ -23,6 +253,8 @@ export interface DesignOption {
   per_unit_price: string;
   ui_component?: string;
   display_order: number;
+  // New: choices array for dropdown add-ons
+  choices?: DesignChoice[];
 }
 
 export interface DesignOptionSelectorProps {
@@ -63,9 +295,8 @@ const formatDesignOptionPrice = (option: DesignOption): string => {
 };
 
 /**
- * Component for selecting design/file upload option
- * Uses dropdown selector - file uploader shows by default when "Upload My Artwork" is selected
- * File uploader hides when other design services are selected
+ * Legacy Component for selecting design/file upload option
+ * Now supports both old (separate add-ons) and new (single add-on with choices) formats
  */
 export function DesignOptionSelector({
   designOptions,
@@ -79,6 +310,49 @@ export function DesignOptionSelector({
   className,
 }: DesignOptionSelectorProps) {
   const [validationError, setValidationError] = useState<string>('');
+  const [selectedChoiceValue, setSelectedChoiceValue] = useState<string | null>(null);
+
+  // Check if we have the new choices-based format
+  // (single "Design" add-on with choices array)
+  const hasChoices = designOptions.length === 1 &&
+    designOptions[0].ui_component === 'dropdown' &&
+    designOptions[0].choices &&
+    designOptions[0].choices.length > 0;
+
+  // If using new format, delegate to the new component
+  if (hasChoices) {
+    const designAddOn = designOptions[0];
+    const choices = designAddOn.choices || [];
+
+    return (
+      <DesignOptionSelectorNew
+        designAddOn={{
+          id: designAddOn.id,
+          name: designAddOn.name,
+          slug: designAddOn.slug,
+          description: designAddOn.description,
+          ui_component: designAddOn.ui_component || 'dropdown',
+          choices: choices,
+        }}
+        selectedChoiceValue={selectedChoiceValue}
+        onChoiceChange={(choiceValue, addOnId) => {
+          setSelectedChoiceValue(choiceValue);
+          // For compatibility, pass the add-on ID
+          onOptionChange(addOnId);
+        }}
+        selectedSides={selectedSides}
+        onSidesChange={onSidesChange}
+        uploadedFiles={uploadedFiles}
+        onFilesChange={onFilesChange}
+        maxFiles={maxFiles}
+        className={className}
+      />
+    );
+  }
+
+  // ========================================
+  // LEGACY BEHAVIOR (multiple separate add-ons)
+  // ========================================
 
   // Sort design options by display order
   const sortedOptions = [...designOptions].sort((a, b) => a.display_order - b.display_order);
@@ -87,7 +361,6 @@ export function DesignOptionSelector({
   const selectedOption = sortedOptions.find((opt) => opt.id === selectedOptionId);
 
   // Auto-select "Upload My Artwork" (first option) if nothing is selected
-  // Only runs once when options are loaded and no option is selected
   useEffect(() => {
     if (selectedOptionId === null && sortedOptions.length > 0) {
       const uploadOption = sortedOptions.find(opt => opt.slug === 'upload-my-artwork');
@@ -98,13 +371,11 @@ export function DesignOptionSelector({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortedOptions.length]); // Only depend on options being loaded
+  }, [sortedOptions.length]);
 
   // Derive requirements from slug
   const requiresSidesSelection = selectedOption?.slug === 'standard-custom-design' ||
     selectedOption?.slug === 'rush-custom-design';
-  // Note: "upload-my-artwork" is OPTIONAL - users can upload files later
-  // Only design changes require files because they need existing artwork to modify
   const requiresUpload = selectedOption?.slug === 'design-changes-minor' ||
     selectedOption?.slug === 'design-changes-major';
 
@@ -115,13 +386,11 @@ export function DesignOptionSelector({
       return;
     }
 
-    // Check if sides selection is required but missing
     if (requiresSidesSelection && !selectedSides) {
       setValidationError('Please select the number of sides for your custom design.');
       return;
     }
 
-    // Check if file upload is required but missing
     if (requiresUpload && uploadedFiles.length === 0) {
       setValidationError('Please upload your artwork files.');
       return;
@@ -148,14 +417,10 @@ export function DesignOptionSelector({
     }
   };
 
-  // Determine if file uploader should show based on slug
-  // Show for: upload-my-artwork, design-changes-minor, design-changes-major
   const showFileUploader = selectedOption?.slug === 'upload-my-artwork' ||
     selectedOption?.slug === 'design-changes-minor' ||
     selectedOption?.slug === 'design-changes-major';
 
-  // Determine if sides selection should show based on slug
-  // Show for: standard-custom-design, rush-custom-design
   const showSidesSelection = selectedOption?.slug === 'standard-custom-design' ||
     selectedOption?.slug === 'rush-custom-design';
 
@@ -216,7 +481,7 @@ export function DesignOptionSelector({
           </div>
         )}
 
-        {/* File Upload Dropzone - Shows by default for upload options */}
+        {/* File Upload Dropzone */}
         {showFileUploader && (
           <div className="space-y-2">
             <Label className="text-sm font-medium">

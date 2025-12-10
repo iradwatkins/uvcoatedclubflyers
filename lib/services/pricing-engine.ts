@@ -37,6 +37,8 @@ export interface PriceCalculationInput {
 export interface AddOnSelection {
   addOnId: number;
   subOptions?: Record<string, any>; // Dynamic sub-option values
+  choiceId?: number; // Selected choice ID for dropdown add-ons
+  choiceValue?: string; // Selected choice value for dropdown add-ons
 }
 
 export interface PriceBreakdown {
@@ -213,47 +215,74 @@ export class PricingEngine {
 
       let cost = 0;
       let description = '';
+      let displayName = addOn.name;
 
-      switch (addOn.pricing_model) {
-        case 'FLAT':
-          // Simple flat fee
-          cost = parseFloat(addOn.base_price) || 0;
-          description = `$${cost.toFixed(2)} flat fee`;
-          break;
+      // Check if this is a dropdown add-on with a choice selected
+      if (addOn.ui_component === 'dropdown' && (selection.choiceId || selection.choiceValue)) {
+        // Get the selected choice
+        let choiceResult;
+        if (selection.choiceId) {
+          choiceResult = await query(
+            'SELECT * FROM add_on_choices WHERE id = $1 AND add_on_id = $2 AND is_active = true',
+            [selection.choiceId, addOn.id]
+          );
+        } else if (selection.choiceValue) {
+          choiceResult = await query(
+            'SELECT * FROM add_on_choices WHERE value = $1 AND add_on_id = $2 AND is_active = true',
+            [selection.choiceValue, addOn.id]
+          );
+        }
 
-        case 'PER_UNIT':
-          // Base fee + per-piece charge
-          const basePrice = parseFloat(addOn.base_price) || 0;
-          const perUnitPrice = parseFloat(addOn.per_unit_price) || 0;
-          cost = basePrice + perUnitPrice * quantity;
-          description = `$${basePrice.toFixed(2)} + $${perUnitPrice.toFixed(4)}/piece`;
-          break;
+        const choice = choiceResult?.rows[0];
+        if (choice) {
+          displayName = choice.label;
+          const choicePriceResult = this.calculateChoicePrice(choice, selection.subOptions, quantity);
+          cost = choicePriceResult.cost;
+          description = choicePriceResult.description;
+        }
+      } else {
+        // Standard add-on pricing (non-dropdown)
+        switch (addOn.pricing_model) {
+          case 'FLAT':
+            // Simple flat fee
+            cost = parseFloat(addOn.base_price) || 0;
+            description = `$${cost.toFixed(2)} flat fee`;
+            break;
 
-        case 'PERCENTAGE':
-          // Percentage markup or discount
-          const percentage = parseFloat(addOn.percentage) || 0;
-          if (percentage < 0) {
-            // Discount - accumulate percentage
-            discountPercentage += Math.abs(percentage);
-            description = `${Math.abs(percentage)}% discount`;
-          } else {
-            // Markup - calculate on subtotal
-            cost = subtotal * (percentage / 100);
-            description = `${percentage}% markup`;
-          }
-          break;
+          case 'PER_UNIT':
+            // Base fee + per-piece charge
+            const basePrice = parseFloat(addOn.base_price) || 0;
+            const perUnitPrice = parseFloat(addOn.per_unit_price) || 0;
+            cost = basePrice + perUnitPrice * quantity;
+            description = `$${basePrice.toFixed(2)} + $${perUnitPrice.toFixed(4)}/piece`;
+            break;
 
-        case 'CUSTOM':
-          // Complex pricing based on sub-options
-          cost = this.calculateCustomAddOn(addOn, selection.subOptions, quantity);
-          description = this.getCustomAddOnDescription(addOn, selection.subOptions);
-          break;
+          case 'PERCENTAGE':
+            // Percentage markup or discount
+            const percentage = parseFloat(addOn.percentage) || 0;
+            if (percentage < 0) {
+              // Discount - accumulate percentage
+              discountPercentage += Math.abs(percentage);
+              description = `${Math.abs(percentage)}% discount`;
+            } else {
+              // Markup - calculate on subtotal
+              cost = subtotal * (percentage / 100);
+              description = `${percentage}% markup`;
+            }
+            break;
+
+          case 'CUSTOM':
+            // Complex pricing based on sub-options
+            cost = this.calculateCustomAddOn(addOn, selection.subOptions, quantity);
+            description = this.getCustomAddOnDescription(addOn, selection.subOptions);
+            break;
+        }
       }
 
       addOnsCost += cost;
       addOnsDetails.push({
         addOnId: addOn.id,
-        name: addOn.name,
+        name: displayName,
         cost: parseFloat(cost.toFixed(2)),
         pricingModel: addOn.pricing_model,
         description,
@@ -265,6 +294,70 @@ export class PricingEngine {
       addOnsDetails,
       discountPercentage,
     };
+  }
+
+  /**
+   * Calculate price for a dropdown choice
+   */
+  private static calculateChoicePrice(
+    choice: any,
+    subOptions: Record<string, any> = {},
+    quantity: number
+  ): { cost: number; description: string } {
+    const basePrice = parseFloat(choice.base_price) || 0;
+    const perUnitPrice = parseFloat(choice.per_unit_price) || 0;
+    const percentage = parseFloat(choice.percentage) || 0;
+    let cost = 0;
+    let description = '';
+
+    switch (choice.price_type) {
+      case 'flat':
+        cost = basePrice;
+        if (cost === 0) {
+          description = 'FREE';
+        } else {
+          description = `$${cost.toFixed(2)} flat fee`;
+        }
+        break;
+
+      case 'per_unit':
+        cost = basePrice + perUnitPrice * quantity;
+        description = `$${basePrice.toFixed(2)} + $${perUnitPrice.toFixed(4)}/piece`;
+        break;
+
+      case 'percentage':
+        // Note: percentage pricing would need subtotal passed in
+        description = `${percentage}%`;
+        break;
+
+      case 'custom':
+        // Custom pricing - typically sides-based
+        if (choice.requires_sides_selection && choice.sides_pricing) {
+          const sidesPricing =
+            typeof choice.sides_pricing === 'string'
+              ? JSON.parse(choice.sides_pricing)
+              : choice.sides_pricing;
+
+          const selectedSides = subOptions?.sides || subOptions?.designSides || 'one';
+          if (selectedSides === 'two' || selectedSides === '2') {
+            cost = parseFloat(sidesPricing.two) || 0;
+            description = `Two sides - $${cost.toFixed(2)}`;
+          } else {
+            cost = parseFloat(sidesPricing.one) || 0;
+            description = `One side - $${cost.toFixed(2)}`;
+          }
+        } else {
+          cost = basePrice;
+          description = cost > 0 ? `$${cost.toFixed(2)}` : 'Custom pricing';
+        }
+        break;
+
+      default:
+        cost = basePrice;
+        description = cost > 0 ? `$${cost.toFixed(2)}` : '-';
+    }
+
+    return { cost, description };
   }
 
   /**
@@ -724,10 +817,52 @@ export async function getProductPricingOptions(productId: number) {
     return acc;
   }, {});
 
-  // Attach sub-options to add-ons
+  // Get choices for dropdown add-ons
+  const dropdownAddOnIds = addOnsResult.rows
+    .filter((ao: any) => ao.ui_component === 'dropdown')
+    .map((ao: any) => ao.id);
+
+  const choicesResult =
+    dropdownAddOnIds.length > 0
+      ? await query(
+          `SELECT * FROM add_on_choices
+           WHERE add_on_id = ANY($1) AND is_active = true
+           ORDER BY display_order`,
+          [dropdownAddOnIds]
+        )
+      : { rows: [] };
+
+  // Map choices by add-on ID
+  const choicesByAddOn = choicesResult.rows.reduce((acc: any, choice: any) => {
+    if (!acc[choice.add_on_id]) {
+      acc[choice.add_on_id] = [];
+    }
+    // Transform to camelCase for frontend
+    acc[choice.add_on_id].push({
+      id: choice.id,
+      addOnId: choice.add_on_id,
+      value: choice.value,
+      label: choice.label,
+      description: choice.description,
+      priceType: choice.price_type,
+      basePrice: choice.base_price,
+      perUnitPrice: choice.per_unit_price,
+      percentage: choice.percentage,
+      requiresFileUpload: choice.requires_file_upload,
+      requiresSidesSelection: choice.requires_sides_selection,
+      sidesPricing: choice.sides_pricing,
+      displayOrder: choice.display_order,
+      isDefault: choice.is_default,
+      isActive: choice.is_active,
+    });
+    return acc;
+  }, {});
+
+  // Attach sub-options and choices to add-ons
   const addOnsWithSubOptions = addOnsResult.rows.map((ao: any) => ({
     ...ao,
     subOptions: subOptionsByAddOn[ao.id] || [],
+    choices: choicesByAddOn[ao.id] || [],
   }));
 
   // Group add-ons by position
