@@ -24,7 +24,95 @@ interface AddOn {
   product_count: bigint;
 }
 
+async function ensureCategoryColumn() {
+  try {
+    // Check if category column exists
+    const columnCheck = await prisma.$queryRaw<{column_name: string}[]>`
+      SELECT column_name
+      FROM information_schema.columns
+      WHERE table_name = 'add_ons' AND column_name = 'category'
+    `;
+
+    if (columnCheck.length === 0) {
+      // Add category column
+      await prisma.$executeRawUnsafe(`
+        ALTER TABLE add_ons ADD COLUMN IF NOT EXISTS category VARCHAR(100)
+      `);
+
+      // Update design-related add-ons
+      await prisma.$executeRawUnsafe(`
+        UPDATE add_ons
+        SET category = 'Design Services'
+        WHERE slug IN (
+          'upload-my-artwork',
+          'standard-custom-design',
+          'rush-custom-design',
+          'design-changes-minor',
+          'design-changes-major',
+          'will-upload-later'
+        )
+      `);
+
+      // Update finishing add-ons
+      await prisma.$executeRawUnsafe(`
+        UPDATE add_ons
+        SET category = 'Finishing Options'
+        WHERE slug IN (
+          'perforation',
+          'score-only',
+          'folding',
+          'corner-rounding',
+          'hole-drilling',
+          'wafer-seal'
+        )
+      `);
+
+      // Update packaging add-ons
+      await prisma.$executeRawUnsafe(`
+        UPDATE add_ons
+        SET category = 'Packaging & Bundling'
+        WHERE slug IN ('banding', 'shrink-wrapping')
+      `);
+
+      // Update premium add-ons
+      await prisma.$executeRawUnsafe(`
+        UPDATE add_ons
+        SET category = 'Premium Finishes'
+        WHERE slug IN ('foil-stamping', 'spot-uv')
+      `);
+
+      // Update personalization add-ons
+      await prisma.$executeRawUnsafe(`
+        UPDATE add_ons
+        SET category = 'Personalization'
+        WHERE slug IN ('variable-data-printing', 'numbering', 'qr-code')
+      `);
+
+      // Update pricing add-ons
+      await prisma.$executeRawUnsafe(`
+        UPDATE add_ons
+        SET category = 'Pricing Adjustments'
+        WHERE slug IN ('our-tagline', 'exact-size')
+      `);
+
+      // Update proofs add-ons
+      await prisma.$executeRawUnsafe(`
+        UPDATE add_ons
+        SET category = 'Proofs & QC'
+        WHERE slug IN ('digital-proof')
+      `);
+
+      console.log('Category column added and populated');
+    }
+  } catch (error) {
+    console.error('Error ensuring category column:', error);
+  }
+}
+
 async function getAddOns(): Promise<AddOn[]> {
+  // Ensure migration is applied
+  await ensureCategoryColumn();
+
   const addOns = await prisma.$queryRaw<AddOn[]>`
     SELECT
       a.*,
