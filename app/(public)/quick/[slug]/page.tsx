@@ -56,6 +56,33 @@ async function getTurnarounds() {
   return result.rows;
 }
 
+interface DesignChoice {
+  id: number;
+  add_on_id: number;
+  value: string;
+  label: string;
+  description: string | null;
+  price_type: string;
+  base_price: string;
+  per_unit_price: string | null;
+  requires_file_upload: boolean;
+  requires_sides_selection: boolean;
+  sides_pricing: any;
+  display_order: number;
+  is_active: boolean;
+}
+
+async function getDesignChoices(): Promise<DesignChoice[]> {
+  const result = await query(
+    `SELECT id, add_on_id, value, label, description, price_type, base_price, per_unit_price,
+            requires_file_upload, requires_sides_selection, sides_pricing, display_order, is_active
+     FROM add_on_choices
+     WHERE add_on_id = 1 AND is_active = true
+     ORDER BY display_order ASC`
+  );
+  return result.rows;
+}
+
 export default async function QuickProductPage({
   params,
 }: {
@@ -63,9 +90,10 @@ export default async function QuickProductPage({
 }) {
   const { slug } = await params;
 
-  const [product, turnarounds] = await Promise.all([
+  const [product, turnarounds, designChoices] = await Promise.all([
     getQuickProduct(slug),
     getTurnarounds(),
+    getDesignChoices(),
   ]);
 
   if (!product) {
@@ -78,6 +106,7 @@ export default async function QuickProductPage({
         <QuickProductConfigurator
           product={product}
           turnarounds={turnarounds}
+          designChoices={designChoices}
         />
       </div>
     </div>

@@ -46,9 +46,26 @@ interface Turnaround {
   category: string;
 }
 
+interface DesignChoice {
+  id: number;
+  add_on_id: number;
+  value: string;
+  label: string;
+  description: string | null;
+  price_type: string;
+  base_price: string;
+  per_unit_price: string | null;
+  requires_file_upload: boolean;
+  requires_sides_selection: boolean;
+  sides_pricing: any;
+  display_order: number;
+  is_active: boolean;
+}
+
 interface QuickProductConfiguratorProps {
   product: QuickProduct;
   turnarounds: Turnaround[];
+  designChoices: DesignChoice[];
 }
 
 // Standard quantity options
@@ -61,13 +78,6 @@ const SIDES_OPTIONS = [
   { value: 'front-only', label: 'Image One Side Only', pricingValue: 'single' },
 ];
 
-// Design options - pricing matches database add-ons (Standard Custom Design: $90 one side, $135 two sides)
-const DESIGN_OPTIONS = [
-  { value: 'upload', label: 'Upload Your Image', price: 0 },
-  { value: 'design-service-one', label: 'Design Services - One Side (+$90)', price: 90 },
-  { value: 'design-service-two', label: 'Design Services - Both Sides (+$135)', price: 135 },
-];
-
 // Format size - remove decimals for whole numbers
 function formatSize(value: string): string {
   const num = parseFloat(value);
@@ -77,13 +87,14 @@ function formatSize(value: string): string {
 export function QuickProductConfigurator({
   product,
   turnarounds,
+  designChoices,
 }: QuickProductConfiguratorProps) {
   const router = useRouter();
 
   // State - default quantity is 5000
   const [selectedQuantity, setSelectedQuantity] = useState(5000);
   const [selectedSides, setSelectedSides] = useState('different-both');
-  const [selectedDesign, setSelectedDesign] = useState('upload');
+  const [selectedDesign, setSelectedDesign] = useState(designChoices[0]?.value || 'upload');
   const [selectedTurnaroundId, setSelectedTurnaroundId] = useState<number | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [calculatedPrice, setCalculatedPrice] = useState<number | null>(null);
@@ -97,9 +108,9 @@ export function QuickProductConfigurator({
   const selectedSidesOption = SIDES_OPTIONS.find((s) => s.value === selectedSides);
   const sidesForPricing = selectedSidesOption?.pricingValue || 'double';
 
-  // Get design service fee
-  const selectedDesignOption = DESIGN_OPTIONS.find((d) => d.value === selectedDesign);
-  const designFee = selectedDesignOption?.price || 0;
+  // Get design service fee from database choices
+  const selectedDesignChoice = designChoices.find((d) => d.value === selectedDesign);
+  const designFee = selectedDesignChoice ? parseFloat(selectedDesignChoice.base_price) : 0;
 
   // Format sizes for display
   const formattedWidth = formatSize(product.fixed_width);
@@ -246,14 +257,14 @@ export function QuickProductConfigurator({
           turnaround: selectedTurnaround?.name,
           turnaroundId: selectedTurnaroundId,
           productionDays: selectedTurnaround?.production_days,
-          designOption: selectedDesignOption?.label,
+          designOption: selectedDesignChoice?.label,
           designFee: designFee,
           designFiles: fileUrls,
         },
         price: totalPrice,
         unitPrice: totalPrice / selectedQuantity,
         uploadedFiles: fileUrls,
-        addOns: designFee > 0 ? [{ name: selectedDesign === 'design-service-one' ? 'Standard Custom Design (One Side)' : 'Standard Custom Design (Both Sides)', price: designFee }] : [],
+        addOns: designFee > 0 ? [{ name: selectedDesignChoice?.label || 'Design Service', price: designFee }] : [],
       };
 
       // Add to cart via API
@@ -409,17 +420,21 @@ export function QuickProductConfigurator({
                   <SelectValue placeholder="Select design option" />
                 </SelectTrigger>
                 <SelectContent>
-                  {DESIGN_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
+                  {designChoices.map((choice) => {
+                    const price = parseFloat(choice.base_price);
+                    const priceLabel = price > 0 ? ` (+$${price.toFixed(0)})` : '';
+                    return (
+                      <SelectItem key={choice.id} value={choice.value}>
+                        {choice.label}{priceLabel}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
 
-            {/* File Upload - Show when "Upload Your Image" is selected or design service for reference */}
-            {(selectedDesign === 'upload' || selectedDesign.startsWith('design-service')) && (
+            {/* File Upload - Show when selected choice requires file upload */}
+            {selectedDesignChoice?.requires_file_upload && (
               <div className="space-y-2">
                 <FileUploadDropzone
                   onFilesSelected={setUploadedFiles}
@@ -540,7 +555,7 @@ export function QuickProductConfigurator({
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Design</span>
-                <span>{selectedDesign === 'upload' ? 'Upload Your Image' : 'Design Services'}</span>
+                <span>{selectedDesignChoice?.label || 'Upload Your Image'}</span>
               </div>
             </div>
 
