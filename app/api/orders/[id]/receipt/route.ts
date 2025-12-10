@@ -54,7 +54,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       .text('UV COATED CLUB FLYERS', { align: 'center' })
       .fontSize(10)
       .font('Helvetica')
-      .text('1300 Basswood Road, Schaumburg, IL 60173', { align: 'center' })
+      .text('251 Little Falls Dr, Wilmington, DE 19808', { align: 'center' })
       .text('Phone: (555) 123-4567 | Email: orders@uvcoatedflyers.com', { align: 'center' })
       .moveDown(2);
 

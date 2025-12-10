@@ -103,7 +103,7 @@ export default function PrivacyPage() {
             </p>
             <p className="mt-2">
               Email: support@uvcoatedclubflyers.com<br />
-              Address: 1300 Basswood Road, Schaumburg, IL 60173
+              Address: 251 Little Falls Dr, Wilmington, DE 19808
             </p>
           </CardContent>
         </Card>

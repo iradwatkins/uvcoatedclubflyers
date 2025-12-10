@@ -123,10 +123,10 @@ export const SERVICE_NAMES = {
 
 // Default sender address (your warehouse)
 export const DEFAULT_SENDER_ADDRESS = {
-  street: '1300 Basswood Road',
-  city: 'Schaumburg',
-  state: 'IL',
-  zipCode: '60173',
+  street: '251 Little Falls Dr',
+  city: 'Wilmington',
+  state: 'DE',
+  zipCode: '19808',
   country: 'US',
   isResidential: false,
 }

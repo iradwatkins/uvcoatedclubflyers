@@ -57,8 +57,8 @@ export default function ContactPage() {
           <CardContent>
             <p className="text-muted-foreground">
               UV Coated Club Flyers<br />
-              1300 Basswood Road<br />
-              Schaumburg, IL 60173
+              251 Little Falls Dr<br />
+              Wilmington, DE 19808
             </p>
           </CardContent>
         </Card>

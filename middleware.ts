@@ -3,15 +3,31 @@ import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  // Early return if nextUrl is not available (Next.js 16 compatibility)
+  if (!request.nextUrl) {
+    return NextResponse.next();
+  }
 
   const { pathname } = request.nextUrl;
 
+  // Skip middleware for static assets and API routes that don't need auth
+  if (pathname.startsWith('/_next') || pathname.startsWith('/favicon')) {
+    return NextResponse.next();
+  }
+
+  let token = null;
+  try {
+    token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+  } catch (error) {
+    // If getToken fails, continue without authentication
+    console.error('Middleware getToken error:', error);
+  }
+
   // Public paths that don't require authentication
-  const publicPaths = ['/', '/login', '/signup', '/api/auth', '/test-payments', '/square-test', '/products', '/cart', '/api/products', '/api/cart', '/images'];
+  const publicPaths = ['/', '/login', '/signup', '/api/auth', '/test-payments', '/square-test', '/products', '/cart', '/api/products', '/api/cart', '/images', '/quick', '/api/addons'];
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
 
   // If trying to access protected route without authentication

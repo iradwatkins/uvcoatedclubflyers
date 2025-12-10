@@ -97,9 +97,9 @@ export function SiteFooter() {
               <li className="flex items-start space-x-3">
                 <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0" />
                 <span>
-                  1300 Basswood Road
+                  251 Little Falls Dr
                   <br />
-                  Schaumburg, IL 60173
+                  Wilmington, DE 19808
                 </span>
               </li>
               <li className="flex items-center space-x-3">

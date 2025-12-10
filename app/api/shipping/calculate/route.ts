@@ -39,12 +39,12 @@ export async function POST(request: NextRequest) {
 
     const { toAddress, items, selectedAirportId } = validation.data;
 
-    // From address (UV Coated Club Flyers warehouse - Schaumburg, IL)
+    // From address (UV Coated Club Flyers warehouse - Wilmington, DE)
     const shipFrom: ShippingAddress = {
-      street: '1300 Basswood Road',
-      city: 'Schaumburg',
-      state: 'IL',
-      zipCode: '60173',
+      street: '251 Little Falls Dr',
+      city: 'Wilmington',
+      state: 'DE',
+      zipCode: '19808',
       country: 'US',
       isResidential: false,
     };
