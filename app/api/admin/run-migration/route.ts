@@ -20,6 +20,61 @@ export async function POST(request: NextRequest) {
 
     const { migrationName } = await request.json();
 
+    if (migrationName === '029_fix_design_choice_pricing') {
+      // Fix design choice pricing to correct flat amounts
+      await query(`
+        -- Update Standard Custom Design to $125 flat (no sides selection)
+        UPDATE add_on_choices
+        SET price_type = 'flat',
+            base_price = 125,
+            requires_sides_selection = false,
+            sides_pricing = NULL,
+            updated_at = NOW()
+        WHERE add_on_id = 1 AND value = 'standard-custom-design';
+      `);
+
+      await query(`
+        -- Update Rush Custom Design to $150 flat (no sides selection)
+        UPDATE add_on_choices
+        SET price_type = 'flat',
+            base_price = 150,
+            requires_sides_selection = false,
+            sides_pricing = NULL,
+            updated_at = NOW()
+        WHERE add_on_id = 1 AND value = 'rush-custom-design';
+      `);
+
+      await query(`
+        -- Update Design Changes - Minor to $35 flat
+        UPDATE add_on_choices
+        SET base_price = 35,
+            updated_at = NOW()
+        WHERE add_on_id = 1 AND value = 'design-changes-minor';
+      `);
+
+      await query(`
+        -- Update Design Changes - Major to $50 flat
+        UPDATE add_on_choices
+        SET base_price = 50,
+            updated_at = NOW()
+        WHERE add_on_id = 1 AND value = 'design-changes-major';
+      `);
+
+      // Verify the updates
+      const verifyResult = await query(`
+        SELECT value, label, price_type, base_price, requires_sides_selection
+        FROM add_on_choices
+        WHERE add_on_id = 1
+        ORDER BY display_order
+      `);
+
+      return NextResponse.json({
+        success: true,
+        message: 'Design choice pricing updated successfully',
+        choices: verifyResult.rows,
+      });
+    }
+
     if (migrationName === '029_design_addon_sub_options') {
       // Run the migration to add design_sides sub-option
 
