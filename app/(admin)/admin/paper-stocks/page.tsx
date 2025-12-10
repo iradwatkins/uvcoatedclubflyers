@@ -91,6 +91,13 @@ export default function PaperStocksPage() {
 
   // Create dialog state
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+
+  // New coating creation state (inline)
+  const [showNewCoatingForm, setShowNewCoatingForm] = useState(false);
+  const [newCoatingName, setNewCoatingName] = useState('');
+  const [newCoatingDescription, setNewCoatingDescription] = useState('');
+  const [creatingCoating, setCreatingCoating] = useState(false);
+
   const [newPaperStock, setNewPaperStock] = useState({
     name: '',
     slug: '',
@@ -310,6 +317,53 @@ export default function PaperStocksPage() {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
+  };
+
+  const handleCreateCoating = async () => {
+    if (!newCoatingName.trim()) {
+      setError('Coating name is required');
+      return;
+    }
+
+    setCreatingCoating(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/admin/coatings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newCoatingName.trim(),
+          description: newCoatingDescription.trim(),
+        }),
+      });
+
+      if (response.ok) {
+        const created = await response.json();
+        // Add to allCoatings list
+        setAllCoatings(prev => [...prev, created]);
+        // Auto-select the new coating in whichever dialog is open
+        if (editingPaperStock) {
+          setEditedCoatings(prev => [...prev, created.id]);
+        }
+        if (createDialogOpen) {
+          setNewCoatings(prev => [...prev, created.id]);
+        }
+        // Reset form
+        setNewCoatingName('');
+        setNewCoatingDescription('');
+        setShowNewCoatingForm(false);
+        setSuccess(`Coating "${created.name}" created successfully`);
+        setTimeout(() => setSuccess(null), 3000);
+      } else {
+        const data = await response.json();
+        setError(data.error || 'Failed to create coating');
+      }
+    } catch (err) {
+      setError('Failed to create coating');
+    } finally {
+      setCreatingCoating(false);
+    }
   };
 
   const openCreateDialog = () => {
@@ -666,6 +720,68 @@ export default function PaperStocksPage() {
                   </div>
                 ))}
               </div>
+
+              {/* Add New Coating Form */}
+              {showNewCoatingForm ? (
+                <div className="mt-3 p-3 border rounded-lg bg-muted/50 space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-new-coating-name" className="text-sm">Coating Name *</Label>
+                    <Input
+                      id="edit-new-coating-name"
+                      value={newCoatingName}
+                      onChange={(e) => setNewCoatingName(e.target.value)}
+                      placeholder="e.g., Soft Touch Laminate"
+                      className="h-8"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-new-coating-desc" className="text-sm">Description (optional)</Label>
+                    <Input
+                      id="edit-new-coating-desc"
+                      value={newCoatingDescription}
+                      onChange={(e) => setNewCoatingDescription(e.target.value)}
+                      placeholder="e.g., Premium soft feel finish"
+                      className="h-8"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={handleCreateCoating}
+                      disabled={creatingCoating || !newCoatingName.trim()}
+                    >
+                      {creatingCoating ? (
+                        <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                      ) : (
+                        <Plus className="h-3 w-3 mr-1" />
+                      )}
+                      Add Coating
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setShowNewCoatingForm(false);
+                        setNewCoatingName('');
+                        setNewCoatingDescription('');
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="mt-2"
+                  onClick={() => setShowNewCoatingForm(true)}
+                >
+                  <Plus className="h-3 w-3 mr-1" />
+                  Add New Coating
+                </Button>
+              )}
+
               {editedCoatings.length === 0 && (
                 <p className="text-sm text-destructive mt-2">
                   At least one coating option must be selected.
@@ -894,6 +1010,67 @@ export default function PaperStocksPage() {
                   </div>
                 ))}
               </div>
+
+              {/* Add New Coating Form */}
+              {showNewCoatingForm ? (
+                <div className="mt-3 p-3 border rounded-lg bg-muted/50 space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="create-new-coating-name" className="text-sm">Coating Name *</Label>
+                    <Input
+                      id="create-new-coating-name"
+                      value={newCoatingName}
+                      onChange={(e) => setNewCoatingName(e.target.value)}
+                      placeholder="e.g., Soft Touch Laminate"
+                      className="h-8"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="create-new-coating-desc" className="text-sm">Description (optional)</Label>
+                    <Input
+                      id="create-new-coating-desc"
+                      value={newCoatingDescription}
+                      onChange={(e) => setNewCoatingDescription(e.target.value)}
+                      placeholder="e.g., Premium soft feel finish"
+                      className="h-8"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={handleCreateCoating}
+                      disabled={creatingCoating || !newCoatingName.trim()}
+                    >
+                      {creatingCoating ? (
+                        <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                      ) : (
+                        <Plus className="h-3 w-3 mr-1" />
+                      )}
+                      Add Coating
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setShowNewCoatingForm(false);
+                        setNewCoatingName('');
+                        setNewCoatingDescription('');
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="mt-2"
+                  onClick={() => setShowNewCoatingForm(true)}
+                >
+                  <Plus className="h-3 w-3 mr-1" />
+                  Add New Coating
+                </Button>
+              )}
             </div>
 
             {/* Sides Options Section */}
