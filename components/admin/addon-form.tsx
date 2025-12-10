@@ -20,6 +20,7 @@ import { Separator } from '@/components/ui/separator';
 import { Loader2, Save, ArrowLeft, ExternalLink, List } from 'lucide-react';
 import { AddonPricingFields } from './addon-pricing-fields';
 import { AddonSubOptionEditor, SubOption } from './addon-sub-option-editor';
+import { ChoiceForm } from './choice-form';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 
@@ -110,6 +111,24 @@ export function AddonForm({ mode, initialData, initialSubOptions = [], initialCh
       displayOrder: opt.display_order || opt.displayOrder || index,
     }));
   });
+
+  // Choices state for dynamic updates
+  const [choices, setChoices] = useState<Choice[]>(initialChoices);
+
+  // Refresh choices after adding a new one
+  const refreshChoices = async () => {
+    if (initialData?.id) {
+      try {
+        const res = await fetch(`/api/addons/${initialData.id}/choices`);
+        const data = await res.json();
+        if (data.choices) {
+          setChoices(data.choices);
+        }
+      } catch (err) {
+        console.error('Failed to refresh choices:', err);
+      }
+    }
+  };
 
   // Form validation errors
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -438,8 +457,8 @@ export function AddonForm({ mode, initialData, initialSubOptions = [], initialCh
                 <CardTitle className="flex items-center gap-2">
                   <List className="h-5 w-5" />
                   Dropdown Choices
-                  {initialChoices.length > 0 && (
-                    <Badge variant="secondary">{initialChoices.length} choices</Badge>
+                  {choices.length > 0 && (
+                    <Badge variant="secondary">{choices.length} choices</Badge>
                   )}
                 </CardTitle>
                 <CardDescription>
@@ -455,7 +474,7 @@ export function AddonForm({ mode, initialData, initialSubOptions = [], initialCh
             </div>
           </CardHeader>
           <CardContent>
-            {initialChoices.length > 0 ? (
+            {choices.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
@@ -468,7 +487,7 @@ export function AddonForm({ mode, initialData, initialSubOptions = [], initialCh
                     </tr>
                   </thead>
                   <tbody>
-                    {initialChoices.map((choice) => {
+                    {choices.map((choice) => {
                       // Format pricing display
                       let pricingDisplay = 'FREE';
                       const basePrice = parseFloat(choice.base_price || '0');
@@ -527,16 +546,16 @@ export function AddonForm({ mode, initialData, initialSubOptions = [], initialCh
             ) : (
               <div className="text-center py-6">
                 <p className="text-muted-foreground mb-4">
-                  No choices configured yet. Add choices to give customers options.
+                  No choices configured yet. Add your first choice below.
                 </p>
-                <Link href={`/admin/addons/${initialData?.id}/choices`}>
-                  <Button type="button" variant="outline">
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    Add Choices
-                  </Button>
-                </Link>
               </div>
             )}
+
+            {/* Inline Add New Choice Form */}
+            <div className="mt-6 pt-6 border-t">
+              <h4 className="text-sm font-semibold mb-4">Add New Choice</h4>
+              <ChoiceForm addOnId={initialData?.id!} onSuccess={refreshChoices} />
+            </div>
           </CardContent>
         </Card>
       )}

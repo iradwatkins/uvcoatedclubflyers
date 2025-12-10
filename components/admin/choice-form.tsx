@@ -36,9 +36,10 @@ interface ChoiceFormProps {
     is_active: boolean;
   };
   mode?: 'create' | 'edit';
+  onSuccess?: () => void;
 }
 
-export function ChoiceForm({ addOnId, initialData, mode = 'create' }: ChoiceFormProps) {
+export function ChoiceForm({ addOnId, initialData, mode = 'create', onSuccess }: ChoiceFormProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -166,6 +167,7 @@ export function ChoiceForm({ addOnId, initialData, mode = 'create' }: ChoiceForm
       }
 
       router.refresh();
+      if (onSuccess) onSuccess();
 
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
