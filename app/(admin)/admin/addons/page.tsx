@@ -31,7 +31,7 @@ async function getAddOns(): Promise<AddOn[]> {
       COUNT(DISTINCT pa.id) as product_count,
       COUNT(DISTINCT c.id) as choice_count
     FROM add_ons a
-    LEFT JOIN product_addons pa ON a.id = pa.add_on_id
+    LEFT JOIN product_addons pa ON a.id = pa.addon_id
     LEFT JOIN add_on_choices c ON a.id = c.add_on_id
     GROUP BY a.id
     ORDER BY a.display_order, a.id
