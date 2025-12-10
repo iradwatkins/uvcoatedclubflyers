@@ -40,9 +40,9 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       base_cost_per_sq_in,
       weight_per_sq_in,
       is_active,
-      sides_multiplier_single,
-      sides_multiplier_double,
-      coatings // Array of coating IDs to enable
+      coatings, // Array of coating IDs to enable
+      sidesOptions, // Array of { sides_option_id, is_default }
+      defaultSidesOptionId // ID of the default sides option
     } = body;
 
     // Build update query dynamically based on provided fields
@@ -77,16 +77,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       values.push(is_active);
     }
 
-    if (sides_multiplier_single !== undefined) {
-      updates.push(`sides_multiplier_single = $${paramIndex++}`);
-      values.push(parseFloat(sides_multiplier_single));
-    }
-
-    if (sides_multiplier_double !== undefined) {
-      updates.push(`sides_multiplier_double = $${paramIndex++}`);
-      values.push(parseFloat(sides_multiplier_double));
-    }
-
     // Update paper stock fields if any
     if (updates.length > 0) {
       updates.push(`updated_at = NOW()`);
@@ -119,7 +109,24 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       }
     }
 
-    // Fetch and return the updated paper stock with coatings
+    // Update sides options if provided
+    if (sidesOptions !== undefined && Array.isArray(sidesOptions)) {
+      // Delete existing assignments
+      await query('DELETE FROM paper_stock_sides WHERE paper_stock_id = $1', [paperStockId]);
+
+      // Insert new assignments
+      if (sidesOptions.length > 0) {
+        const insertValues = sidesOptions.map((optionId: number) =>
+          `(${paperStockId}, ${optionId}, ${optionId === defaultSidesOptionId})`
+        ).join(', ');
+
+        await query(
+          `INSERT INTO paper_stock_sides (paper_stock_id, sides_option_id, is_default) VALUES ${insertValues}`
+        );
+      }
+    }
+
+    // Fetch and return the updated paper stock with all options
     const paperStockResult = await query('SELECT * FROM paper_stocks WHERE id = $1', [paperStockId]);
     const coatingsResult = await query(
       `SELECT psc.coating_id, psc.is_default
@@ -128,10 +135,18 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
        ORDER BY psc.coating_id`,
       [paperStockId]
     );
+    const sidesResult = await query(
+      `SELECT pss.sides_option_id, pss.is_default
+       FROM paper_stock_sides pss
+       WHERE pss.paper_stock_id = $1
+       ORDER BY pss.sides_option_id`,
+      [paperStockId]
+    );
 
     return NextResponse.json({
       ...paperStockResult.rows[0],
       coatings: coatingsResult.rows,
+      sidesOptions: sidesResult.rows,
     });
   } catch (error) {
     console.error('Failed to update paper stock:', error);

@@ -13,7 +13,7 @@ export async function GET() {
     // Get paper stocks
     const result = await query(
       `SELECT id, name, slug, type, thickness, base_cost_per_sq_in, weight_per_sq_in,
-              markup, sides_multiplier_single, sides_multiplier_double, is_active
+              markup, is_active
        FROM paper_stocks
        ORDER BY display_order, id`
     );
@@ -25,34 +25,62 @@ export async function GET() {
        ORDER BY display_order, id`
     );
 
+    // Get all sides options
+    const sidesOptionsResult = await query(
+      `SELECT id, name, slug, description, price_multiplier, is_active
+       FROM sides_options
+       ORDER BY display_order, id`
+    );
+
     // Get paper stock coating assignments
-    const assignmentsResult = await query(
+    const coatingAssignmentsResult = await query(
       `SELECT psc.paper_stock_id, psc.coating_id, psc.is_default
        FROM paper_stock_coatings psc
        ORDER BY psc.paper_stock_id, psc.coating_id`
     );
 
-    // Group assignments by paper stock
-    const assignmentsByPaperStock: Record<number, { coating_id: number; is_default: boolean }[]> = {};
-    for (const a of assignmentsResult.rows) {
-      if (!assignmentsByPaperStock[a.paper_stock_id]) {
-        assignmentsByPaperStock[a.paper_stock_id] = [];
+    // Get paper stock sides assignments
+    const sidesAssignmentsResult = await query(
+      `SELECT pss.paper_stock_id, pss.sides_option_id, pss.is_default
+       FROM paper_stock_sides pss
+       ORDER BY pss.paper_stock_id, pss.sides_option_id`
+    );
+
+    // Group coating assignments by paper stock
+    const coatingsByPaperStock: Record<number, { coating_id: number; is_default: boolean }[]> = {};
+    for (const a of coatingAssignmentsResult.rows) {
+      if (!coatingsByPaperStock[a.paper_stock_id]) {
+        coatingsByPaperStock[a.paper_stock_id] = [];
       }
-      assignmentsByPaperStock[a.paper_stock_id].push({
+      coatingsByPaperStock[a.paper_stock_id].push({
         coating_id: a.coating_id,
         is_default: a.is_default,
       });
     }
 
-    // Add coatings to each paper stock
-    const paperStocksWithCoatings = result.rows.map((ps: any) => ({
+    // Group sides assignments by paper stock
+    const sidesByPaperStock: Record<number, { sides_option_id: number; is_default: boolean }[]> = {};
+    for (const a of sidesAssignmentsResult.rows) {
+      if (!sidesByPaperStock[a.paper_stock_id]) {
+        sidesByPaperStock[a.paper_stock_id] = [];
+      }
+      sidesByPaperStock[a.paper_stock_id].push({
+        sides_option_id: a.sides_option_id,
+        is_default: a.is_default,
+      });
+    }
+
+    // Add coatings and sides to each paper stock
+    const paperStocksWithOptions = result.rows.map((ps: any) => ({
       ...ps,
-      coatings: assignmentsByPaperStock[ps.id] || [],
+      coatings: coatingsByPaperStock[ps.id] || [],
+      sidesOptions: sidesByPaperStock[ps.id] || [],
     }));
 
     return NextResponse.json({
-      paperStocks: paperStocksWithCoatings,
+      paperStocks: paperStocksWithOptions,
       allCoatings: coatingsResult.rows,
+      allSidesOptions: sidesOptionsResult.rows,
     });
   } catch (error) {
     console.error('Failed to fetch paper stocks:', error);

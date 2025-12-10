@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import {
   Table,
   TableBody,
@@ -21,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Save, Loader2, CheckCircle, AlertCircle, Settings, Droplets, Square } from 'lucide-react';
+import { Save, Loader2, CheckCircle, AlertCircle, Settings, Droplets, Copy } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface Coating {
@@ -32,8 +34,22 @@ interface Coating {
   is_active: boolean;
 }
 
+interface SidesOption {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  price_multiplier: string;
+  is_active: boolean;
+}
+
 interface CoatingAssignment {
   coating_id: number;
+  is_default: boolean;
+}
+
+interface SidesAssignment {
+  sides_option_id: number;
   is_default: boolean;
 }
 
@@ -46,15 +62,15 @@ interface PaperStock {
   base_cost_per_sq_in: string;
   weight_per_sq_in: string;
   markup: string;
-  sides_multiplier_single: string;
-  sides_multiplier_double: string;
   is_active: boolean;
   coatings: CoatingAssignment[];
+  sidesOptions: SidesAssignment[];
 }
 
 export default function PaperStocksPage() {
   const [paperStocks, setPaperStocks] = useState<PaperStock[]>([]);
   const [allCoatings, setAllCoatings] = useState<Coating[]>([]);
+  const [allSidesOptions, setAllSidesOptions] = useState<SidesOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<number | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -62,8 +78,8 @@ export default function PaperStocksPage() {
   const [editedMarkups, setEditedMarkups] = useState<Record<number, string>>({});
   const [editingPaperStock, setEditingPaperStock] = useState<PaperStock | null>(null);
   const [editedCoatings, setEditedCoatings] = useState<number[]>([]);
-  const [editedSidesSingle, setEditedSidesSingle] = useState<string>('1.0');
-  const [editedSidesDouble, setEditedSidesDouble] = useState<string>('1.0');
+  const [editedSidesOptions, setEditedSidesOptions] = useState<number[]>([]);
+  const [defaultSidesOptionId, setDefaultSidesOptionId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchPaperStocks();
@@ -76,6 +92,7 @@ export default function PaperStocksPage() {
         const data = await response.json();
         setPaperStocks(data.paperStocks || data);
         setAllCoatings(data.allCoatings || []);
+        setAllSidesOptions(data.allSidesOptions || []);
         // Initialize edited markups
         const markups: Record<number, string> = {};
         (data.paperStocks || data).forEach((ps: PaperStock) => {
@@ -135,8 +152,9 @@ export default function PaperStocksPage() {
   const openEditDialog = (ps: PaperStock) => {
     setEditingPaperStock(ps);
     setEditedCoatings(ps.coatings.map(c => c.coating_id));
-    setEditedSidesSingle(ps.sides_multiplier_single || '1.0');
-    setEditedSidesDouble(ps.sides_multiplier_double || '1.0');
+    setEditedSidesOptions(ps.sidesOptions.map(s => s.sides_option_id));
+    const defaultSides = ps.sidesOptions.find(s => s.is_default);
+    setDefaultSidesOptionId(defaultSides?.sides_option_id || allSidesOptions[0]?.id || null);
   };
 
   const handleCoatingToggle = (coatingId: number) => {
@@ -146,6 +164,27 @@ export default function PaperStocksPage() {
       }
       return [...prev, coatingId];
     });
+  };
+
+  const handleSidesToggle = (sidesOptionId: number) => {
+    setEditedSidesOptions(prev => {
+      if (prev.includes(sidesOptionId)) {
+        // Don't allow removing the default option
+        if (sidesOptionId === defaultSidesOptionId) {
+          return prev;
+        }
+        return prev.filter(id => id !== sidesOptionId);
+      }
+      return [...prev, sidesOptionId];
+    });
+  };
+
+  const handleDefaultSidesChange = (sidesOptionId: number) => {
+    setDefaultSidesOptionId(sidesOptionId);
+    // Ensure the default option is in the selected list
+    if (!editedSidesOptions.includes(sidesOptionId)) {
+      setEditedSidesOptions(prev => [...prev, sidesOptionId]);
+    }
   };
 
   const handleSaveOptions = async () => {
@@ -160,8 +199,8 @@ export default function PaperStocksPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           coatings: editedCoatings,
-          sides_multiplier_single: parseFloat(editedSidesSingle),
-          sides_multiplier_double: parseFloat(editedSidesDouble),
+          sidesOptions: editedSidesOptions,
+          defaultSidesOptionId: defaultSidesOptionId,
         }),
       });
 
@@ -171,8 +210,7 @@ export default function PaperStocksPage() {
           prev.map((ps) => (ps.id === editingPaperStock.id ? {
             ...ps,
             coatings: updated.coatings,
-            sides_multiplier_single: updated.sides_multiplier_single,
-            sides_multiplier_double: updated.sides_multiplier_double,
+            sidesOptions: updated.sidesOptions,
           } : ps))
         );
         setSuccess(`${editingPaperStock.name} options updated successfully`);
@@ -193,6 +231,13 @@ export default function PaperStocksPage() {
     return coatings.map(c => {
       const coating = allCoatings.find(ac => ac.id === c.coating_id);
       return coating?.name || `ID:${c.coating_id}`;
+    });
+  };
+
+  const getSidesOptionNames = (sidesOptions: SidesAssignment[]) => {
+    return sidesOptions.map(s => {
+      const option = allSidesOptions.find(so => so.id === s.sides_option_id);
+      return { name: option?.name || `ID:${s.sides_option_id}`, isDefault: s.is_default };
     });
   };
 
@@ -279,16 +324,21 @@ export default function PaperStocksPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-1">
-                      <Badge variant="outline" className="text-xs justify-start">
-                        <Square className="h-3 w-3 mr-1" />
-                        Single: {parseFloat(ps.sides_multiplier_single || '1').toFixed(2)}x
-                      </Badge>
-                      <Badge variant="outline" className="text-xs justify-start">
-                        <span className="flex h-3 w-3 mr-1">
-                          <Square className="h-2 w-2" /><Square className="h-2 w-2 -ml-1" />
-                        </span>
-                        Double: {parseFloat(ps.sides_multiplier_double || '1').toFixed(2)}x
-                      </Badge>
+                      {ps.sidesOptions.length === 0 ? (
+                        <span className="text-muted-foreground text-sm">None configured</span>
+                      ) : (
+                        getSidesOptionNames(ps.sidesOptions).map((opt, i) => (
+                          <Badge
+                            key={i}
+                            variant={opt.isDefault ? 'default' : 'outline'}
+                            className="text-xs justify-start"
+                          >
+                            <Copy className="h-3 w-3 mr-1" />
+                            {opt.name}
+                            {opt.isDefault && <span className="ml-1 text-[10px]">(default)</span>}
+                          </Badge>
+                        ))
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -341,7 +391,7 @@ export default function PaperStocksPage() {
           <DialogHeader>
             <DialogTitle>Configure {editingPaperStock?.name}</DialogTitle>
             <DialogDescription>
-              Set available coatings and sides multipliers for this paper stock.
+              Set available coatings and sides options for this paper stock.
               These are mandatory options customers must select when ordering.
             </DialogDescription>
           </DialogHeader>
@@ -382,47 +432,57 @@ export default function PaperStocksPage() {
               )}
             </div>
 
-            {/* Sides Section */}
+            {/* Sides Options Section */}
             <div>
               <h4 className="font-medium mb-3 flex items-center gap-2">
-                <Square className="h-4 w-4" />
-                Sides Pricing Multipliers
+                <Copy className="h-4 w-4" />
+                Sides Options
               </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Single-Sided</label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Input
-                      type="number"
-                      step="0.05"
-                      min="0.5"
-                      max="3"
-                      value={editedSidesSingle}
-                      onChange={(e) => setEditedSidesSingle(e.target.value)}
-                      className="w-24"
+              <div className="space-y-3">
+                {allSidesOptions.map((option) => (
+                  <div key={option.id} className="flex items-center space-x-3 p-2 border rounded-lg">
+                    <Checkbox
+                      id={`sides-${option.id}`}
+                      checked={editedSidesOptions.includes(option.id)}
+                      onCheckedChange={() => handleSidesToggle(option.id)}
+                      disabled={option.id === defaultSidesOptionId}
                     />
-                    <span className="text-sm text-muted-foreground">x multiplier</span>
+                    <div className="flex-1">
+                      <label
+                        htmlFor={`sides-${option.id}`}
+                        className="text-sm font-medium leading-none cursor-pointer"
+                      >
+                        {option.name}
+                      </label>
+                      {option.description && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {option.description}
+                        </p>
+                      )}
+                    </div>
+                    <RadioGroup
+                      value={defaultSidesOptionId?.toString()}
+                      onValueChange={(val) => handleDefaultSidesChange(parseInt(val))}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <RadioGroupItem
+                          value={option.id.toString()}
+                          id={`default-${option.id}`}
+                          disabled={!editedSidesOptions.includes(option.id)}
+                        />
+                        <Label htmlFor={`default-${option.id}`} className="text-xs text-muted-foreground">
+                          Default
+                        </Label>
+                      </div>
+                    </RadioGroup>
                   </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Double-Sided</label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Input
-                      type="number"
-                      step="0.05"
-                      min="0.5"
-                      max="3"
-                      value={editedSidesDouble}
-                      onChange={(e) => setEditedSidesDouble(e.target.value)}
-                      className="w-24"
-                    />
-                    <span className="text-sm text-muted-foreground">x multiplier</span>
-                  </div>
-                </div>
+                ))}
               </div>
-              <p className="text-sm text-muted-foreground mt-2">
-                The multiplier is applied to the base cost based on customer&apos;s sides selection.
-              </p>
+              {editedSidesOptions.length === 0 && (
+                <p className="text-sm text-destructive mt-2">
+                  At least one sides option must be selected.
+                </p>
+              )}
             </div>
           </div>
 
@@ -432,7 +492,7 @@ export default function PaperStocksPage() {
             </Button>
             <Button
               onClick={handleSaveOptions}
-              disabled={saving === editingPaperStock?.id || editedCoatings.length === 0}
+              disabled={saving === editingPaperStock?.id || editedCoatings.length === 0 || editedSidesOptions.length === 0}
             >
               {saving === editingPaperStock?.id ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -447,19 +507,38 @@ export default function PaperStocksPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Pricing Formula Reference</CardTitle>
+          <CardTitle>Customer Selection Options</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="font-mono text-sm bg-muted p-4 rounded-lg">
-            <div>Step 1: baseCost = paperStockPrice × <span className="text-blue-600 font-bold underline">sidesMultiplier</span> × (width × height) × quantity</div>
-            <div className="text-primary font-bold">Step 2: markedUpCost = baseCost × <span className="underline">paperStockMarkup</span></div>
-            <div>Step 3: subtotal = markedUpCost × turnaroundMultiplier + <span className="text-purple-600 font-bold underline">coatingCost</span></div>
-            <div>Step 4: totalPrice = subtotal + addOnsCost</div>
-          </div>
           <p className="text-sm text-muted-foreground">
-            <strong>Coatings</strong> and <strong>Sides</strong> are mandatory customer selections.
-            The sides multiplier adjusts the base paper cost, while coatings add their own cost to the subtotal.
+            When a customer selects a paper stock, they must choose from the configured options:
           </p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="bg-muted p-4 rounded-lg">
+              <h4 className="font-medium flex items-center gap-2 mb-2">
+                <Droplets className="h-4 w-4" />
+                Coating Options
+              </h4>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>No Coating</li>
+                <li>Gloss Aqueous</li>
+                <li>Matte Aqueous</li>
+                <li>UV One Side</li>
+                <li>UV Both Sides</li>
+              </ul>
+            </div>
+            <div className="bg-muted p-4 rounded-lg">
+              <h4 className="font-medium flex items-center gap-2 mb-2">
+                <Copy className="h-4 w-4" />
+                Sides Options
+              </h4>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li><strong>Same Image Both Sides</strong> (default)</li>
+                <li>Different Image Both Sides</li>
+                <li>Image Front Only / Blank Back</li>
+              </ul>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
