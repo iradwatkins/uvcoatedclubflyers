@@ -1,145 +1,112 @@
+/**
+ * API Route: Run Database Migration
+ * POST /api/admin/run-migration
+ *
+ * Runs a specific SQL migration on the database.
+ * ADMIN ONLY - Protected endpoint.
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { query } from '@/lib/db';
 
-// POST /api/admin/run-migration
-// Run a specific migration by number (e.g., 026)
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
     const session = await auth();
-
     if (!session?.user || session.user.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { migrationNumber } = await request.json();
+    const { migrationName } = await request.json();
 
-    if (!migrationNumber) {
-      return NextResponse.json({ error: 'Migration number required' }, { status: 400 });
-    }
+    if (migrationName === '029_design_addon_sub_options') {
+      // Run the migration to add design_sides sub-option
 
-    // Migration 026: Add category column to add_ons
-    if (migrationNumber === '026') {
-      // Add category column if not exists
+      // First, add columns if they don't exist
       await query(`
-        ALTER TABLE add_ons ADD COLUMN IF NOT EXISTS category VARCHAR(100)
+        DO $$
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'add_on_sub_options' AND column_name = 'show_when'
+          ) THEN
+            ALTER TABLE add_on_sub_options ADD COLUMN show_when JSONB;
+          END IF;
+
+          IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'add_on_sub_options' AND column_name = 'affects_pricing'
+          ) THEN
+            ALTER TABLE add_on_sub_options ADD COLUMN affects_pricing BOOLEAN DEFAULT false;
+          END IF;
+
+          IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'add_on_sub_options' AND column_name = 'tooltip'
+          ) THEN
+            ALTER TABLE add_on_sub_options ADD COLUMN tooltip TEXT;
+          END IF;
+        END $$;
       `);
 
-      // Update design-related add-ons
-      await query(`
-        UPDATE add_ons
-        SET category = 'Design Services'
-        WHERE slug IN (
-          'upload-my-artwork',
-          'standard-custom-design',
-          'rush-custom-design',
-          'design-changes-minor',
-          'design-changes-major',
-          'will-upload-later'
+      // Insert the design_sides sub-option
+      const insertResult = await query(`
+        INSERT INTO add_on_sub_options (
+          add_on_id,
+          field_name,
+          field_label,
+          field_type,
+          options,
+          default_value,
+          is_required,
+          display_order,
+          show_when,
+          affects_pricing,
+          tooltip
         )
-      `);
-
-      // Update finishing add-ons
-      await query(`
-        UPDATE add_ons
-        SET category = 'Finishing Options'
-        WHERE slug IN (
-          'perforation',
-          'score-only',
-          'folding',
-          'corner-rounding',
-          'hole-drilling',
-          'wafer-seal'
+        SELECT
+          1,
+          'design_sides',
+          'How many sides need design?',
+          'select',
+          '{"options": [{"value": "one", "label": "One Side"}, {"value": "two", "label": "Two Sides"}]}'::jsonb,
+          'one',
+          true,
+          1,
+          '{"choiceRequiresSides": true}'::jsonb,
+          true,
+          'Select how many sides you need designed. Two-sided design costs more.'
+        WHERE NOT EXISTS (
+          SELECT 1 FROM add_on_sub_options
+          WHERE add_on_id = 1 AND field_name = 'design_sides'
         )
-      `);
-
-      // Update packaging add-ons
-      await query(`
-        UPDATE add_ons
-        SET category = 'Packaging & Bundling'
-        WHERE slug IN ('banding', 'shrink-wrapping')
-      `);
-
-      // Update premium add-ons
-      await query(`
-        UPDATE add_ons
-        SET category = 'Premium Finishes'
-        WHERE slug IN ('foil-stamping', 'spot-uv')
-      `);
-
-      // Update personalization add-ons
-      await query(`
-        UPDATE add_ons
-        SET category = 'Personalization'
-        WHERE slug IN ('variable-data-printing', 'numbering', 'qr-code')
-      `);
-
-      // Update pricing add-ons
-      await query(`
-        UPDATE add_ons
-        SET category = 'Pricing Adjustments'
-        WHERE slug IN ('our-tagline', 'exact-size')
-      `);
-
-      // Update proofs add-ons
-      await query(`
-        UPDATE add_ons
-        SET category = 'Proofs & QC'
-        WHERE slug IN ('digital-proof')
-      `);
-
-      // Create index
-      await query(`
-        CREATE INDEX IF NOT EXISTS idx_add_ons_category ON add_ons(category)
+        RETURNING id;
       `);
 
       return NextResponse.json({
         success: true,
-        message: 'Migration 026 completed: Added category column and updated add-on categories',
+        message: 'Migration completed successfully',
+        result: insertResult.rows,
       });
     }
 
-    return NextResponse.json({ error: 'Unknown migration number' }, { status: 400 });
+    return NextResponse.json({ error: 'Unknown migration' }, { status: 400 });
   } catch (error: any) {
-    console.error('Migration error:', error);
+    console.error('[Migration API] Error:', error);
     return NextResponse.json(
-      { error: 'Migration failed', details: error.message },
+      {
+        error: 'Migration failed',
+        message: error.message,
+      },
       { status: 500 }
     );
   }
 }
 
-// GET /api/admin/run-migration
-// Get current migration status
 export async function GET() {
-  try {
-    const session = await auth();
-
-    if (!session?.user || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Check if category column exists
-    const columnCheck = await query(`
-      SELECT column_name
-      FROM information_schema.columns
-      WHERE table_name = 'add_ons' AND column_name = 'category'
-    `);
-
-    const hasCategoryColumn = columnCheck.rows.length > 0;
-
-    // Get add-ons with categories
-    const addOns = await query(`
-      SELECT id, name, slug, category
-      FROM add_ons
-      ORDER BY category, display_order
-    `);
-
-    return NextResponse.json({
-      hasCategoryColumn,
-      addOns: addOns.rows,
-    });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST to run migrations.' },
+    { status: 405 }
+  );
 }
