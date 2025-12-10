@@ -234,10 +234,14 @@ export default function PaperStocksPage() {
     });
   };
 
-  const getSidesOptionNames = (sidesOptions: SidesAssignment[]) => {
+  const getSidesOptionInfo = (sidesOptions: SidesAssignment[]) => {
     return sidesOptions.map(s => {
       const option = allSidesOptions.find(so => so.id === s.sides_option_id);
-      return { name: option?.name || `ID:${s.sides_option_id}`, isDefault: s.is_default };
+      return {
+        name: option?.name || `ID:${s.sides_option_id}`,
+        isDefault: s.is_default,
+        multiplier: option?.price_multiplier || '1.0'
+      };
     });
   };
 
@@ -327,7 +331,7 @@ export default function PaperStocksPage() {
                       {ps.sidesOptions.length === 0 ? (
                         <span className="text-muted-foreground text-sm">None configured</span>
                       ) : (
-                        getSidesOptionNames(ps.sidesOptions).map((opt, i) => (
+                        getSidesOptionInfo(ps.sidesOptions).map((opt, i) => (
                           <Badge
                             key={i}
                             variant={opt.isDefault ? 'default' : 'outline'}
@@ -335,7 +339,10 @@ export default function PaperStocksPage() {
                           >
                             <Copy className="h-3 w-3 mr-1" />
                             {opt.name}
-                            {opt.isDefault && <span className="ml-1 text-[10px]">(default)</span>}
+                            <span className="ml-1 text-[10px]">
+                              ({parseFloat(opt.multiplier).toFixed(2)}x)
+                              {opt.isDefault && ' default'}
+                            </span>
                           </Badge>
                         ))
                       )}
