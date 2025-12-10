@@ -310,7 +310,6 @@ export function DesignOptionSelector({
   className,
 }: DesignOptionSelectorProps) {
   const [validationError, setValidationError] = useState<string>('');
-  const [selectedChoiceValue, setSelectedChoiceValue] = useState<string | null>(null);
 
   // Check if we have the new choices-based format
   // (single "Design" add-on with choices array)
@@ -319,34 +318,143 @@ export function DesignOptionSelector({
     designOptions[0].choices &&
     designOptions[0].choices.length > 0;
 
-  // If using new format, delegate to the new component
+  // If using new format, use the inline implementation directly
   if (hasChoices) {
     const designAddOn = designOptions[0];
     const choices = designAddOn.choices || [];
 
+    // Sort choices by display order
+    const sortedChoices = [...choices].sort(
+      (a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)
+    );
+
+    // Find default choice or use first
+    const defaultChoice = sortedChoices.find((c) => c.isDefault) || sortedChoices[0];
+
+    // Use selectedOptionId to track which choice is selected by matching against choice values
+    // We'll store the choice value in a derived way - find the choice that matches our selection
+    const selectedChoice = selectedOptionId
+      ? sortedChoices.find((c) => c.id === selectedOptionId) || defaultChoice
+      : defaultChoice;
+
+    // Auto-select default on mount if nothing selected
+    useEffect(() => {
+      if (!selectedOptionId && defaultChoice) {
+        onOptionChange(defaultChoice.id);
+      }
+    }, []);
+
+    const requiresSidesSelection = selectedChoice?.requiresSidesSelection || false;
+
+    const showFileUploader =
+      selectedChoice?.value === 'upload-my-artwork' ||
+      selectedChoice?.value === 'design-changes-minor' ||
+      selectedChoice?.value === 'design-changes-major';
+
+    const getSidesPrice = (sides: 'one' | 'two'): string => {
+      if (!selectedChoice?.sidesPricing) return '';
+      return `$${selectedChoice.sidesPricing[sides]}`;
+    };
+
+    const formatChoicePrice = (choice: DesignChoice): string => {
+      const basePrice = parseFloat(choice.basePrice || '0');
+      const perUnit = parseFloat(choice.perUnitPrice || '0');
+
+      if (basePrice === 0 && perUnit === 0 && choice.priceType !== 'custom') {
+        return '';
+      }
+
+      if (choice.priceType === 'custom' && choice.sidesPricing) {
+        const onePrice = choice.sidesPricing.one || 0;
+        return ` (from $${onePrice})`;
+      }
+
+      if (basePrice > 0) {
+        return ` (+$${basePrice.toFixed(basePrice % 1 === 0 ? 0 : 2)})`;
+      }
+
+      return '';
+    };
+
     return (
-      <DesignOptionSelectorNew
-        designAddOn={{
-          id: designAddOn.id,
-          name: designAddOn.name,
-          slug: designAddOn.slug,
-          description: designAddOn.description,
-          ui_component: designAddOn.ui_component || 'dropdown',
-          choices: choices,
-        }}
-        selectedChoiceValue={selectedChoiceValue}
-        onChoiceChange={(choiceValue, addOnId) => {
-          setSelectedChoiceValue(choiceValue);
-          // For compatibility, pass the add-on ID
-          onOptionChange(addOnId);
-        }}
-        selectedSides={selectedSides}
-        onSidesChange={onSidesChange}
-        uploadedFiles={uploadedFiles}
-        onFilesChange={onFilesChange}
-        maxFiles={maxFiles}
-        className={className}
-      />
+      <div className={className}>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="design-service" className="text-base font-semibold">
+              Design
+              <span className="text-red-500 ml-1">*</span>
+            </Label>
+            <Select
+              value={selectedChoice?.id?.toString() || ''}
+              onValueChange={(value) => onOptionChange(parseInt(value))}
+            >
+              <SelectTrigger id="design-service" className="w-full">
+                <SelectValue placeholder="Select design option" />
+              </SelectTrigger>
+              <SelectContent>
+                {sortedChoices.map((choice) => (
+                  <SelectItem key={choice.id} value={choice.id.toString()}>
+                    {choice.label}
+                    {formatChoicePrice(choice)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedChoice?.description && (
+              <p className="text-sm text-muted-foreground">{selectedChoice.description}</p>
+            )}
+          </div>
+
+          {requiresSidesSelection && (
+            <div className="space-y-2">
+              <Label htmlFor="design-sides" className="text-sm font-medium">
+                How many sides need design?
+                <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <Select value={selectedSides || ''} onValueChange={onSidesChange}>
+                <SelectTrigger id="design-sides" className="w-full">
+                  <SelectValue placeholder="Select number of sides" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="one">One Side - {getSidesPrice('one')}</SelectItem>
+                  <SelectItem value="two">Two Sides - {getSidesPrice('two')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {showFileUploader && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">
+                Upload Your Artwork
+                {(selectedChoice?.value === 'design-changes-minor' ||
+                  selectedChoice?.value === 'design-changes-major') && (
+                  <span className="text-red-500 ml-1">*</span>
+                )}
+              </Label>
+              <FileUploadDropzone
+                files={uploadedFiles}
+                onFilesSelected={onFilesChange || (() => {})}
+                maxFiles={maxFiles}
+                acceptedFileTypes={[
+                  '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp',
+                  '.pdf', '.ai', '.eps', '.psd',
+                ]}
+              />
+            </div>
+          )}
+
+          {selectedChoice?.value === 'will-upload-later' && (
+            <Alert>
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                You can upload your files later from your dashboard after placing the order. Your
+                order will not be processed until files are received.
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+      </div>
     );
   }
 
