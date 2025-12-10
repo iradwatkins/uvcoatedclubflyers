@@ -29,7 +29,7 @@ interface Choice {
   value: string;
   label: string;
   description: string | null;
-  pricing_type: string;
+  price_type: string;
   base_price: string | null;
   per_unit_price: string | null;
   sides_pricing: any;
@@ -474,16 +474,16 @@ export function AddonForm({ mode, initialData, initialSubOptions = [], initialCh
                       const basePrice = parseFloat(choice.base_price || '0');
                       const perUnit = parseFloat(choice.per_unit_price || '0');
 
-                      if (choice.pricing_type === 'sides_based' && choice.sides_pricing) {
+                      if ((choice.price_type === 'sides_based' || choice.price_type === 'custom') && choice.sides_pricing) {
                         const sp = typeof choice.sides_pricing === 'string'
                           ? JSON.parse(choice.sides_pricing)
                           : choice.sides_pricing;
-                        if (sp.one_side && sp.two_sides) {
-                          pricingDisplay = `$${parseFloat(sp.one_side).toFixed(0)}-$${parseFloat(sp.two_sides).toFixed(0)}`;
+                        if (sp.one && sp.two) {
+                          pricingDisplay = `$${parseFloat(sp.one).toFixed(0)}-$${parseFloat(sp.two).toFixed(0)}`;
                         }
-                      } else if (choice.pricing_type === 'flat' && basePrice > 0) {
+                      } else if (choice.price_type === 'flat' && basePrice > 0) {
                         pricingDisplay = `$${basePrice.toFixed(2)}`;
-                      } else if (choice.pricing_type === 'per_unit' && perUnit > 0) {
+                      } else if (choice.price_type === 'per_unit' && perUnit > 0) {
                         pricingDisplay = `$${perUnit.toFixed(4)}/unit`;
                       }
 
