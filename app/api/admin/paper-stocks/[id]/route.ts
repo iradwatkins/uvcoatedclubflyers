@@ -110,19 +110,37 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     // Update sides options if provided
+    // sidesOptions can be:
+    // - Array of IDs (legacy): [1, 2, 3]
+    // - Array of objects with price_multiplier: [{ sides_option_id: 1, price_multiplier: 1.0, is_default: true }]
     if (sidesOptions !== undefined && Array.isArray(sidesOptions)) {
       // Delete existing assignments
       await query('DELETE FROM paper_stock_sides WHERE paper_stock_id = $1', [paperStockId]);
 
       // Insert new assignments
       if (sidesOptions.length > 0) {
-        const insertValues = sidesOptions.map((optionId: number) =>
-          `(${paperStockId}, ${optionId}, ${optionId === defaultSidesOptionId})`
-        ).join(', ');
+        // Check if it's the new format (array of objects) or legacy format (array of IDs)
+        const isNewFormat = typeof sidesOptions[0] === 'object' && sidesOptions[0] !== null;
 
-        await query(
-          `INSERT INTO paper_stock_sides (paper_stock_id, sides_option_id, is_default) VALUES ${insertValues}`
-        );
+        if (isNewFormat) {
+          // New format: array of { sides_option_id, price_multiplier, is_default }
+          const insertValues = sidesOptions.map((opt: { sides_option_id: number; price_multiplier?: number; is_default?: boolean }) =>
+            `(${paperStockId}, ${opt.sides_option_id}, ${opt.is_default || false}, ${opt.price_multiplier || 1.0})`
+          ).join(', ');
+
+          await query(
+            `INSERT INTO paper_stock_sides (paper_stock_id, sides_option_id, is_default, price_multiplier) VALUES ${insertValues}`
+          );
+        } else {
+          // Legacy format: array of IDs
+          const insertValues = sidesOptions.map((optionId: number) =>
+            `(${paperStockId}, ${optionId}, ${optionId === defaultSidesOptionId}, 1.0)`
+          ).join(', ');
+
+          await query(
+            `INSERT INTO paper_stock_sides (paper_stock_id, sides_option_id, is_default, price_multiplier) VALUES ${insertValues}`
+          );
+        }
       }
     }
 
@@ -136,7 +154,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       [paperStockId]
     );
     const sidesResult = await query(
-      `SELECT pss.sides_option_id, pss.is_default
+      `SELECT pss.sides_option_id, pss.is_default, pss.price_multiplier
        FROM paper_stock_sides pss
        WHERE pss.paper_stock_id = $1
        ORDER BY pss.sides_option_id`,

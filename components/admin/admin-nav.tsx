@@ -17,7 +17,6 @@ import {
   ShoppingCartIcon,
   Contact,
   Zap,
-  Copy,
 } from 'lucide-react';
 
 interface AdminNavProps {
@@ -68,11 +67,6 @@ const navItems = [
     title: 'Paper Stocks',
     href: '/admin/paper-stocks',
     icon: FileStack,
-  },
-  {
-    title: 'Sides Options',
-    href: '/admin/sides-options',
-    icon: Copy,
   },
   {
     title: 'Order Bumps',
