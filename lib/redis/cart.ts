@@ -10,6 +10,10 @@ export interface CartItem {
 
 export async function getCart(userId: string): Promise<CartItem[]> {
   const redis = await getRedis();
+  if (!redis) {
+    console.warn('Redis not available, returning empty cart');
+    return [];
+  }
   const cartData = await redis.get(`cart:${userId}`);
 
   if (!cartData) {
@@ -21,6 +25,9 @@ export async function getCart(userId: string): Promise<CartItem[]> {
 
 export async function addToCart(userId: string, item: CartItem): Promise<void> {
   const redis = await getRedis();
+  if (!redis) {
+    throw new Error('Redis not available');
+  }
   const cart = await getCart(userId);
 
   // Check if item already exists
@@ -47,6 +54,9 @@ export async function removeFromCart(
   configuration: Record<string, any>
 ): Promise<void> {
   const redis = await getRedis();
+  if (!redis) {
+    throw new Error('Redis not available');
+  }
   const cart = await getCart(userId);
 
   const filtered = cart.filter(
@@ -64,6 +74,9 @@ export async function removeFromCart(
 
 export async function clearCart(userId: string): Promise<void> {
   const redis = await getRedis();
+  if (!redis) {
+    return;
+  }
   await redis.del(`cart:${userId}`);
 }
 
@@ -74,6 +87,9 @@ export async function updateCartItemQuantity(
   quantity: number
 ): Promise<void> {
   const redis = await getRedis();
+  if (!redis) {
+    throw new Error('Redis not available');
+  }
   const cart = await getCart(userId);
 
   const item = cart.find(

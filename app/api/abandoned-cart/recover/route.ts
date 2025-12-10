@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
       itemCount: number;
     };
 
-    if (cartData && cartData.items) {
+    if (cartData && cartData.items && redis) {
       await redis.set(
         `cart:${sessionId}`,
         JSON.stringify(cartData),

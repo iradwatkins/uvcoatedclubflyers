@@ -27,6 +27,11 @@ function getCartKey(sessionId: string): string {
 
 export async function getCart(sessionId: string): Promise<Cart> {
   try {
+    if (!redis) {
+      console.warn('Redis not available, returning empty cart');
+      return { items: [], total: 0, itemCount: 0 };
+    }
+
     const cartData = await redis.get(getCartKey(sessionId));
 
     if (!cartData) {
@@ -43,6 +48,10 @@ export async function getCart(sessionId: string): Promise<Cart> {
 
 export async function addToCart(sessionId: string, item: Omit<CartItem, 'id'>): Promise<Cart> {
   try {
+    if (!redis) {
+      throw new Error('Redis not available');
+    }
+
     const cart = await getCart(sessionId);
 
     // Generate unique ID for cart item using cryptographically secure random bytes
@@ -72,6 +81,10 @@ export async function updateCartItem(
   quantity: number
 ): Promise<Cart> {
   try {
+    if (!redis) {
+      throw new Error('Redis not available');
+    }
+
     const cart = await getCart(sessionId);
 
     const item = cart.items.find((i) => i.id === itemId);
@@ -96,6 +109,10 @@ export async function updateCartItem(
 
 export async function removeFromCart(sessionId: string, itemId: string): Promise<Cart> {
   try {
+    if (!redis) {
+      throw new Error('Redis not available');
+    }
+
     const cart = await getCart(sessionId);
 
     cart.items = cart.items.filter((i) => i.id !== itemId);
@@ -117,6 +134,9 @@ export async function removeFromCart(sessionId: string, itemId: string): Promise
 
 export async function clearCart(sessionId: string): Promise<void> {
   try {
+    if (!redis) {
+      return;
+    }
     await redis.del(getCartKey(sessionId));
   } catch (error) {
     console.error('Error clearing cart:', error);

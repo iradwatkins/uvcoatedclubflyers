@@ -1,17 +1,32 @@
-import { createClient } from 'redis';
+import { createClient, RedisClientType } from 'redis';
 
 const globalForRedis = globalThis as unknown as {
-  redis: ReturnType<typeof createClient> | undefined;
+  redis: RedisClientType | null | undefined;
+  redisInitialized: boolean;
 };
 
-export const redis =
-  globalForRedis.redis ??
-  createClient({
-    url: process.env.REDIS_URL || 'redis://localhost:6302',
-  });
+// Only create Redis client if REDIS_URL is provided
+let redis: RedisClientType | null = null;
 
-if (!redis.isOpen) {
-  redis.connect().catch(console.error);
+if (process.env.REDIS_URL) {
+  if (globalForRedis.redis !== undefined) {
+    redis = globalForRedis.redis;
+  } else {
+    redis = createClient({
+      url: process.env.REDIS_URL,
+    }) as RedisClientType;
+
+    if (!redis.isOpen) {
+      redis.connect().catch((err) => {
+        console.error('Redis connection error:', err);
+        redis = null;
+      });
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      globalForRedis.redis = redis;
+    }
+  }
 }
 
-if (process.env.NODE_ENV !== 'production') globalForRedis.redis = redis;
+export { redis };
