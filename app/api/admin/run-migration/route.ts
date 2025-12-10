@@ -146,6 +146,55 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    if (migrationName === '030_add_color_critical_addon') {
+      // Add Color Critical addon
+      const insertResult = await query(`
+        INSERT INTO add_ons (
+          name,
+          slug,
+          description,
+          pricing_model,
+          base_price,
+          per_unit_price,
+          percentage,
+          ui_component,
+          position,
+          display_order,
+          is_mandatory_default,
+          is_enabled_default,
+          turnaround_days_add,
+          is_active
+        )
+        VALUES (
+          'Color Critical',
+          'color-critical',
+          'Production time dependent on approval of color proof. Because of limitations with the gang run printing process, the accuracy of color reproduction is not guaranteed. Only select this option if you are looking for a specific color match custom run with proofs that will not gang up with other jobs.',
+          'CUSTOM',
+          0,
+          0,
+          0,
+          'checkbox',
+          'below_upload',
+          23,
+          false,
+          true,
+          0,
+          true
+        )
+        ON CONFLICT (slug) DO UPDATE SET
+          name = EXCLUDED.name,
+          description = EXCLUDED.description,
+          is_active = true
+        RETURNING *;
+      `);
+
+      return NextResponse.json({
+        success: true,
+        message: 'Color Critical addon created successfully',
+        addon: insertResult.rows[0],
+      });
+    }
+
     return NextResponse.json({ error: 'Unknown migration' }, { status: 400 });
   } catch (error: any) {
     console.error('[Migration API] Error:', error);
