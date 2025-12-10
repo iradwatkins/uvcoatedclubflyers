@@ -33,8 +33,17 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     const { id } = await params;
+    const paperStockId = parseInt(id);
     const body = await request.json();
-    const { markup, base_cost_per_sq_in, weight_per_sq_in, is_active } = body;
+    const {
+      markup,
+      base_cost_per_sq_in,
+      weight_per_sq_in,
+      is_active,
+      sides_multiplier_single,
+      sides_multiplier_double,
+      coatings // Array of coating IDs to enable
+    } = body;
 
     // Build update query dynamically based on provided fields
     const updates: string[] = [];
@@ -68,23 +77,62 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       values.push(is_active);
     }
 
-    if (updates.length === 0) {
-      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+    if (sides_multiplier_single !== undefined) {
+      updates.push(`sides_multiplier_single = $${paramIndex++}`);
+      values.push(parseFloat(sides_multiplier_single));
     }
 
-    updates.push(`updated_at = NOW()`);
-    values.push(parseInt(id));
+    if (sides_multiplier_double !== undefined) {
+      updates.push(`sides_multiplier_double = $${paramIndex++}`);
+      values.push(parseFloat(sides_multiplier_double));
+    }
 
-    const result = await query(
-      `UPDATE paper_stocks SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
-      values
+    // Update paper stock fields if any
+    if (updates.length > 0) {
+      updates.push(`updated_at = NOW()`);
+      values.push(paperStockId);
+
+      const result = await query(
+        `UPDATE paper_stocks SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
+        values
+      );
+
+      if (result.rows.length === 0) {
+        return NextResponse.json({ error: 'Paper stock not found' }, { status: 404 });
+      }
+    }
+
+    // Update coating assignments if provided
+    if (coatings !== undefined && Array.isArray(coatings)) {
+      // Delete existing assignments
+      await query('DELETE FROM paper_stock_coatings WHERE paper_stock_id = $1', [paperStockId]);
+
+      // Insert new assignments
+      if (coatings.length > 0) {
+        const insertValues = coatings.map((coatingId: number) =>
+          `(${paperStockId}, ${coatingId}, ${coatingId === coatings[0]})`
+        ).join(', ');
+
+        await query(
+          `INSERT INTO paper_stock_coatings (paper_stock_id, coating_id, is_default) VALUES ${insertValues}`
+        );
+      }
+    }
+
+    // Fetch and return the updated paper stock with coatings
+    const paperStockResult = await query('SELECT * FROM paper_stocks WHERE id = $1', [paperStockId]);
+    const coatingsResult = await query(
+      `SELECT psc.coating_id, psc.is_default
+       FROM paper_stock_coatings psc
+       WHERE psc.paper_stock_id = $1
+       ORDER BY psc.coating_id`,
+      [paperStockId]
     );
 
-    if (result.rows.length === 0) {
-      return NextResponse.json({ error: 'Paper stock not found' }, { status: 404 });
-    }
-
-    return NextResponse.json(result.rows[0]);
+    return NextResponse.json({
+      ...paperStockResult.rows[0],
+      coatings: coatingsResult.rows,
+    });
   } catch (error) {
     console.error('Failed to update paper stock:', error);
     return NextResponse.json({ error: 'Failed to update paper stock' }, { status: 500 });
