@@ -67,6 +67,8 @@ export async function POST(request: NextRequest) {
       addOns: addOns.map((a: any) => ({
         addOnId: parseInt(a.addOnId),
         subOptions: a.subOptions || {},
+        choiceId: a.choiceId ? parseInt(a.choiceId) : undefined,
+        choiceValue: a.choiceValue || undefined,
       })),
     };
 
