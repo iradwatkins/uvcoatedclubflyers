@@ -17,10 +17,27 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { Loader2, Save, ArrowLeft } from 'lucide-react';
+import { Loader2, Save, ArrowLeft, ExternalLink, List } from 'lucide-react';
 import { AddonPricingFields } from './addon-pricing-fields';
 import { AddonSubOptionEditor, SubOption } from './addon-sub-option-editor';
+import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+
+interface Choice {
+  id: number;
+  add_on_id: number;
+  value: string;
+  label: string;
+  description: string | null;
+  pricing_type: string;
+  base_price: string | null;
+  per_unit_price: string | null;
+  sides_pricing: any;
+  is_default: boolean;
+  display_order: number;
+  requires_file_upload: boolean;
+  requires_sides_selection: boolean;
+}
 
 interface AddonFormProps {
   mode: 'create' | 'edit';
@@ -44,9 +61,10 @@ interface AddonFormProps {
     adminNotes: string | null;
   };
   initialSubOptions?: any[];
+  initialChoices?: Choice[];
 }
 
-export function AddonForm({ mode, initialData, initialSubOptions = [] }: AddonFormProps) {
+export function AddonForm({ mode, initialData, initialSubOptions = [], initialChoices = [] }: AddonFormProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -410,6 +428,118 @@ export function AddonForm({ mode, initialData, initialSubOptions = [] }: AddonFo
           </div>
         </CardContent>
       </Card>
+
+      {/* Choices Section - Only for dropdown add-ons in edit mode */}
+      {mode === 'edit' && uiComponent === 'dropdown' && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <List className="h-5 w-5" />
+                  Dropdown Choices
+                  {initialChoices.length > 0 && (
+                    <Badge variant="secondary">{initialChoices.length} choices</Badge>
+                  )}
+                </CardTitle>
+                <CardDescription>
+                  Options that customers can select from the dropdown
+                </CardDescription>
+              </div>
+              <Link href={`/admin/addons/${initialData?.id}/choices`}>
+                <Button type="button" variant="outline" size="sm">
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Manage Choices
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {initialChoices.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="pb-2 text-left text-sm font-medium text-muted-foreground">Order</th>
+                      <th className="pb-2 text-left text-sm font-medium text-muted-foreground">Label</th>
+                      <th className="pb-2 text-left text-sm font-medium text-muted-foreground">Value</th>
+                      <th className="pb-2 text-left text-sm font-medium text-muted-foreground">Pricing</th>
+                      <th className="pb-2 text-center text-sm font-medium text-muted-foreground">Options</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {initialChoices.map((choice) => {
+                      // Format pricing display
+                      let pricingDisplay = 'FREE';
+                      const basePrice = parseFloat(choice.base_price || '0');
+                      const perUnit = parseFloat(choice.per_unit_price || '0');
+
+                      if (choice.pricing_type === 'sides_based' && choice.sides_pricing) {
+                        const sp = typeof choice.sides_pricing === 'string'
+                          ? JSON.parse(choice.sides_pricing)
+                          : choice.sides_pricing;
+                        if (sp.one_side && sp.two_sides) {
+                          pricingDisplay = `$${parseFloat(sp.one_side).toFixed(0)}-$${parseFloat(sp.two_sides).toFixed(0)}`;
+                        }
+                      } else if (choice.pricing_type === 'flat' && basePrice > 0) {
+                        pricingDisplay = `$${basePrice.toFixed(2)}`;
+                      } else if (choice.pricing_type === 'per_unit' && perUnit > 0) {
+                        pricingDisplay = `$${perUnit.toFixed(4)}/unit`;
+                      }
+
+                      return (
+                        <tr key={choice.id} className="border-b last:border-0">
+                          <td className="py-2 text-sm text-muted-foreground">{choice.display_order}</td>
+                          <td className="py-2">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{choice.label}</span>
+                              {choice.is_default && (
+                                <Badge variant="secondary" className="text-xs">Default</Badge>
+                              )}
+                            </div>
+                            {choice.description && (
+                              <p className="text-xs text-muted-foreground mt-1 max-w-xs truncate">
+                                {choice.description}
+                              </p>
+                            )}
+                          </td>
+                          <td className="py-2 text-sm font-mono text-muted-foreground">{choice.value}</td>
+                          <td className="py-2 text-sm">{pricingDisplay}</td>
+                          <td className="py-2 text-center">
+                            <div className="flex items-center justify-center gap-1">
+                              {choice.requires_file_upload && (
+                                <Badge variant="outline" className="text-xs">Upload</Badge>
+                              )}
+                              {choice.requires_sides_selection && (
+                                <Badge variant="outline" className="text-xs">Sides</Badge>
+                              )}
+                              {!choice.requires_file_upload && !choice.requires_sides_selection && (
+                                <span className="text-muted-foreground">-</span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-muted-foreground mb-4">
+                  No choices configured yet. Add choices to give customers options.
+                </p>
+                <Link href={`/admin/addons/${initialData?.id}/choices`}>
+                  <Button type="button" variant="outline">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Add Choices
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Behavior Settings */}
       <Card>

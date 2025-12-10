@@ -24,9 +24,17 @@ async function getAddon(id: number) {
     ORDER BY display_order
   `;
 
+  // Also fetch choices for dropdown add-ons
+  const choices = await prisma.$queryRaw`
+    SELECT * FROM add_on_choices
+    WHERE add_on_id = ${id}
+    ORDER BY display_order
+  `;
+
   return {
     addon: addons[0],
     subOptions,
+    choices,
   };
 }
 
@@ -74,7 +82,7 @@ export default async function EditAddonPage({ params }: EditAddonPageProps) {
 
   return (
     <div className="container mx-auto py-10">
-      <AddonForm mode="edit" initialData={initialData} initialSubOptions={data.subOptions} />
+      <AddonForm mode="edit" initialData={initialData} initialSubOptions={data.subOptions} initialChoices={data.choices} />
     </div>
   );
 }
