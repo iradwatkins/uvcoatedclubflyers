@@ -84,6 +84,7 @@ export const prisma = {
         availableTurnarounds: row.available_turnarounds,
         mandatoryAddons: row.mandatory_addons,
         availableAddons: row.available_addons,
+        isQuickProduct: row.is_quick_product,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
         category: row['category.id']

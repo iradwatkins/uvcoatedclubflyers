@@ -138,12 +138,16 @@ export default async function AdminProductsPage() {
                     <td className="py-4 text-center">{product._count.orderItems}</td>
                     <td className="py-4 text-right">
                       <div className="flex justify-end gap-2">
-                        <Link href={`/admin/products/${product.id}`}>
+                        <a
+                          href={product.isQuickProduct ? `/quick/${product.slug}` : `/products/${product.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           <Button variant="ghost" size="sm">
                             <Eye className="mr-2 h-4 w-4" />
                             View
                           </Button>
-                        </Link>
+                        </a>
                         <Link href={`/admin/products/${product.id}/edit`}>
                           <Button variant="outline" size="sm">
                             <Edit className="mr-2 h-4 w-4" />
