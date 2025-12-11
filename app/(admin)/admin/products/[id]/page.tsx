@@ -3,7 +3,7 @@ import { redirect, notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Edit, Copy, Trash2 } from 'lucide-react';
+import { ArrowLeft, Edit, Copy, Trash2, ExternalLink } from 'lucide-react';
 import { ProductViewDetails } from '@/components/admin/products/product-view-details';
 import { ProductDeleteDialog } from '@/components/admin/products/product-delete-dialog';
 import { ProductDuplicateButton } from '@/components/admin/products/product-duplicate-button';
@@ -86,6 +86,16 @@ export default async function ProductViewPage({ params }: ProductViewPageProps) 
         </div>
 
         <div className="flex items-center gap-2">
+          <a
+            href={product.isQuickProduct ? `/quick/${product.slug}` : `/products/${product.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant="outline">
+              <ExternalLink className="mr-2 h-4 w-4" />
+              View on Site
+            </Button>
+          </a>
           <Link href={`/admin/products/${product.id}/edit`}>
             <Button variant="default">
               <Edit className="mr-2 h-4 w-4" />
