@@ -18,14 +18,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const allAddOns = await prisma.$queryRaw`
       SELECT
         a.*,
-        pa.id as assignment_id,
-        pa.is_default,
+        pa.product_id as assignment_id,
+        pa.is_enabled as is_default,
         pa.display_order,
-        CASE WHEN pa.id IS NOT NULL THEN true ELSE false END as is_assigned
+        CASE WHEN pa.product_id IS NOT NULL THEN true ELSE false END as is_assigned
       FROM add_ons a
-      LEFT JOIN product_addons pa ON a.id = pa.addon_id AND pa.product_id = ${productId}
+      LEFT JOIN product_add_ons pa ON a.id = pa.add_on_id AND pa.product_id = ${productId}
+      WHERE a.is_active = true
       ORDER BY
-        CASE WHEN pa.id IS NOT NULL THEN pa.display_order ELSE a.display_order END,
+        CASE WHEN pa.product_id IS NOT NULL THEN pa.display_order ELSE a.display_order END,
         a.id
     `;
 
@@ -58,17 +59,21 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     // Delete existing assignments
     await prisma.$executeRaw`
-      DELETE FROM product_addons WHERE product_id = ${productId}
+      DELETE FROM product_add_ons WHERE product_id = ${productId}
     `;
 
     // Insert new assignments
     if (addOnIds.length > 0) {
       const values = addOnIds
-        .map((addOnId, index) => `(${productId}, ${addOnId}, false, ${index + 1})`)
+        .map((addOnId, index) => {
+          // Determine position based on addon slug (Design goes above_upload, others below)
+          const position = addOnId === 1 ? 'above_upload' : 'below_upload';
+          return `(${productId}, ${addOnId}, '${position}', false, true, ${index + 1})`;
+        })
         .join(', ');
 
       await prisma.$executeRawUnsafe(`
-        INSERT INTO product_addons (product_id, addon_id, is_default, display_order)
+        INSERT INTO product_add_ons (product_id, add_on_id, position, is_mandatory, is_enabled, display_order)
         VALUES ${values}
       `);
     }
